@@ -2,4 +2,4 @@
 *.class
 
 #Working Project Directory Setup
-/bin
+\bin
