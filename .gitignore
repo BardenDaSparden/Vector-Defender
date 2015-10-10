@@ -1,0 +1,5 @@
+#Java Class files
+*.class
+
+#Working Project Directory Setup
+/bin
