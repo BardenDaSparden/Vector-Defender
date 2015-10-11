@@ -1,4 +1,4 @@
-package com.shapedefender.objects;
+package com.vecdef.objects;
 
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;

@@ -1,10 +1,10 @@
-package com.shapedefender.objects;
+package com.vecdef.objects;
 
 import org.javatroid.math.Vector4f;
 
-import com.shapedefender.model.DefaultMesh;
-import com.shapedefender.model.Mesh;
-import com.shapedefender.model.Transform2D;
+import com.vecdef.model.DefaultMesh;
+import com.vecdef.model.Mesh;
+import com.vecdef.model.Transform2D;
 
 public interface IRenderable {
 	

@@ -1,7 +1,7 @@
-package com.shapedefender.behaviours;
+package com.vecdef.ai;
 
-import com.shapedefender.objects.Entity;
-import com.shapedefender.objects.Grid;
+import com.vecdef.objects.Entity;
+import com.vecdef.objects.Grid;
 
 public interface Behavior{
 	

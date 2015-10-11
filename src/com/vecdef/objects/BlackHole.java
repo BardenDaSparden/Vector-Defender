@@ -1,4 +1,4 @@
-package com.shapedefender.objects;
+package com.vecdef.objects;
 
 public class BlackHole extends Entity{
 

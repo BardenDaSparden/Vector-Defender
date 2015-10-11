@@ -1,4 +1,4 @@
-package com.shapedefender.objects;
+package com.vecdef.objects;
 
 import java.util.ArrayList;
 
@@ -12,9 +12,9 @@ import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 import org.javatroid.math.Vector4f;
 
-import com.shapedefender.model.LinePrimitive;
-import com.shapedefender.model.Mesh;
-import com.shapedefender.model.MeshLayer;
+import com.vecdef.model.LinePrimitive;
+import com.vecdef.model.Mesh;
+import com.vecdef.model.MeshLayer;
 
 public class Player extends Entity{
 	

@@ -1,11 +1,11 @@
-package com.shapedefender.objects;
+package com.vecdef.objects;
 
 import org.javatroid.math.Vector2f;
 
-import com.shapedefender.Scene;
-import com.shapedefender.model.DefaultMesh;
-import com.shapedefender.model.Mesh;
-import com.shapedefender.model.Transform2D;
+import com.vecdef.gamestate.Scene;
+import com.vecdef.model.DefaultMesh;
+import com.vecdef.model.Mesh;
+import com.vecdef.model.Transform2D;
 
 public abstract class Entity implements IRenderable, IPhysics{
 	

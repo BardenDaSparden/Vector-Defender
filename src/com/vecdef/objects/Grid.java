@@ -1,4 +1,4 @@
-package com.shapedefender.objects;
+package com.vecdef.objects;
 
 import java.util.ArrayList;
 
@@ -8,8 +8,8 @@ import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 import org.javatroid.math.Vector4f;
 
-import com.shapedefender.ShapeRenderer;
-import com.shapedefender.model.Primitive.DrawType;
+import com.vecdef.gamestate.ShapeRenderer;
+import com.vecdef.model.Primitive.DrawType;
 
 import debug.physics.PointMass;
 import debug.physics.Spring;
@@ -180,29 +180,6 @@ public class Grid{
 	public void draw(ShapeRenderer renderer){
 		
 		renderer.begin(DrawType.LINES, BlendState.ADDITIVE);
-		
-		//float red = 0.1f + (GameStatus.getMultiplier() / 1000.0f) * 0.3f;
-		
-//	    for (int i = 0; i < springs.size(); i++){
-//	    	
-//	    	Spring spring = (Spring)springs.get(i);
-//	    	
-//		    PointMass start = spring.getStart();
-//		    PointMass end = spring.getEnd();
-//
-//		    Vector3f startPos = start.getPosition();
-//		    Vector3f endPos = end.getPosition();
-//
-//		    float dx = endPos.x - startPos.x;
-//		    float dy = endPos.y - startPos.y;
-//		    
-//		    float lineWidth = FastMath.sqrt((dx * dx) + (dy * dy));
-//		    
-//		    float startFactor = (startPos.z + 2000.0F) / 2000.0F;
-//		    float endFactor = (endPos.z + 2000.0F) / 2000.0F;
-//
-//		    renderer.draw(startPos.x + (endPos.x - startPos.x) / 2.0f + startFactor, startPos.y + (endPos.y - startPos.y) / 2.0f + endFactor, lineWidth, 2, FastMath.getAngleInDegrees(dx,  dy), Resources.getTexture("white"));
-//	    }
 		
 		for (int j = 0; j < points.length - 1; j++){
 			for(int i = 0; i < points[j].length - 1; i++){

@@ -1,4 +1,4 @@
-package com.shapedefender.model;
+package com.vecdef.model;
 
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;

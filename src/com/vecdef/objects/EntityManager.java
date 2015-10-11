@@ -1,10 +1,9 @@
-package com.shapedefender.objects;
+package com.vecdef.objects;
 
 import java.util.ArrayList;
-
 import org.javatroid.math.Vector2f;
 
-import com.shapedefender.ShapeRenderer;
+import com.vecdef.gamestate.ShapeRenderer;
 
 public class EntityManager{
 	

@@ -1,8 +1,8 @@
-package com.shapedefender.objects;
+package com.vecdef.objects;
 
 import org.javatroid.math.Vector2f;
 
-import com.shapedefender.model.Transform2D;
+import com.vecdef.model.Transform2D;
 
 public interface IPhysics {
 	

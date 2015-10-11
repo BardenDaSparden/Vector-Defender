@@ -1,4 +1,4 @@
-package com.shapedefender;
+package com.vecdef.gamestate;
 
 public class GameStateManager {
 
@@ -16,15 +16,15 @@ public class GameStateManager {
 		currentState.update();
 	}
 	
-	public void draw(Renderer renderer, float inter){
+	public void draw(Renderer renderer){
 		if(currentState == null) return;
-		currentState.draw(renderer, inter);
+		currentState.draw(renderer);
 	}
 	
 	public void setState(int state){
 		
 		if(currentState != null)
-			currentState.dispose();
+			currentState.destroy();
 		
 		if(state == MENU_STATE)
 			currentState = new MenuState(this);
@@ -39,7 +39,7 @@ public class GameStateManager {
 	
 	public void dispose(){
 		if(currentState != null)
-			currentState.dispose();
+			currentState.destroy();
 	}
 	
 }

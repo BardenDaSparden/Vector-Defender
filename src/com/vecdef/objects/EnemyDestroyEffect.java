@@ -1,4 +1,4 @@
-package com.shapedefender.objects;
+package com.vecdef.objects;
 
 import java.util.ArrayList;
 
@@ -6,10 +6,10 @@ import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
 
-import com.shapedefender.model.LinePrimitive;
-import com.shapedefender.model.Mesh;
-import com.shapedefender.model.MeshLayer;
-import com.shapedefender.model.Primitive;
+import com.vecdef.model.LinePrimitive;
+import com.vecdef.model.Mesh;
+import com.vecdef.model.MeshLayer;
+import com.vecdef.model.Primitive;
 
 public class EnemyDestroyEffect {
 

@@ -1,4 +1,4 @@
-package com.shapedefender.model;
+package com.vecdef.model;
 
 public class LinePrimitive extends BasePrimitive{
 

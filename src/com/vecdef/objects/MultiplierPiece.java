@@ -1,4 +1,4 @@
-package com.shapedefender.objects;
+package com.vecdef.objects;
 
 import org.javatroid.core.Timer;
 import org.javatroid.core.TimerCallback;
@@ -7,9 +7,9 @@ import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
 
-import com.shapedefender.model.LinePrimitive;
-import com.shapedefender.model.Mesh;
-import com.shapedefender.model.MeshLayer;
+import com.vecdef.model.LinePrimitive;
+import com.vecdef.model.Mesh;
+import com.vecdef.model.MeshLayer;
 
 public class MultiplierPiece extends Entity{
 

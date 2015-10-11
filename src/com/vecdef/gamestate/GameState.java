@@ -1,4 +1,4 @@
-package com.shapedefender;
+package com.vecdef.gamestate;
 
 public abstract class GameState {
 
@@ -10,7 +10,7 @@ public abstract class GameState {
 	
 	public abstract void initialize();
 	public abstract void update();
-	public abstract void draw(Renderer renderer, float inter);
-	public abstract void dispose();
+	public abstract void draw(Renderer renderer);
+	public abstract void destroy();
 	
 }

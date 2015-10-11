@@ -1,12 +1,12 @@
-package com.shapedefender.behaviours;
-
-import com.shapedefender.objects.Entity;
-import com.shapedefender.objects.Grid;
+package com.vecdef.ai;
 
 import org.javatroid.core.Window;
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
+
+import com.vecdef.objects.Entity;
+import com.vecdef.objects.Grid;
 
 public class WandererBehavior implements Behavior{
 	

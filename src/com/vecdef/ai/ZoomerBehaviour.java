@@ -1,12 +1,12 @@
-package com.shapedefender.behaviours;
+package com.vecdef.ai;
 
 import org.javatroid.core.Window;
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 
-import com.shapedefender.objects.Enemy;
-import com.shapedefender.objects.Entity;
-import com.shapedefender.objects.Grid;
+import com.vecdef.objects.Enemy;
+import com.vecdef.objects.Entity;
+import com.vecdef.objects.Grid;
 
 public class ZoomerBehaviour implements Behavior{
 

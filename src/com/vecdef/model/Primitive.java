@@ -1,4 +1,4 @@
-package com.shapedefender.model;
+package com.vecdef.model;
 
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_LINE_LOOP;

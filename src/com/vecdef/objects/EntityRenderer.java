@@ -1,4 +1,4 @@
-package com.shapedefender.objects;
+package com.vecdef.objects;
 
 import java.util.ArrayList;
 
@@ -6,12 +6,12 @@ import org.javatroid.graphics.BlendState;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
 
-import com.shapedefender.ShapeRenderer;
-import com.shapedefender.model.Mesh;
-import com.shapedefender.model.MeshLayer;
-import com.shapedefender.model.Primitive;
-import com.shapedefender.model.Primitive.DrawType;
-import com.shapedefender.model.Transform2D;
+import com.vecdef.gamestate.ShapeRenderer;
+import com.vecdef.model.Mesh;
+import com.vecdef.model.MeshLayer;
+import com.vecdef.model.Primitive;
+import com.vecdef.model.Transform2D;
+import com.vecdef.model.Primitive.DrawType;
 
 public class EntityRenderer {
 

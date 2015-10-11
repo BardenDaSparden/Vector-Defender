@@ -1,10 +1,10 @@
-package com.shapedefender.objects;
+package com.vecdef.objects;
 
 import java.util.ArrayList;
 
 import org.javatroid.math.Vector2f;
 
-import com.shapedefender.model.Transform2D;
+import com.vecdef.model.Transform2D;
 
 public class PhysicsManager {
 

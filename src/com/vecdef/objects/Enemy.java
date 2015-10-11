@@ -1,4 +1,4 @@
-package com.shapedefender.objects;
+package com.vecdef.objects;
 
 import java.util.ArrayList;
 
@@ -8,17 +8,17 @@ import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
 
-import com.shapedefender.behaviours.Behavior;
-import com.shapedefender.behaviours.BlackHoleBehaviour;
-import com.shapedefender.behaviours.ChaserBehaviour;
-import com.shapedefender.behaviours.PrototypeBehaviour;
-import com.shapedefender.behaviours.FollowerBehavior;
-import com.shapedefender.behaviours.StalkerBehaviour;
-import com.shapedefender.behaviours.WandererBehavior;
-import com.shapedefender.behaviours.ZoomerBehaviour;
-import com.shapedefender.model.LinePrimitive;
-import com.shapedefender.model.Mesh;
-import com.shapedefender.model.MeshLayer;
+import com.vecdef.ai.Behavior;
+import com.vecdef.ai.BlackHoleBehaviour;
+import com.vecdef.ai.ChaserBehaviour;
+import com.vecdef.ai.FollowerBehavior;
+import com.vecdef.ai.PrototypeBehaviour;
+import com.vecdef.ai.StalkerBehaviour;
+import com.vecdef.ai.WandererBehavior;
+import com.vecdef.ai.ZoomerBehaviour;
+import com.vecdef.model.LinePrimitive;
+import com.vecdef.model.Mesh;
+import com.vecdef.model.MeshLayer;
 
 public class Enemy extends Entity{
 	
