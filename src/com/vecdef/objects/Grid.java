@@ -2,11 +2,11 @@ package com.vecdef.objects;
 
 import java.util.ArrayList;
 
-import org.javatroid.core.Window;
 import org.javatroid.graphics.BlendState;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 import org.javatroid.math.Vector4f;
+import org.lwjgl.opengl.Display;
 
 import com.vecdef.gamestate.ShapeRenderer;
 import com.vecdef.model.Primitive.DrawType;
@@ -34,8 +34,8 @@ public class Grid{
 		
 		this.offset = new Vector2f(-cellWidth / 2.0f, -cellHeight / 2.0f);
 		
-		Vector2f min = new Vector2f(-Window.getWidth() / 2.0F + 1.0F, -Window.getHeight() / 2.0F + 1.0F);
-	    Vector2f max = new Vector2f(Window.getWidth() / 2.0F - 1.0F, Window.getHeight() / 2.0F - 1.0F);
+		Vector2f min = new Vector2f(-Display.getWidth() / 2.0F + 1.0F, -Display.getHeight() / 2.0F + 1.0F);
+	    Vector2f max = new Vector2f(Display.getWidth() / 2.0F - 1.0F, Display.getHeight() / 2.0F - 1.0F);
 	    rows = (int)((max.y - min.y) / cellHeight) + 2;
 	    cols = (int)((max.x - min.x) / cellWidth) + 2;
 
@@ -149,26 +149,6 @@ public class Grid{
 	int skip = SKIP_TIME;
 	public void update(){
 		
-//		if(skip == 0){
-//			time += 1.0f / 1000f;
-//			if(time > 1){
-//				time = 0;
-//			}
-//			skip = SKIP_TIME;
-//		} else {
-//			skip--;
-//		}
-//		
-//		int c = HSLColor.toRGB(time, 1, 0.5f);
-//		
-//		float r = ((c >> 16) & 0xFF) / 255.0f;
-//		float g = ((c >> 8) & 0xFF) / 255.0f;
-//		float b = ((c) & 0xFF) / 255.0f;
-//		
-//		color.x = r;
-//		color.y = g;
-//		color.z = b;
-		
 		for(Spring spring : springs)
 			spring.update();
 		
@@ -240,6 +220,5 @@ public class Grid{
 	    
 	    renderer.draw(v0, color);
 	    renderer.draw(v1, color);
-	    //renderer.draw(start.x + (end.x - start.x) / 2.0f + startFactor + offset.x, start.y + (end.y - start.y) / 2.0f + endFactor + offset.y, lineWidth, 2, FastMath.getAngleInDegrees(dx,  dy), Resources.getTexture("white"));
 	}
 }

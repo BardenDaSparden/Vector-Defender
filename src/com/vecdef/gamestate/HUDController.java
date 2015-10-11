@@ -1,10 +1,10 @@
 package com.vecdef.gamestate;
 
 import org.javatroid.core.Resources;
-import org.javatroid.core.Window;
 import org.javatroid.graphics.SpriteBatch;
 import org.javatroid.graphics.Texture;
 import org.javatroid.text.BitmapFont;
+import org.lwjgl.opengl.Display;
 
 import com.vecdef.objects.Player;
 
@@ -29,8 +29,8 @@ public class HUDController {
 		
 		int lives = player.getStats().getLiveCount();
 		int bombs = player.getStats().getBombCount();
-		float startX = -Window.getWidth() / 2.0f + 30;
-		float startY = Window.getHeight() / 2 - 46;
+		float startX = -Display.getWidth() / 2.0f + 30;
+		float startY = Display.getHeight() / 2 - 46;
 		
 		defaultFont.drawString(startX, startY, "Lives : ", spriteBatch);
 		
@@ -68,12 +68,12 @@ public class HUDController {
 		}
 		
 		spriteBatch.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-	    scoreFont.drawStringCentered(0, Window.getHeight() / 2 - 46, player.getStats().getScore() + "", spriteBatch);
-	    defaultFont.drawStringCentered(0.5f, Window.getHeight() / 2 - 90, "Multiplier : " + player.getStats().getMultiplier(), spriteBatch);
+	    scoreFont.drawStringCentered(0, Display.getHeight() / 2 - 46, player.getStats().getScore() + "", spriteBatch);
+	    defaultFont.drawStringCentered(0.5f, Display.getHeight() / 2 - 90, "Multiplier : " + player.getStats().getMultiplier(), spriteBatch);
 	    
 	    spriteBatch.setColor(1.0F, 1.0F, 1.0F, 0.4F);
-	    defaultFont.drawString(-Window.getWidth() / 2 + 20, -Window.getHeight() / 2 + 70, "PRE-ALPHA 0.12", spriteBatch);
-	    defaultFont.drawString(-Window.getWidth() / 2 + 20, -Window.getHeight() / 2 + 40, "BY Branden Monroe", spriteBatch);
+	    defaultFont.drawString(-Display.getWidth() / 2 + 20, -Display.getHeight() / 2 + 70, "PRE-ALPHA 0.12", spriteBatch);
+	    defaultFont.drawString(-Display.getWidth() / 2 + 20, -Display.getHeight() / 2 + 40, "BY Branden Monroe", spriteBatch);
 		
 	    spriteBatch.end();
 	}
