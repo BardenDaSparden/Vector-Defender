@@ -6,13 +6,13 @@ import org.javatroid.core.Input;
 import org.javatroid.core.Resources;
 import org.javatroid.core.Timer;
 import org.javatroid.core.TimerCallback;
-import org.javatroid.core.Window;
 import org.javatroid.graphics.GLUtil;
 import org.javatroid.graphics.OrthogonalCamera;
 import org.javatroid.graphics.SpriteBatch;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
 import org.javatroid.text.BitmapFont;
+import org.lwjgl.opengl.Display;
 
 import com.vecdef.objects.Bullet;
 import com.vecdef.objects.Enemy;
@@ -54,8 +54,8 @@ public class PlayState extends GameState{
 	Grid grid;
 	
 	public void initialize() {
-		mainCamera = new OrthogonalCamera(Window.getWidth(), Window.getHeight());
-		hudCamera = new OrthogonalCamera(Window.getWidth(), Window.getHeight());
+		mainCamera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
+		hudCamera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
 		headerFont = Resources.getFont("imagine18");
 		hudFont = Resources.getFont("imagine12");
 		
@@ -118,8 +118,8 @@ public class PlayState extends GameState{
 		mainCamera.update();
 		
 		//update mouse position
-		mousePosition.x = Input.getMouseX() * Window.getWidth() / 2 + mainCamera.getTranslation().x;
-		mousePosition.y = Input.getMouseY() * Window.getHeight() / 2 + mainCamera.getTranslation().y;
+		mousePosition.x = Input.getMouseX() * Display.getWidth() / 2 + mainCamera.getTranslation().x;
+		mousePosition.y = Input.getMouseY() * Display.getHeight() / 2 + mainCamera.getTranslation().y;
 		reticle.setPosition(mousePosition);
 	}
 	
@@ -153,7 +153,7 @@ public class PlayState extends GameState{
 	void drawPauseOverlay(SpriteBatch renderer){
 		renderer.setColor(0, 0, 0, 0.5f);
 		renderer.begin();
-		renderer.draw(0, 0, Window.getWidth(), Window.getHeight(), 0, Resources.getTexture("blank"));
+		renderer.draw(0, 0, Display.getWidth(), Display.getHeight(), 0, Resources.getTexture("blank"));
 		renderer.end();
 		renderer.setColor(1, 1, 1, 1);
 	}

@@ -2,11 +2,11 @@ package com.vecdef.gamestate;
 
 import org.javatroid.core.Input;
 import org.javatroid.core.Resources;
-import org.javatroid.core.Window;
 import org.javatroid.graphics.GLUtil;
 import org.javatroid.graphics.OrthogonalCamera;
 import org.javatroid.graphics.SpriteBatch;
 import org.javatroid.text.BitmapFont;
+import org.lwjgl.opengl.Display;
 
 public class MenuState extends GameState{
 
@@ -22,7 +22,7 @@ public class MenuState extends GameState{
 	float messageAlpha = 1;
 	
 	public void initialize() {
-		camera = new OrthogonalCamera(Window.getWidth(), Window.getHeight());
+		camera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
 		titleFont = Resources.getFont("TitleFont");
 		messageFont = Resources.getFont("imagine18");
 	}
@@ -41,7 +41,7 @@ public class MenuState extends GameState{
 		GLUtil.clear(true, false, false, false);
 		sb.setCamera(camera);
 		sb.begin();
-		messageFont.drawStringCentered(0, Window.getHeight() / 2 - 100, "Geometry Wars", sb);
+		messageFont.drawStringCentered(0, Display.getHeight() / 2 - 100, "Geometry Wars", sb);
 		
 		sb.setColor(1, 1, 1, messageAlpha);
 		titleFont.drawStringCentered(0, 0, "Click Mouse to begin...", sb);

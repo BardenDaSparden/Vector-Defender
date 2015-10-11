@@ -1,5 +1,6 @@
 package com.vecdef.gamestate;
 
+import org.javatroid.graphics.OrthogonalCamera;
 import org.javatroid.graphics.SpriteBatch;
 
 public class Renderer {
@@ -11,6 +12,11 @@ public class Renderer {
 	public Renderer(){
 		shapeRenderer = new ShapeRenderer();
 		spriteBatch = new SpriteBatch(MAX_DRAWS);
+	}
+	
+	public void setCamera(OrthogonalCamera camera){
+		shapeRenderer.setCamera(camera);
+		spriteBatch.setCamera(camera);
 	}
 	
 	public SpriteBatch SpriteBatch(){
