@@ -30,6 +30,7 @@ public class VectorDefender implements Application {
 	@Override
 	public void update() {
 		gameStateManager.update();
+		Input.update();
 	}
 	
 	@Override
