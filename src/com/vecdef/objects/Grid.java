@@ -6,7 +6,6 @@ import org.javatroid.graphics.BlendState;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 import org.javatroid.math.Vector4f;
-import org.lwjgl.opengl.Display;
 
 import com.vecdef.gamestate.ShapeRenderer;
 import com.vecdef.model.Primitive.DrawType;
@@ -19,23 +18,28 @@ public class Grid{
 	ArrayList<Spring> springs = new ArrayList<Spring>();
 	ArrayList<PointMass> masses = new ArrayList<PointMass>();
 	PointMass[][] points;
-	float cellWidth;
-	float cellHeight;
+	
+	int gridWidth;
+	int gridHeight;
+	int cellWidth;
+	int cellHeight;
 	int rows;
 	int cols;
 	final Vector2f offset;
 	
 	Vector4f color = new Vector4f(0.05f, 0.43f, 1f, 0.28f);
 	
-	public Grid(float cellWidth, float cellHeight){
+	public Grid(int width, int height, int cellWidth, int cellHeight){
 		
+		this.gridWidth = width;
+		this.gridHeight = height;
 		this.cellWidth = cellWidth;
 		this.cellHeight = cellHeight;
 		
 		this.offset = new Vector2f(-cellWidth / 2.0f, -cellHeight / 2.0f);
 		
-		Vector2f min = new Vector2f(-Display.getWidth() / 2.0F + 1.0F, -Display.getHeight() / 2.0F + 1.0F);
-	    Vector2f max = new Vector2f(Display.getWidth() / 2.0F - 1.0F, Display.getHeight() / 2.0F - 1.0F);
+		Vector2f min = new Vector2f(-gridWidth / 2.0F + 1.0F, -gridHeight / 2.0F + 1.0F);
+	    Vector2f max = new Vector2f(gridWidth / 2.0F - 1.0F, gridHeight / 2.0F - 1.0F);
 	    rows = (int)((max.y - min.y) / cellHeight) + 2;
 	    cols = (int)((max.x - min.x) / cellWidth) + 2;
 

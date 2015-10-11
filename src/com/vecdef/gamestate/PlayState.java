@@ -61,7 +61,7 @@ public class PlayState extends GameState{
 		
 		reticle = new Reticle(new Vector4f(1, 1, 1, 1));
 		mousePosition = new Vector2f();
-	    grid = new Grid(50, 50);
+	    grid = new Grid(1920, 1080, 50, 50);
 	    
 	    gameoverTimer = new Timer(GAMEOVER_TIME);
 	    gameoverTimer.setCallback(new TimerCallback() {
