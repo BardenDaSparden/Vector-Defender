@@ -157,7 +157,7 @@ public class Player extends Entity{
 	    	fireWeapon();
 	    }
 	    
-	    setVelocity(velocity.scale(VELOCITY_DAMPING));
+	    velocity.set(velocity.scale(VELOCITY_DAMPING));
 	    velocity.x = FastMath.clamp(-MAX_SPEED, MAX_SPEED, velocity.x);
 	    velocity.y = FastMath.clamp(-MAX_SPEED, MAX_SPEED, velocity.y);
 	}
