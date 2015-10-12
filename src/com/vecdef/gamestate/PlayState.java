@@ -23,16 +23,13 @@ import com.vecdef.objects.MultiplierPiece;
 import com.vecdef.objects.Player;
 import com.vecdef.objects.Reticle;
 
-public class PlayState extends GameState{
-
-	public PlayState(GameStateManager gsm){
-		super(gsm);
-	}
+public class PlayState{
 
 	enum State{
 		PLAYING, PAUSED, GAMEOVER
 	}
 	
+	Renderer renderer;
 	OrthogonalCamera mainCamera;
 	OrthogonalCamera hudCamera;
 	BitmapFont headerFont;
@@ -54,6 +51,7 @@ public class PlayState extends GameState{
 	Grid grid;
 	
 	public void initialize() {
+		renderer = new Renderer();
 		mainCamera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
 		hudCamera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
 		headerFont = Resources.getFont("imagine18");
@@ -123,7 +121,7 @@ public class PlayState extends GameState{
 		reticle.setPosition(mousePosition);
 	}
 	
-	public void draw(Renderer renderer){
+	public void draw(){
 		
 		SpriteBatch sb = renderer.SpriteBatch();
 		ShapeRenderer sr = renderer.ShapeRenderer();

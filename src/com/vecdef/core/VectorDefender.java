@@ -2,17 +2,11 @@ package com.vecdef.core;
 
 import org.javatroid.core.Input;
 import org.javatroid.core.Resources;
-import org.javatroid.graphics.OrthogonalCamera;
-import org.lwjgl.opengl.Display;
-
-import com.vecdef.gamestate.GameStateManager;
-import com.vecdef.gamestate.Renderer;
+import com.vecdef.gamestate.PlayState;
 
 public class VectorDefender implements Application {
 	
-	Renderer renderer;
-	OrthogonalCamera camera;
-	GameStateManager gameStateManager;
+	PlayState playState;
 	
 	@Override
 	public void initialize() {
@@ -23,30 +17,25 @@ public class VectorDefender implements Application {
 		Resources.loadTexture("textures/Player.png", "player");
 		Resources.loadTexture("textures/bomb.png", "bomb");
 		Resources.loadTexture("textures/white.png", "blank");
-		
 		Input.setMouseGrabbed(true);
 		
-		renderer = new Renderer();
-		camera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
-		renderer.setCamera(camera);
-		
-		gameStateManager = new GameStateManager();
-		gameStateManager.setState(GameStateManager.MENU_STATE);
+		playState = new PlayState();
+		playState.initialize();
 	}
 
 	@Override
 	public void update() {
-		gameStateManager.update();
+		playState.update();
 		Input.update();
 	}
 	
 	@Override
 	public void render() {
-		gameStateManager.draw(renderer);
+		playState.draw();
 	}
 
 	@Override
 	public void destroy() {
-		gameStateManager.dispose();
+		
 	}
 }
