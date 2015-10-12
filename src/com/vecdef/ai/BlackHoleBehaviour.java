@@ -101,18 +101,18 @@ public class BlackHoleBehaviour implements Behavior{
         	pVel = pVel.add(new Vector2f(n.y, -n.x).scale(10 + FastMath.random() * 40).scale(1.0F / (distance)));
         }
         
-        particle.setVelocity(pVel.clone());
+        particle.getVelocity().set(pVel.clone());
 	}
 	
 	private void affectBullet(Entity blackHole, Bullet bullet){
 		Vector2f v = bullet.getVelocity().add(bullet.getTransform().getTranslation().sub(blackHole.getTransform().getTranslation()).scale(0.005f));
-		bullet.setVelocity(v);
+		bullet.getVelocity().set(v);
 		//e.setVelocity(e.getVelocity().add(e.transform.getTranslation().sub(object.transform.getTranslation()).scale(0.005F)));
 	}
 	
 	private void affectPiece(Entity blackHole, MultiplierPiece piece){
 		Vector2f v = piece.getVelocity().add(blackHole.getTransform().getTranslation().sub(piece.getTransform().getTranslation()).scale(0.002f));
-		piece.setVelocity(v);
+		piece.getVelocity().set(v);
 		//e.setVelocity(e.getVelocity().add(object.transform.getTranslation().sub(e.transform.getTranslation()).scale(0.002F)));
 	}
 	

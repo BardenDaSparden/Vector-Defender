@@ -17,7 +17,7 @@ public class WandererBehavior implements Behavior{
 		
 		if(!vIsSet){
 			float a = FastMath.random() * 360;
-			object.setVelocity(new Vector2f(FastMath.cosd(a) * speed, FastMath.sind(a) * speed));
+			object.getVelocity().set(new Vector2f(FastMath.cosd(a) * speed, FastMath.sind(a) * speed));
 			vIsSet = true;
 		}
 		

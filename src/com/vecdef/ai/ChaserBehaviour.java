@@ -19,7 +19,7 @@ public class ChaserBehaviour implements Behavior{
 			
 		  Player player = Entity.getScene().getPlayer();
 		  float angleToPlayer = player.getTransform().getTranslation().sub(object.getTransform().getTranslation()).direction();
-		  object.setVelocity(new Vector2f(FastMath.cosd(angleToPlayer) * speed, FastMath.sind(angleToPlayer) * speed));
+		  object.getVelocity().set(new Vector2f(FastMath.cosd(angleToPlayer) * speed, FastMath.sind(angleToPlayer) * speed));
 		  object.setAngularVelocity(object.getVelocity().length() * random);
 	  }
 

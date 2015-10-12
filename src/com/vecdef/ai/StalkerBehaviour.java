@@ -23,8 +23,8 @@ public class StalkerBehaviour implements Behavior{
 		Player player = Entity.getScene().getPlayer();
 		float toPlayer = player.getTransform().getTranslation().sub(object.getTransform().getTranslation()).direction();
 		
-	    object.setVelocity(new Vector2f(FastMath.cosd(time) * angleSpeed, FastMath.sind(time) * angleSpeed));
-	    object.setVelocity(object.getVelocity().add(new Vector2f(FastMath.cosd(toPlayer) * speed, FastMath.sind(toPlayer) * speed)));
+	    object.getVelocity().set(new Vector2f(FastMath.cosd(time) * angleSpeed, FastMath.sind(time) * angleSpeed));
+	    object.getVelocity().set(object.getVelocity().add(new Vector2f(FastMath.cosd(toPlayer) * speed, FastMath.sind(toPlayer) * speed)));
 	    object.getTransform().setOrientation(object.getVelocity().direction());
 	    
 	}

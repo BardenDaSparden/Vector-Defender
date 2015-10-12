@@ -24,7 +24,7 @@ public class PrototypeBehaviour implements Behavior{
 		Vector2f toPlayer = player.getTransform().getTranslation().sub(object.getTransform().getTranslation());
 
 	    object.getTransform().setOrientation(object.getVelocity().direction());
-	    object.setVelocity(new Vector2f(FastMath.cosd(toPlayer.direction()) * speed, FastMath.sind(toPlayer.direction()) * speed));
+	    object.getVelocity().set(new Vector2f(FastMath.cosd(toPlayer.direction()) * speed, FastMath.sind(toPlayer.direction()) * speed));
 
 	    speed += 0.005F;
 	}

@@ -18,7 +18,7 @@ public class ZoomerBehaviour implements Behavior{
 	public void onUpdate(Entity object, Grid grid, float dt) {
 		if(!isVelocitySet){
 			isVelocitySet = true;
-			object.setVelocity(new Vector2f(FastMath.cosd(direction) * speed, FastMath.sind(direction) * speed));
+			object.getVelocity().set(new Vector2f(FastMath.cosd(direction) * speed, FastMath.sind(direction) * speed));
 			object.setAngularVelocity(speed);
 		}
 		
