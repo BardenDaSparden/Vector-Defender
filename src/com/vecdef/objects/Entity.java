@@ -15,10 +15,10 @@ public abstract class Entity implements IRenderable, IPhysics{
 	protected float opacity;
 	
 	//Physics Dependencies
-	protected Vector2f velocity = new Vector2f();
-	protected Vector2f acceleration = new Vector2f();
-	protected float angularVelocity = 0;
-	protected float torque = 0;
+	protected Vector2f velocity;
+	protected Vector2f acceleration;
+	protected float angularVelocity;
+	protected float torque;
 	public float radius = 20;
 	
 	protected boolean bExpired = false;
@@ -29,6 +29,11 @@ public abstract class Entity implements IRenderable, IPhysics{
 		transform = new Transform2D();
 		mesh = new DefaultMesh();
 		opacity = 1;
+		
+		velocity = new Vector2f();
+		acceleration = new Vector2f();
+		angularVelocity = 0;
+		torque = 0;
 	}
 	
 	public abstract void update(Grid grid, float dt);
@@ -55,17 +60,24 @@ public abstract class Entity implements IRenderable, IPhysics{
 		this.opacity = opacity;
 	}
 	
-	public Vector2f getVelocity()		{return velocity;}
-	public Vector2f getAcceleration()	{return acceleration;}
-	public float getAngularVelocity()	{return angularVelocity;}
-	public float getTorque()			{return torque;}
-	
-	public void setVelocity(Vector2f velocity){
-		this.velocity = velocity;
+	@Override
+	public Vector2f getVelocity(){
+		return velocity;
 	}
 	
-	public void setAcceleration(Vector2f acceleration){
-		this.acceleration = acceleration;
+	@Override
+	public Vector2f getAcceleration(){
+		return acceleration;
+	}
+	
+	@Override
+	public float getAngularVelocity(){
+		return angularVelocity;
+	}
+	
+	@Override
+	public float getTorque(){
+		return torque;
 	}
 	
 	public void setAngularVelocity(float av){
