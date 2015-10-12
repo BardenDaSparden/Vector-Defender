@@ -28,7 +28,7 @@ public class PhysicsManager {
 		objects.clear();
 	}
 	
-	public void updatePhysics(float dt){
+	public void integrate(float dt){
 		for(int i = 0; i < objects.size(); i++){
 			Entity object = objects.get(i);
 			Transform2D transform = object.getTransform();

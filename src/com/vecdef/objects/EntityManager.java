@@ -39,7 +39,7 @@ public class EntityManager{
 		      }
 		}
 		
-		physicsWorld.updatePhysics(TIME_STEP);
+		physicsWorld.integrate(TIME_STEP);
 		physicsWorld.clear();
 		
 		handleCollisions();
