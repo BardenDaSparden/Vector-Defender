@@ -8,28 +8,12 @@ public interface IPhysics {
 	
 	public Transform2D getTransform();
 	
-	default public Vector2f getVelocity(){
-		return new Vector2f(0, 0);
-	}
-	public void setVelocity(Vector2f velocity);
+	public Vector2f getVelocity();
+	public Vector2f getAcceleration();
 	
-	default public Vector2f getAcceleration(){
-		return new Vector2f(0, 0);
-	}
-	public void setAcceleration(Vector2f acceleration);
+	public float getAngularVelocity();
+	public void setAngularVelocity(float av);
 	
-	default public float getAngularVelocity(){
-		return 0;
-	}
-	public void setAngularVelocity(float a);
-	
-	default public float getTorque(){
-		return 0;
-	}
+	public float getTorque();
 	public void setTorque(float t);
-	
-	default public float getMass(){
-		return 1;
-	}
-	
 }
