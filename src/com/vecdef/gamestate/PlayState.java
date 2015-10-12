@@ -9,7 +9,6 @@ import org.javatroid.graphics.OrthogonalCamera;
 import org.javatroid.graphics.SpriteBatch;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
-import org.javatroid.text.BitmapFont;
 import org.lwjgl.opengl.Display;
 
 import com.vecdef.objects.Bullet;
@@ -26,10 +25,8 @@ public class PlayState{
 	}
 	
 	Renderer renderer;
-	OrthogonalCamera mainCamera;
-	OrthogonalCamera hudCamera;
-	BitmapFont headerFont;
-	BitmapFont hudFont;
+	OrthogonalCamera camera;
+	
 	Reticle reticle;
 	Vector2f mousePosition;
 	
@@ -42,10 +39,7 @@ public class PlayState{
 	
 	public void initialize() {
 		renderer = new Renderer();
-		mainCamera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
-		hudCamera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
-		headerFont = Resources.getFont("imagine18");
-		hudFont = Resources.getFont("imagine12");
+		camera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
 		
 		reticle = new Reticle(new Vector4f(1, 1, 1, 1));
 		mousePosition = new Vector2f();
@@ -53,15 +47,14 @@ public class PlayState{
 	    scene = new Scene();
 	    Entity.setScene(scene);
 	    spawner = new EnemySpawner();
-	    hudController = new HUDController(scene.getPlayer());
+	    hudController = new HUDController(scene, Display.getWidth(), Display.getHeight());
 	    
 	    EntityManager.add(scene.getPlayer());
 	    EntityManager.add(reticle);
 	}
 	
 	public void update() {
-		if(Input.isKeyPressed(Input.KEY_RETURN)){
-			//If game is playing, pause
+		if(Input.isKeyPressed(Input.KEY_ESCAPE)){
 			if(state == State.PLAYING)
 				state = State.PAUSED;
 			else if(state == State.PAUSED)
@@ -83,12 +76,12 @@ public class PlayState{
 		
 		//update camera translation based on player position
 		Vector2f position = scene.getPlayer().getTransform().getTranslation();
-		mainCamera.getTranslation().set(position.x, position.y);
-		mainCamera.update();
+		camera.getTranslation().set(position.x, position.y);
+		camera.update();
 		
 		//update mouse position
-		mousePosition.x = Input.getMouseX() * Display.getWidth() / 2 + mainCamera.getTranslation().x;
-		mousePosition.y = Input.getMouseY() * Display.getHeight() / 2 + mainCamera.getTranslation().y;
+		mousePosition.x = Input.getMouseX() * Display.getWidth() / 2 + camera.getTranslation().x;
+		mousePosition.y = Input.getMouseY() * Display.getHeight() / 2 + camera.getTranslation().y;
 		reticle.setPosition(mousePosition);
 	}
 	
@@ -99,14 +92,12 @@ public class PlayState{
 		GLUtil.clear(true, false, false, false);
 	
 		//Draw Grid and GameObjects
-	    sb.setCamera(mainCamera);
-	    sr.setCamera(mainCamera);
+	    renderer.setCamera(camera);
 	    scene.getGrid().draw(sr);
 	    EntityManager.draw(sr);
 	    
 	    //Draw HUD
-	    sb.setCamera(hudCamera);
-	    hudController.draw(sb);
+	    hudController.draw(renderer);
 	    
 	    if(state == State.PAUSED){
 	    	drawPauseOverlay(sb);
