@@ -45,10 +45,10 @@ public class PlayState{
 		mousePosition = new Vector2f();
 	    
 	    scene = new Scene();
-	    Entity.setScene(scene);
 	    spawner = new EnemySpawner();
 	    hudController = new HUDController(scene, Display.getWidth(), Display.getHeight());
 	    
+	    Entity.setScene(scene);
 	    EntityManager.add(scene.getPlayer());
 	    EntityManager.add(reticle);
 	}
@@ -74,46 +74,36 @@ public class PlayState{
 		
 		scene.getGrid().update();
 		
-		//update camera translation based on player position
 		Vector2f position = scene.getPlayer().getTransform().getTranslation();
 		camera.getTranslation().set(position.x, position.y);
 		camera.update();
 		
-		//update mouse position
 		mousePosition.x = Input.getMouseX() * Display.getWidth() / 2 + camera.getTranslation().x;
 		mousePosition.y = Input.getMouseY() * Display.getHeight() / 2 + camera.getTranslation().y;
 		reticle.setPosition(mousePosition);
 	}
 	
 	public void draw(){
-		
+		GLUtil.clear(true, false, false, false);
 		SpriteBatch sb = renderer.SpriteBatch();
 		ShapeRenderer sr = renderer.ShapeRenderer();
-		GLUtil.clear(true, false, false, false);
-	
-		//Draw Grid and GameObjects
+		
 	    renderer.setCamera(camera);
 	    scene.getGrid().draw(sr);
 	    EntityManager.draw(sr);
-	    
-	    //Draw HUD
 	    hudController.draw(renderer);
 	    
 	    if(state == State.PAUSED){
-	    	drawPauseOverlay(sb);
+	    	sb.setColor(0, 0, 0, 0.5f);
+	    	sb.begin();
+	    	sb.draw(0, 0, Display.getWidth(), Display.getHeight(), 0, Resources.getTexture("blank"));
+	    	sb.end();
+	    	sb.setColor(1, 1, 1, 1);
 	    }
 	}
 	
 	public void destroy() {
 		
-	}
-	
-	void drawPauseOverlay(SpriteBatch renderer){
-		renderer.setColor(0, 0, 0, 0.5f);
-		renderer.begin();
-		renderer.draw(0, 0, Display.getWidth(), Display.getHeight(), 0, Resources.getTexture("blank"));
-		renderer.end();
-		renderer.setColor(1, 1, 1, 1);
 	}
 	
 	@SuppressWarnings("unchecked")
