@@ -10,10 +10,9 @@ import com.vecdef.model.Transform2D;
 public abstract class Entity implements IRenderable, IPhysics{
 	
 	//Render Dependencies
-	public Transform2D transform = new Transform2D();
-	public Mesh mesh = new DefaultMesh();
-	public boolean isDrawn = true;
-	public float opacity = 1;
+	protected Transform2D transform;
+	protected Mesh mesh;
+	protected float opacity;
 	
 	//Physics Dependencies
 	protected Vector2f velocity = new Vector2f();
@@ -26,14 +25,35 @@ public abstract class Entity implements IRenderable, IPhysics{
 	
 	protected static Scene scene = null;
 	
+	public Entity(){
+		transform = new Transform2D();
+		mesh = new DefaultMesh();
+		opacity = 1;
+	}
+	
 	public abstract void update(Grid grid, float dt);
 	public abstract void collision(Entity other);
 	public abstract void destroy();
 	
-	public Mesh getMesh()				{return mesh;}
-	public Transform2D getTransform()	{return transform;}
-	public boolean isDrawn()			{return isDrawn;}
-	public float getOpacity() 			{return opacity;}
+	@Override
+	public Mesh getMesh(){
+		return mesh;
+	}
+	
+	@Override
+	public Transform2D getTransform(){
+		return transform;
+	}
+	
+	@Override
+	public float getOpacity(){
+		return opacity;
+	}
+	
+	@Override
+	public void setOpacity(float opacity){
+		this.opacity = opacity;
+	}
 	
 	public Vector2f getVelocity()		{return velocity;}
 	public Vector2f getAcceleration()	{return acceleration;}
