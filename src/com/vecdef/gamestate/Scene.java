@@ -2,7 +2,6 @@ package com.vecdef.gamestate;
 
 import java.util.ArrayList;
 
-import com.vecdef.objects.BlackHole;
 import com.vecdef.objects.Bullet;
 import com.vecdef.objects.Enemy;
 import com.vecdef.objects.Grid;
@@ -16,7 +15,6 @@ public class Scene {
 	Grid grid;
 	ArrayList<Bullet> bullets;
 	ArrayList<Enemy> enemies;
-	ArrayList<BlackHole> blackholes;
 	ArrayList<Particle> particles;
 	ArrayList<MultiplierPiece> multiPieces;
 	
@@ -25,7 +23,6 @@ public class Scene {
 		grid = new Grid(1920, 1080, 40, 40);
 		bullets = new ArrayList<Bullet>();
 		enemies = new ArrayList<Enemy>();
-		blackholes = new ArrayList<BlackHole>();
 		multiPieces = new ArrayList<MultiplierPiece>();
 	}
 	
@@ -43,10 +40,6 @@ public class Scene {
 	
 	public ArrayList<Enemy> getEnemies(){
 		return enemies;
-	}
-	
-	public ArrayList<BlackHole> getBlackholes(){
-		return blackholes;
 	}
 	
 	public ArrayList<Particle> getParticles(){
