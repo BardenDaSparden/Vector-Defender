@@ -9,8 +9,8 @@ public class Bullet extends Entity{
 	
 	public Bullet(Vector2f position, Vector2f velocity){
 	    transform.setTranslation(position);
-	    this.velocity = velocity;
 	    transform.setOrientation(velocity.direction());
+	    this.velocity = velocity;
 	    this.radius = 8.0F;
 	}
 	
