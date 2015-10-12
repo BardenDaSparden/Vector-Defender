@@ -2,6 +2,7 @@ package com.vecdef.objects;
 
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
+import org.javatroid.math.Vector4f;
 
 public class Bullet extends Entity{
 	
@@ -21,7 +22,7 @@ public class Bullet extends Entity{
 	}
 
 	public void destroy(){
-		new DestroyEffect(transform.getTranslation(), 25, 8, getBaseColor(), 8, 25);
+		new DestroyEffect(transform.getTranslation(), 25, 8, new Vector4f(1, 0, 1, 1), 8, 25);
 	    bExpired = true;
 	}
 	
