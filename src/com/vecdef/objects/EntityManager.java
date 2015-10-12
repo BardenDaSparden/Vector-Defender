@@ -59,8 +59,8 @@ public class EntityManager{
 		for(int i = 0; i < pieces.size(); i++){
 			MultiplierPiece piece = pieces.get(i);
 			if(isColliding(piece, player)){
-				piece.onCollision(player);
-				player.onCollision(piece);
+				piece.collision(player);
+				player.collision(piece);
 			}
 		}
 		
@@ -69,8 +69,8 @@ public class EntityManager{
 			for(int j = 0; j < enemies.size(); j++){
 				enemy = enemies.get(j);
 				if(isColliding(piece, enemy)){
-					piece.onCollision(enemy);
-					enemy.onCollision(piece);
+					piece.collision(enemy);
+					enemy.collision(piece);
 				}
 			}
 		}
@@ -82,8 +82,8 @@ public class EntityManager{
 				bullet = bullets.get(j);
 				
 				if(isColliding(enemy, bullet)){
-					enemy.onCollision(bullet);
-					bullet.onCollision(enemy);
+					enemy.collision(bullet);
+					bullet.collision(enemy);
 				}
 				
 			}
@@ -95,8 +95,8 @@ public class EntityManager{
 			
 			if(enemy.isExpired()){
 				if(isColliding(enemy, player)){
-					enemy.onCollision(player);
-					player.onCollision(enemy);
+					enemy.collision(player);
+					player.collision(enemy);
 				}
 			}
 			
@@ -111,8 +111,8 @@ public class EntityManager{
 					if(enemy2.isExpired()){
 						if(enemy != enemy2){
 							if(isColliding(enemy, enemy2)){
-								enemy.onCollision(enemy2);
-								enemy2.onCollision(enemy);
+								enemy.collision(enemy2);
+								enemy2.collision(enemy);
 							}
 						}
 					}
@@ -159,7 +159,7 @@ public class EntityManager{
 	public static void destroyAll(){
 		
 		for(Entity e : entities){
-			e.onDestroy();
+			e.destroy();
 		}
 		
 		entities.clear();

@@ -26,17 +26,9 @@ public abstract class Entity implements IRenderable, IPhysics{
 	
 	protected static Scene scene = null;
 	
-	public Entity(){
-		
-	}
-	
-	public void update(Grid grid, float dt){
-		onUpdate(grid, dt);
-	}
-	
-	public abstract void onUpdate(Grid grid, float dt);
-	public abstract void onCollision(Entity other);
-	public abstract void onDestroy();
+	public abstract void update(Grid grid, float dt);
+	public abstract void collision(Entity other);
+	public abstract void destroy();
 	
 	public Mesh getMesh()				{return mesh;}
 	public Transform2D getTransform()	{return transform;}

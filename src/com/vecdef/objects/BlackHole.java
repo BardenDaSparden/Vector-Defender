@@ -2,19 +2,19 @@ package com.vecdef.objects;
 
 public class BlackHole extends Entity{
 
-	public void onUpdate(Grid grid, float dt) {
+	public void update(Grid grid, float dt) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onCollision(Entity other) {
+	public void collision(Entity other) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onDestroy() {
+	public void destroy() {
 		// TODO Auto-generated method stub
 		
 	}

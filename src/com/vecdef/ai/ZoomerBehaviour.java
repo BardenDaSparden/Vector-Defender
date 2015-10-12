@@ -37,7 +37,7 @@ public class ZoomerBehaviour implements Behavior{
 	@Override
 	public void onCollision(Entity object, Entity other) {
 		if(other instanceof Enemy){
-			other.onDestroy();
+			other.destroy();
 			
 			speed += 1;
 			isVelocitySet = false;

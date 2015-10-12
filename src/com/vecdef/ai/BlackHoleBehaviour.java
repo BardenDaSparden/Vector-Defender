@@ -139,7 +139,7 @@ public class BlackHoleBehaviour implements Behavior{
 	
 	public void onCollision(Entity object, Entity other) {
 		if(other instanceof Enemy){
-			other.onDestroy();
+			other.destroy();
 			
 			Vector2f scale = object.getTransform().getScale();
 			
@@ -148,7 +148,7 @@ public class BlackHoleBehaviour implements Behavior{
 			
 			onKill(object);
 		} else if(other instanceof MultiplierPiece) {
-			other.onDestroy();
+			other.destroy();
 		} else if(other instanceof Bullet){
 			if(particlesInRange.size() > 250){
 				for(int i = 0; i < particlesInRange.size(); i+=2){

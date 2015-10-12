@@ -123,7 +123,7 @@ public class Player extends Entity{
 		stats = new PlayerStats();
 	}
 	
-	public void onUpdate(Grid grid, float dt){
+	public void update(Grid grid, float dt){
 		
 		if(this.grid == null)
 			this.grid = grid;
@@ -170,15 +170,15 @@ public class Player extends Entity{
 	    ArrayList<Enemy> enemies = (ArrayList<Enemy>) EntityManager.getEntities(Enemy.class);
 	    for(int i = 0; i < enemies.size(); i++){
 	    	Enemy e = enemies.get(i);
-	    	e.onDestroy();
+	    	e.destroy();
 	    }
 	    
 	    stats.useBomb();
 	}
 	
-	public void onCollision(Entity other){
+	public void collision(Entity other){
 		if(other instanceof Enemy){
-			onDestroy();
+			destroy();
 		} else if(other instanceof MultiplierPiece){
 			stats.increaseMultiplier();
 		}
@@ -241,7 +241,7 @@ public class Player extends Entity{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void onDestroy(){
+	public void destroy(){
 		respawnTimer.restart();
 		
 	    velocity.x = 0.0F;
@@ -252,7 +252,7 @@ public class Player extends Entity{
 	    ArrayList<Enemy> enemies = (ArrayList<Enemy>) EntityManager.getEntities(Enemy.class);
 	    for(int i = 0; i < enemies.size(); i++){
 	    	Enemy e = enemies.get(i);
-	    	e.onDestroy();
+	    	e.destroy();
 	    }
 	    
 	    stats.useLife();

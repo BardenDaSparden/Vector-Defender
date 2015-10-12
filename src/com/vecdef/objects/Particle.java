@@ -58,7 +58,7 @@ public class Particle extends Entity{
 		mesh.addLayer(layer);
 	}
 
-	public void onUpdate(Grid grid, float dt) {
+	public void update(Grid grid, float dt) {
 		
 		for(Behavior b : behaviors){
 			b.onUpdate(this, grid, dt);
@@ -73,11 +73,11 @@ public class Particle extends Entity{
 		currentLife++;
 	}
 
-	public void onCollision(Entity other) {
+	public void collision(Entity other) {
 
 	}
 	
-	public void onDestroy(){
+	public void destroy(){
 		
 	}
 	

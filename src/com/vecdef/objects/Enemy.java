@@ -48,7 +48,7 @@ public class Enemy extends Entity{
 	    wakeupTimer.start();
 	}
 
-	public void onUpdate(Grid grid, float dt){
+	public void update(Grid grid, float dt){
 		wakeupTimer.tick();
 		if(!bAwake)
 			return;
@@ -57,7 +57,7 @@ public class Enemy extends Entity{
 	        b.onUpdate(this, grid, dt);
 	}
 
-	public void onCollision(Entity other){
+	public void collision(Entity other){
 		
 		if(other instanceof Bullet){
 			wasShot();
@@ -74,11 +74,11 @@ public class Enemy extends Entity{
 	public void wasShot(){
 		 health -= 1;
 		 if(health <= 0){
-			onDestroy();
+			destroy();
 		 }
 	}
 	
-	public void onDestroy(){
+	public void destroy(){
 		
 		 //new DestroyEffect(transform.getTranslation(), 100, 16, getBaseColor(), 6, 70);
 		 

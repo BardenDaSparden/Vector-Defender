@@ -63,7 +63,7 @@ public class MultiplierPiece extends Entity{
 		
 	}
 	
-	public void onUpdate(Grid grid, float dt) {
+	public void update(Grid grid, float dt) {
 		
 		Player player = getScene().getPlayer();
 		
@@ -97,13 +97,13 @@ public class MultiplierPiece extends Entity{
 		
 	}
 	
-	public void onCollision(Entity other){
+	public void collision(Entity other){
 		if(other instanceof Player){
 			bExpired = true;
 		}
 	}
 	
-	public void onDestroy(){
+	public void destroy(){
 		bExpired = true;
 	}
 	

@@ -14,18 +14,18 @@ public class Bullet extends Entity{
 	    this.radius = 8.0F;
 	}
 	
-	public void onCollision(Entity other){
+	public void collision(Entity other){
 		if(other instanceof Enemy){
-			onDestroy();
+			destroy();
 		}
 	}
 
-	public void onDestroy(){
+	public void destroy(){
 		new DestroyEffect(transform.getTranslation(), 25, 8, getBaseColor(), 8, 25);
 	    bExpired = true;
 	}
 	
-	public void onUpdate(Grid grid, float dt){
+	public void update(Grid grid, float dt){
 		timeActive++;
 		grid.applyExplosiveForce(velocity.length(), new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 80.0F);
 	    if (velocity.lengthSquared() > 0.0F) {

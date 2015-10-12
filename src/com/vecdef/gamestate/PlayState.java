@@ -45,7 +45,7 @@ public class PlayState{
 		mousePosition = new Vector2f();
 	    
 	    scene = new Scene();
-	    spawner = new EnemySpawner();
+	    spawner = new EnemySpawner(scene);
 	    hudController = new HUDController(scene, Display.getWidth(), Display.getHeight());
 	    
 	    Entity.setScene(scene);
@@ -63,7 +63,7 @@ public class PlayState{
 		
 		switch(state){
 			case PLAYING:
-				spawner.trySpawn(scene.getPlayer().getStats().getScore());
+				spawner.trySpawn();
 				scene.getPlayer().lookAtMouse(mousePosition);
 				EntityManager.update(scene.getGrid(), 1);
 				break;
@@ -115,14 +115,14 @@ public class PlayState{
 		ArrayList<MultiplierPiece> pieces = 	(ArrayList<MultiplierPiece>) EntityManager.getEntities(MultiplierPiece.class);
 		
 		for(Bullet b : bullets)
-			b.onDestroy();
+			b.destroy();
 		
 		for(Enemy e : enemies){
-			e.onDestroy(); 
+			e.destroy(); 
 		}
 		
 		for(MultiplierPiece p : pieces)
-			p.onDestroy();
+			p.destroy();
 		
 		spawner.reset();
 		scene.getPlayer().reset ();
