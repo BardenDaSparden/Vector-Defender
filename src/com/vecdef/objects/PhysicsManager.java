@@ -2,8 +2,6 @@ package com.vecdef.objects;
 
 import java.util.ArrayList;
 
-import org.javatroid.math.Vector2f;
-
 import com.vecdef.model.Transform2D;
 
 public class PhysicsManager {
@@ -41,19 +39,8 @@ public class PhysicsManager {
 			object.velocity.addi(object.acceleration.scale(dt));
 			transform.setTranslation(transform.getTranslation().addi(object.velocity));
 			
-			object.setAcceleration(new Vector2f(0, 0));
+			object.getAcceleration().set(0, 0);
 			object.setTorque(0f);
 		}
-	}
-	
-	public static void applyForce(Vector2f force){
-		
-		for(int i = 0; i < objects.size(); i++){
-			Entity object = objects.get(i);
-			float mass = object.getMass();
-			
-			object.acceleration = force.scale(1.0f / mass);
-		}
-	}
-	
+	}	
 }
