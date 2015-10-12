@@ -32,7 +32,7 @@ public class BlackHoleBehaviour implements Behavior{
 	
 	@SuppressWarnings("unchecked")
 	public void onUpdate(Entity object, Grid grid, float dt){
-		grid.applyImplosiveForce(25.0F, new Vector3f(object.transform.getTranslation().x, object.transform.getTranslation().y, 0.0F), FORCE_RADIUS);
+		grid.applyImplosiveForce(25.0F, new Vector3f(object.getTransform().getTranslation().x, object.getTransform().getTranslation().y, 0.0F), FORCE_RADIUS);
 
 	   // ArrayList<Entity> nearbyObjects = EntityManager.getNearbyEntities(object.transform.getTranslation(), 300.0F);
 	    
@@ -91,7 +91,7 @@ public class BlackHoleBehaviour implements Behavior{
 	private void affectParticle(Entity blackHole, Particle particle){
         Vector2f pVel = new Vector2f(particle.getVelocity().x, particle.getVelocity().y);
 
-        Vector2f dPos = blackHole.transform.getTranslation().sub(particle.getTransform().getTranslation());
+        Vector2f dPos = blackHole.getTransform().getTranslation().sub(particle.getTransform().getTranslation());
         float distance = dPos.length();
         Vector2f n = dPos.scale(1.0F / distance);
         pVel = pVel.add(n.scale(10000.0F).scale(1.0F / (distance * distance + 10000.0F)));
@@ -105,25 +105,25 @@ public class BlackHoleBehaviour implements Behavior{
 	}
 	
 	private void affectBullet(Entity blackHole, Bullet bullet){
-		Vector2f v = bullet.getVelocity().add(bullet.transform.getTranslation().sub(blackHole.transform.getTranslation()).scale(0.005f));
+		Vector2f v = bullet.getVelocity().add(bullet.getTransform().getTranslation().sub(blackHole.getTransform().getTranslation()).scale(0.005f));
 		bullet.setVelocity(v);
 		//e.setVelocity(e.getVelocity().add(e.transform.getTranslation().sub(object.transform.getTranslation()).scale(0.005F)));
 	}
 	
 	private void affectPiece(Entity blackHole, MultiplierPiece piece){
-		Vector2f v = piece.getVelocity().add(blackHole.transform.getTranslation().sub(piece.transform.getTranslation()).scale(0.002f));
+		Vector2f v = piece.getVelocity().add(blackHole.getTransform().getTranslation().sub(piece.getTransform().getTranslation()).scale(0.002f));
 		piece.setVelocity(v);
 		//e.setVelocity(e.getVelocity().add(object.transform.getTranslation().sub(e.transform.getTranslation()).scale(0.002F)));
 	}
 	
 	private void affectEnemy(Entity blackHole, Entity other){
-		Vector2f v = blackHole.transform.getTranslation().sub(other.transform.getTranslation()).scale(0.001f);
+		Vector2f v = blackHole.getTransform().getTranslation().sub(other.getTransform().getTranslation()).scale(0.001f);
 		other.getVelocity().addi(v);
 		//other.setVelocity(e.getVelocity().add(object.transform.getTranslation().sub(e.transform.getTranslation()).scale(0.00055F)));
 	}
 	
 	private void affectPlayer(Entity blackHole, Player player){
-		Vector2f v = blackHole.transform.getTranslation().sub(player.transform.getTranslation()).scale(0.0005F);
+		Vector2f v = blackHole.getTransform().getTranslation().sub(player.getTransform().getTranslation()).scale(0.0005F);
 		player.getVelocity().addi(v);
 	}
 	
@@ -171,7 +171,7 @@ public class BlackHoleBehaviour implements Behavior{
 			onDestroy(object);
 			for (int i = 0; i < 8; i++){
 				float a = FastMath.random() * 360.0F;
-		        Vector2f pos = object.transform.getTranslation().add(new Vector2f(FastMath.cosd(a) * object.radius, FastMath.sind(a) * object.radius));
+		        Vector2f pos = object.getTransform().getTranslation().add(new Vector2f(FastMath.cosd(a) * object.radius, FastMath.sind(a) * object.radius));
 		        Enemy e = Enemy.createChaser(pos);
 		        EntityManager.add(e);
 			}
