@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.vecdef.objects.BlackHole;
 import com.vecdef.objects.Bullet;
 import com.vecdef.objects.Enemy;
+import com.vecdef.objects.Grid;
 import com.vecdef.objects.MultiplierPiece;
 import com.vecdef.objects.Particle;
 import com.vecdef.objects.Player;
@@ -12,6 +13,7 @@ import com.vecdef.objects.Player;
 public class Scene {
 
 	Player player;
+	Grid grid;
 	ArrayList<Bullet> bullets;
 	ArrayList<Enemy> enemies;
 	ArrayList<BlackHole> blackholes;
@@ -20,6 +22,7 @@ public class Scene {
 	
 	public Scene(){
 		player = new Player();
+		grid = new Grid(1920, 1080, 40, 40);
 		bullets = new ArrayList<Bullet>();
 		enemies = new ArrayList<Enemy>();
 		blackholes = new ArrayList<BlackHole>();
@@ -28,6 +31,10 @@ public class Scene {
 	
 	public Player getPlayer(){
 		return player;
+	}
+	
+	public Grid getGrid(){
+		return grid;
 	}
 	
 	public ArrayList<Bullet> getBullets(){

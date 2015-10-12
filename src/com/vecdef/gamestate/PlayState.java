@@ -18,9 +18,7 @@ import com.vecdef.objects.Bullet;
 import com.vecdef.objects.Enemy;
 import com.vecdef.objects.Entity;
 import com.vecdef.objects.EntityManager;
-import com.vecdef.objects.Grid;
 import com.vecdef.objects.MultiplierPiece;
-import com.vecdef.objects.Player;
 import com.vecdef.objects.Reticle;
 
 public class PlayState{
@@ -43,12 +41,9 @@ public class PlayState{
 	State state = State.PLAYING;
 	
 	Scene scene;
-	Player player;
 	
 	EnemySpawner spawner;
 	HUDController hudController;
-	
-	Grid grid;
 	
 	public void initialize() {
 		renderer = new Renderer();
@@ -59,7 +54,6 @@ public class PlayState{
 		
 		reticle = new Reticle(new Vector4f(1, 1, 1, 1));
 		mousePosition = new Vector2f();
-	    grid = new Grid(1920, 1080, 50, 50);
 	    
 	    gameoverTimer = new Timer(GAMEOVER_TIME);
 	    gameoverTimer.setCallback(new TimerCallback() {
@@ -71,12 +65,10 @@ public class PlayState{
 	    
 	    scene = new Scene();
 	    Entity.setScene(scene);
-	    
-	    player = scene.getPlayer();
 	    spawner = new EnemySpawner();
-	    hudController = new HUDController(player);
+	    hudController = new HUDController(scene.getPlayer());
 	    
-	    EntityManager.add(player);
+	    EntityManager.add(scene.getPlayer());
 	    EntityManager.add(reticle);
 	}
 	
@@ -91,10 +83,10 @@ public class PlayState{
 		
 		switch(state){
 			case PLAYING:
-				spawner.trySpawn(player.getStats().getScore());
-				player.lookAtMouse(mousePosition);
-				EntityManager.update(grid, 1);
-				if(player.getStats().getLiveCount() <= 0){
+				spawner.trySpawn(scene.getPlayer().getStats().getScore());
+				scene.getPlayer().lookAtMouse(mousePosition);
+				EntityManager.update(scene.getGrid(), 1);
+				if(scene.getPlayer().getStats().getLiveCount() <= 0){
 					state = State.GAMEOVER;
 					gameoverTimer.start();
 				}
@@ -108,10 +100,10 @@ public class PlayState{
 				break;
 		}
 		
-		grid.update();
+		scene.getGrid().update();
 		
 		//update camera translation based on player position
-		Vector2f position = player.getTransform().getTranslation();
+		Vector2f position = scene.getPlayer().getTransform().getTranslation();
 		mainCamera.getTranslation().set(position.x, position.y);
 		mainCamera.update();
 		
@@ -130,7 +122,7 @@ public class PlayState{
 		//Draw Grid and GameObjects
 	    sb.setCamera(mainCamera);
 	    sr.setCamera(mainCamera);
-	    grid.draw(sr);
+	    scene.getGrid().draw(sr);
 	    EntityManager.draw(sr);
 	    
 	    //Draw HUD
@@ -163,7 +155,7 @@ public class PlayState{
     	String s = "Game Over";
   		hudFont.drawString(-hudFont.getWidth(s) / 2.0F, 30.0F, s, renderer);
 
-  		s = "Your Score : " + player.getStats().getScore();
+  		s = "Your Score : " + scene.getPlayer().getStats().getScore();
   		hudFont.drawString(-hudFont.getWidth(s) / 2.0F, 0.0F, s, renderer);
   		
   		renderer.end();
@@ -188,7 +180,7 @@ public class PlayState{
 			p.onDestroy();
 		
 		spawner.reset();
-		player.reset ();
+		scene.getPlayer().reset ();
 		EntityManager.add(reticle);
 	}
 	
