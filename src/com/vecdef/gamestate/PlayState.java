@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import org.javatroid.core.Input;
 import org.javatroid.core.Resources;
-import org.javatroid.core.Timer;
-import org.javatroid.core.TimerCallback;
 import org.javatroid.graphics.GLUtil;
 import org.javatroid.graphics.OrthogonalCamera;
 import org.javatroid.graphics.SpriteBatch;
@@ -24,7 +22,7 @@ import com.vecdef.objects.Reticle;
 public class PlayState{
 
 	enum State{
-		PLAYING, PAUSED, GAMEOVER
+		PLAYING, PAUSED
 	}
 	
 	Renderer renderer;
@@ -34,9 +32,6 @@ public class PlayState{
 	BitmapFont hudFont;
 	Reticle reticle;
 	Vector2f mousePosition;
-	
-	int GAMEOVER_TIME = 240;
-	Timer gameoverTimer;
 	
 	State state = State.PLAYING;
 	
@@ -54,14 +49,6 @@ public class PlayState{
 		
 		reticle = new Reticle(new Vector4f(1, 1, 1, 1));
 		mousePosition = new Vector2f();
-	    
-	    gameoverTimer = new Timer(GAMEOVER_TIME);
-	    gameoverTimer.setCallback(new TimerCallback() {
-			public void execute(Timer timer) {
-				timer.reset();
-				resetGame();
-			}
-		});
 	    
 	    scene = new Scene();
 	    Entity.setScene(scene);
@@ -86,17 +73,9 @@ public class PlayState{
 				spawner.trySpawn(scene.getPlayer().getStats().getScore());
 				scene.getPlayer().lookAtMouse(mousePosition);
 				EntityManager.update(scene.getGrid(), 1);
-				if(scene.getPlayer().getStats().getLiveCount() <= 0){
-					state = State.GAMEOVER;
-					gameoverTimer.start();
-				}
 				break;
 			
 			case PAUSED:
-				break;
-			
-			case GAMEOVER:
-				gameoverTimer.tick();
 				break;
 		}
 		
@@ -131,8 +110,6 @@ public class PlayState{
 	    
 	    if(state == State.PAUSED){
 	    	drawPauseOverlay(sb);
-	    } else if(state == State.GAMEOVER){
-	    	drawGameoverOverlay(sb);
 	    }
 	}
 	
@@ -146,19 +123,6 @@ public class PlayState{
 		renderer.draw(0, 0, Display.getWidth(), Display.getHeight(), 0, Resources.getTexture("blank"));
 		renderer.end();
 		renderer.setColor(1, 1, 1, 1);
-	}
-	
-	void drawGameoverOverlay(SpriteBatch renderer){
-		renderer.setColor(1, 1, 1, 1);
-		renderer.begin();
-    	
-    	String s = "Game Over";
-  		hudFont.drawString(-hudFont.getWidth(s) / 2.0F, 30.0F, s, renderer);
-
-  		s = "Your Score : " + scene.getPlayer().getStats().getScore();
-  		hudFont.drawString(-hudFont.getWidth(s) / 2.0F, 0.0F, s, renderer);
-  		
-  		renderer.end();
 	}
 	
 	@SuppressWarnings("unchecked")
