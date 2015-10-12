@@ -27,7 +27,16 @@ public class EnemySpawner{
 	float specialUnitSpawnChance = 500.0f;
 	float blackholeSpawnChance = 1200.0F;
 	
-	public void trySpawn(int score){
+	Scene scene;
+	
+	public EnemySpawner(Scene scene){
+		this.scene = scene;
+	}
+	
+	public void trySpawn(){
+		
+		int score = scene.getPlayer().getStats().getScore();
+		
 		int entityCount = EntityManager.getEntities(Enemy.class).size();
 		Player player = Entity.getScene().getPlayer();
 		
