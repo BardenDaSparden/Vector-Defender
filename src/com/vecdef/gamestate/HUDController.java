@@ -1,6 +1,7 @@
 package com.vecdef.gamestate;
 
 import org.javatroid.core.Resources;
+import org.javatroid.graphics.OrthogonalCamera;
 import org.javatroid.graphics.SpriteBatch;
 import org.javatroid.graphics.Texture;
 import org.javatroid.text.BitmapFont;
@@ -10,19 +11,24 @@ import com.vecdef.objects.Player;
 
 public class HUDController {
 
+	private OrthogonalCamera camera;
 	private Player player;
 	private Texture liveTexture, bombTexture;
 	private BitmapFont defaultFont, scoreFont;
 	
-	public HUDController(Player p){
-		player = p;
+	public HUDController(Scene scene, int width, int height){
+		camera = new OrthogonalCamera(width, height);
+		player = scene.getPlayer();
 		defaultFont = Resources.getFont("imagine16");
 		scoreFont = Resources.getFont("imagine18");
 		liveTexture = Resources.getTexture("player");
 		bombTexture = Resources.getTexture("bomb");
 	}
 	
-	public void draw(SpriteBatch spriteBatch){
+	public void draw(Renderer renderer){
+		
+		renderer.setCamera(camera);
+		SpriteBatch spriteBatch = renderer.SpriteBatch();
 		
 		spriteBatch.begin();
 		spriteBatch.setColor(1, 1, 1, 1);
