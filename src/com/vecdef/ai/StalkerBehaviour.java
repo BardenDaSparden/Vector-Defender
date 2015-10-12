@@ -15,7 +15,7 @@ public class StalkerBehaviour implements Behavior{
 	
 	int time = 0;
 	
-	public void onUpdate(Entity object, Grid grid, float dt){
+	public void onUpdate(Entity object, Grid grid){
 		
 		grid.applyDirectedForce(new Vector3f(object.getVelocity().x, object.getVelocity().y, 0), new Vector3f(object.getTransform().getTranslation().x, object.getTransform().getTranslation().y, 0), 100);
 		

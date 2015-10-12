@@ -31,13 +31,12 @@ public class Reticle extends Entity{
 		mesh.addLayer(layer);
 	}
 	
-	public void update(Grid grid, float dt) {
+	public void update(Grid grid) {
 		
 	}
 
 	@Override
 	public void collision(Entity other) {
-		// TODO Auto-generated method stub
 		
 	}
 	

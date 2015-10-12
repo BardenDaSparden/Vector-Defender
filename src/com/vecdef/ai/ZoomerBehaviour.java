@@ -15,7 +15,7 @@ public class ZoomerBehaviour implements Behavior{
 	boolean isVelocitySet = false;
 	
 	@Override
-	public void onUpdate(Entity object, Grid grid, float dt) {
+	public void onUpdate(Entity object, Grid grid) {
 		if(!isVelocitySet){
 			isVelocitySet = true;
 			object.getVelocity().set(new Vector2f(FastMath.cosd(direction) * speed, FastMath.sind(direction) * speed));

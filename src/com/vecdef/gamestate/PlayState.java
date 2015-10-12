@@ -65,7 +65,7 @@ public class PlayState{
 			case PLAYING:
 				spawner.trySpawn();
 				scene.getPlayer().lookAtMouse(mousePosition);
-				EntityManager.update(scene.getGrid(), 1);
+				EntityManager.update(scene.getGrid());
 				break;
 			
 			case PAUSED:

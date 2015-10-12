@@ -13,7 +13,7 @@ public class ChaserBehaviour implements Behavior{
 	float maxSpeed = 15.0F;
 	float random = 0.3f + FastMath.random() * 0.7f;
 	
-	public void onUpdate(Entity object, Grid grid, float dt){
+	public void onUpdate(Entity object, Grid grid){
 		  if (speed < maxSpeed)
 			  speed += 0.1F;
 			

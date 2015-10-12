@@ -58,10 +58,10 @@ public class Particle extends Entity{
 		mesh.addLayer(layer);
 	}
 
-	public void update(Grid grid, float dt) {
+	public void update(Grid grid) {
 		
 		for(Behavior b : behaviors){
-			b.onUpdate(this, grid, dt);
+			b.onUpdate(this, grid);
 		}
 		
 		if(currentLife == maxLife){

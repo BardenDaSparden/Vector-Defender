@@ -13,7 +13,7 @@ public class WandererBehavior implements Behavior{
 	float speed = 2f;
 	boolean vIsSet = false;
 	
-	public void onUpdate(Entity object, Grid grid, float dt){
+	public void onUpdate(Entity object, Grid grid){
 		
 		if(!vIsSet){
 			float a = FastMath.random() * 360;

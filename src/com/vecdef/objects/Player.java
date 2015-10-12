@@ -123,7 +123,7 @@ public class Player extends Entity{
 		stats = new PlayerStats();
 	}
 	
-	public void update(Grid grid, float dt){
+	public void update(Grid grid){
 		
 		if(this.grid == null)
 			this.grid = grid;

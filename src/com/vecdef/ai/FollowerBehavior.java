@@ -15,7 +15,7 @@ public class FollowerBehavior implements Behavior{
 	  float speed = 3.5f;
 	  int time = 0;
 	  
-	  public void onUpdate(Entity object, Grid grid, float dt){
+	  public void onUpdate(Entity object, Grid grid){
 		  time += 4;
 		  
 		  float scaleX = 1 + FastMath.cosd(time + 90) * 0.3f;

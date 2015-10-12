@@ -7,6 +7,8 @@ import com.vecdef.gamestate.ShapeRenderer;
 
 public class EntityManager{
 	
+	static final float TIME_STEP = 1.0f / 60.0f;
+	
 	static ArrayList<Entity> entities = new ArrayList<Entity>();
 
 	static EntityRenderer renderer = new EntityRenderer();
@@ -26,18 +28,18 @@ public class EntityManager{
 		physicsWorld.remove(entity);
 	}
 	
-	public static void update(Grid grid, float dt){
+	public static void update(Grid grid){
 		for (int i = 0; i < entities.size(); i++){
 			Entity entity = (Entity)entities.get(i);
 		      if (entity.bExpired)
 		        removeEntity(entity);
 		      else {
-		        entity.update(grid, dt);
+		        entity.update(grid);
 		        physicsWorld.add(entity);
 		      }
 		}
 		
-		physicsWorld.updatePhysics(dt);
+		physicsWorld.updatePhysics(TIME_STEP);
 		physicsWorld.clear();
 		
 		handleCollisions();

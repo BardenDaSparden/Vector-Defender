@@ -63,7 +63,7 @@ public class MultiplierPiece extends Entity{
 		
 	}
 	
-	public void update(Grid grid, float dt) {
+	public void update(Grid grid) {
 		
 		Player player = getScene().getPlayer();
 		

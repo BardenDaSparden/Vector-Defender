@@ -31,7 +31,7 @@ public class BlackHoleBehaviour implements Behavior{
 	int maxKills = 10;
 	
 	@SuppressWarnings("unchecked")
-	public void onUpdate(Entity object, Grid grid, float dt){
+	public void onUpdate(Entity object, Grid grid){
 		grid.applyImplosiveForce(25.0F, new Vector3f(object.getTransform().getTranslation().x, object.getTransform().getTranslation().y, 0.0F), FORCE_RADIUS);
 
 	   // ArrayList<Entity> nearbyObjects = EntityManager.getNearbyEntities(object.transform.getTranslation(), 300.0F);

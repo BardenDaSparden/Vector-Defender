@@ -36,7 +36,7 @@ public abstract class Entity implements IRenderable, IPhysics{
 		torque = 0;
 	}
 	
-	public abstract void update(Grid grid, float dt);
+	public abstract void update(Grid grid);
 	public abstract void collision(Entity other);
 	public abstract void destroy();
 	

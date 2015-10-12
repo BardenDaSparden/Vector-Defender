@@ -5,7 +5,7 @@ import com.vecdef.objects.Grid;
 
 public interface Behavior{
 	
-	public void onUpdate(Entity object, Grid grid, float dt);
+	public void onUpdate(Entity object, Grid grid);
 	public void onCollision(Entity object, Entity other);
 	public void onDestroy(Entity object);
 	

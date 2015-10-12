@@ -14,7 +14,7 @@ public class PrototypeBehaviour implements Behavior{
 	float targetOrientation = 0.0F;
 	float speed = 7.6F;
 	
-	public void onUpdate(Entity object, Grid grid, float dt){
+	public void onUpdate(Entity object, Grid grid){
 		
 		
 		

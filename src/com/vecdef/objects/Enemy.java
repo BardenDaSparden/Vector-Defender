@@ -48,13 +48,13 @@ public class Enemy extends Entity{
 	    wakeupTimer.start();
 	}
 
-	public void update(Grid grid, float dt){
+	public void update(Grid grid){
 		wakeupTimer.tick();
 		if(!bAwake)
 			return;
 		
 		for (Behavior b : behaviors)
-	        b.onUpdate(this, grid, dt);
+	        b.onUpdate(this, grid);
 	}
 
 	public void collision(Entity other){

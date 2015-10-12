@@ -26,7 +26,7 @@ public class Bullet extends Entity{
 	    bExpired = true;
 	}
 	
-	public void update(Grid grid, float dt){
+	public void update(Grid grid){
 		timeActive++;
 		grid.applyExplosiveForce(velocity.length(), new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 80.0F);
 	    if (velocity.lengthSquared() > 0.0F) {
