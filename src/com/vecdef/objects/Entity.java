@@ -42,7 +42,7 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 		
 		contactListeners = new ArrayList<ContactEventListener>();
 		
-		isExpired = true;
+		isExpired = false;
 	}
 	
 	public abstract void update(Grid grid);
