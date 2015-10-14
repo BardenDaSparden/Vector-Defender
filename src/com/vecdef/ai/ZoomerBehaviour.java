@@ -4,53 +4,42 @@ import org.javatroid.core.Window;
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 
-import com.vecdef.objects.Enemy;
+import com.vecdef.gamestate.Scene;
 import com.vecdef.objects.Entity;
-import com.vecdef.objects.Grid;
 
-public class ZoomerBehaviour implements Behavior{
+public class ZoomerBehaviour extends Behavior{
 
 	float speed = 7;
 	float direction = FastMath.random() * 360f;
 	boolean isVelocitySet = false;
 	
+	public ZoomerBehaviour(Scene scene){
+		super(scene);
+	}
+	
 	@Override
-	public void onUpdate(Entity object, Grid grid) {
+	public void update(Entity self) {
 		if(!isVelocitySet){
 			isVelocitySet = true;
-			object.getVelocity().set(new Vector2f(FastMath.cosd(direction) * speed, FastMath.sind(direction) * speed));
-			object.setAngularVelocity(speed);
+			self.getVelocity().set(new Vector2f(FastMath.cosd(direction) * speed, FastMath.sind(direction) * speed));
+			self.setAngularVelocity(speed);
 		}
 		
-		if ((object.getTransform().getTranslation().x < -Window.getWidth() / 2) || (object.getTransform().getTranslation().x > Window.getWidth() / 2)) {
-	    	object.getTransform().getTranslation().x = FastMath.clamp(-Window.getWidth() / 2 + 1, Window.getWidth() / 2 - 1, object.getTransform().getTranslation().x);
-	    	object.getVelocity().x *= -1.0F;
+		if ((self.getTransform().getTranslation().x < -Window.getWidth() / 2) || (self.getTransform().getTranslation().x > Window.getWidth() / 2)) {
+			self.getTransform().getTranslation().x = FastMath.clamp(-Window.getWidth() / 2 + 1, Window.getWidth() / 2 - 1, self.getTransform().getTranslation().x);
+			self.getVelocity().x *= -1.0F;
 	    }
 
-	    if ((object.getTransform().getTranslation().y < -Window.getHeight() / 2) || (object.getTransform().getTranslation().y > Window.getHeight() / 2)) {
-	    	object.getTransform().getTranslation().y = FastMath.clamp(-Window.getHeight() / 2 + 1, Window.getHeight() / 2 - 1, object.getTransform().getTranslation().y);
-	    	object.getVelocity().y *= -1.0F;
+	    if ((self.getTransform().getTranslation().y < -Window.getHeight() / 2) || (self.getTransform().getTranslation().y > Window.getHeight() / 2)) {
+	    	self.getTransform().getTranslation().y = FastMath.clamp(-Window.getHeight() / 2 + 1, Window.getHeight() / 2 - 1, self.getTransform().getTranslation().y);
+	    	self.getVelocity().y *= -1.0F;
 	    }
 		
 	}
 
 	@Override
-	public void onCollision(Entity object, Entity other) {
-		if(other instanceof Enemy){
-			other.destroy();
-			
-			speed += 1;
-			isVelocitySet = false;
-			
-		}
-	}
-
-	@Override
-	public void onDestroy(Entity object) {
+	public void destroy(Entity object) {
 		// TODO Auto-generated method stub
 		
 	}
-
-	
-	
 }

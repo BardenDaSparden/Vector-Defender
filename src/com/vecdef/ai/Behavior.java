@@ -1,12 +1,17 @@
 package com.vecdef.ai;
 
+import com.vecdef.gamestate.Scene;
 import com.vecdef.objects.Entity;
-import com.vecdef.objects.Grid;
 
-public interface Behavior{
+public abstract class Behavior{
 	
-	public void onUpdate(Entity object, Grid grid);
-	public void onCollision(Entity object, Entity other);
-	public void onDestroy(Entity object);
+	Scene scene;
+	
+	public Behavior(Scene scene){
+		this.scene = scene;
+	}
+	
+	public abstract void update(Entity self);
+	public abstract void destroy(Entity self);
 	
 }

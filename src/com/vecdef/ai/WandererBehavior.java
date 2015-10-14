@@ -5,15 +5,19 @@ import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 
+import com.vecdef.gamestate.Scene;
 import com.vecdef.objects.Entity;
-import com.vecdef.objects.Grid;
 
-public class WandererBehavior implements Behavior{
+public class WandererBehavior extends Behavior{
 	
 	float speed = 2f;
 	boolean vIsSet = false;
 	
-	public void onUpdate(Entity object, Grid grid){
+	public WandererBehavior(Scene scene){
+		super(scene);
+	}
+	
+	public void update(Entity object){
 		
 		if(!vIsSet){
 			float a = FastMath.random() * 360;
@@ -21,7 +25,7 @@ public class WandererBehavior implements Behavior{
 			vIsSet = true;
 		}
 		
-		grid.applyExplosiveForce(10, new Vector3f(object.getTransform().getTranslation().x, object.getTransform().getTranslation().y, 0), 100);
+		scene.getGrid().applyExplosiveForce(10, new Vector3f(object.getTransform().getTranslation().x, object.getTransform().getTranslation().y, 0), 100);
 		
 	    object.setAngularVelocity(-3);
 	    
@@ -38,13 +42,7 @@ public class WandererBehavior implements Behavior{
 	}
 
 	@Override
-	public void onCollision(Entity object, Entity other) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDestroy(Entity object) {
+	public void destroy(Entity self) {
 		// TODO Auto-generated method stub
 		
 	}

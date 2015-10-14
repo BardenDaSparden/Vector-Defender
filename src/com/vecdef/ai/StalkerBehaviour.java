@@ -4,23 +4,27 @@ import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 
+import com.vecdef.gamestate.Scene;
 import com.vecdef.objects.Entity;
-import com.vecdef.objects.Grid;
 import com.vecdef.objects.Player;
 
-public class StalkerBehaviour implements Behavior{
+public class StalkerBehaviour extends Behavior{
 	
 	float speed = 3.0F;
 	float angleSpeed = 4;
 	
 	int time = 0;
 	
-	public void onUpdate(Entity object, Grid grid){
+	public StalkerBehaviour(Scene scene){
+		super(scene);
+	}
+	
+	public void update(Entity object){
 		
-		grid.applyDirectedForce(new Vector3f(object.getVelocity().x, object.getVelocity().y, 0), new Vector3f(object.getTransform().getTranslation().x, object.getTransform().getTranslation().y, 0), 100);
+		scene.getGrid().applyDirectedForce(new Vector3f(object.getVelocity().x, object.getVelocity().y, 0), new Vector3f(object.getTransform().getTranslation().x, object.getTransform().getTranslation().y, 0), 100);
 		
 		time += 5;
-		Player player = Entity.getScene().getPlayer();
+		Player player = scene.getPlayer();
 		float toPlayer = player.getTransform().getTranslation().sub(object.getTransform().getTranslation()).direction();
 		
 	    object.getVelocity().set(new Vector2f(FastMath.cosd(time) * angleSpeed, FastMath.sind(time) * angleSpeed));
@@ -30,17 +34,8 @@ public class StalkerBehaviour implements Behavior{
 	}
 
 	@Override
-	public void onCollision(Entity object, Entity other) {
+	public void destroy(Entity self) {
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void onDestroy(Entity object) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
-	
 }

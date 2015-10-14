@@ -6,22 +6,18 @@ import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 
+import com.vecdef.gamestate.Scene;
 import com.vecdef.objects.Bullet;
 import com.vecdef.objects.Enemy;
 import com.vecdef.objects.Entity;
-import com.vecdef.objects.EntityManager;
-import com.vecdef.objects.Grid;
+import com.vecdef.objects.Masks;
 import com.vecdef.objects.MultiplierPiece;
-import com.vecdef.objects.Particle;
 import com.vecdef.objects.Player;
 
-public class BlackHoleBehaviour implements Behavior{
+public class BlackHoleBehaviour extends Behavior{
 
 	private static final int BLACK_HOLE_RADIUS = 200;
 	private static final int FORCE_RADIUS = 500;
-	private static final int MAX_AFFECTED_PARTICLES = 750;
-	
-	private ArrayList<Particle> particlesInRange = new ArrayList<Particle>();
 	
 	int time = 0;
 	Vector2f toScale = new Vector2f(0, 0);
@@ -30,53 +26,55 @@ public class BlackHoleBehaviour implements Behavior{
 	int numKills = 0;
 	int maxKills = 10;
 	
-	@SuppressWarnings("unchecked")
-	public void onUpdate(Entity object, Grid grid){
-		grid.applyImplosiveForce(25.0F, new Vector3f(object.getTransform().getTranslation().x, object.getTransform().getTranslation().y, 0.0F), FORCE_RADIUS);
-
-	   // ArrayList<Entity> nearbyObjects = EntityManager.getNearbyEntities(object.transform.getTranslation(), 300.0F);
+	ArrayList<Entity> particlesInRange;
+	ArrayList<Entity> piecesInRange;
+	ArrayList<Entity> bulletsInRange;
+	ArrayList<Entity> enemiesInRange;
+	
+	public BlackHoleBehaviour(Scene scene){
+		super(scene);
+	}
+	
+	public void update(Entity object){
+		scene.getGrid().applyImplosiveForce(25.0F, new Vector3f(object.getTransform().getTranslation().x, object.getTransform().getTranslation().y, 0.0F), FORCE_RADIUS);
 	    
-	    ArrayList<Particle> 		nearbyParticles 		= (ArrayList<Particle>) EntityManager.getEntities(Particle.class);
-	    ArrayList<MultiplierPiece> 	nearbyPieces 			= (ArrayList<MultiplierPiece>) EntityManager.getEntities(MultiplierPiece.class);
-	    ArrayList<Bullet>			nearbyBullets   		= (ArrayList<Bullet>) EntityManager.getEntities(Bullet.class);
-	    ArrayList<Enemy>			nearbyEnemies			= (ArrayList<Enemy>)  EntityManager.getEntities(Enemy.class);
+	    particlesInRange.clear();
+	    scene.getEntitiesByType(object.getTransform().getTranslation(), FORCE_RADIUS, Masks.Entities.PARTICLE, particlesInRange);
 	    
-	    Player player = Entity.getScene().getPlayer();
+	    piecesInRange.clear();
+	    scene.getEntitiesByType(object.getTransform().getTranslation(), FORCE_RADIUS, Masks.Entities.MULTIPLIER, piecesInRange);
+	    
+	    bulletsInRange.clear();
+	    scene.getEntitiesByType(object.getTransform().getTranslation(), FORCE_RADIUS, Masks.Entities.MULTIPLIER, bulletsInRange);
+	    
+	    enemiesInRange.clear();
+	    scene.getEntitiesByType(object.getTransform().getTranslation(), FORCE_RADIUS, Masks.Entities.MULTIPLIER, enemiesInRange);
+	    
+	    Player player = scene.getPlayer();
 	    
 	    //Player in range of black hole
 	    if(isInRange(object, player)){
 	    	affectPlayer(object, player);
 	    }
 	    
+	    int n = particlesInRange.size();
+	    for(int i = 0; i < n; i++)
+	    	affectParticle(object, particlesInRange.get(i));
 	    
-	    if(particlesInRange.size() < MAX_AFFECTED_PARTICLES + 1){
-	    	for(Particle p : nearbyParticles){
-		    	if(isInRange(object, p)){
-		    		if(!particlesInRange.contains(p)){
-		    			particlesInRange.add(p);
-		    		}
-		    	}
-		    }
-		}
+	    n = piecesInRange.size();
+	    for(int i = 0; i < n; i++)
+	    	affectPiece(object, piecesInRange.get(i));
 	    
-	    for(Particle p : particlesInRange)
-	    	affectParticle(object, p);
+	    n = bulletsInRange.size();
+	    for(int i = 0; i < n; i++)
+	    	affectBullet(object, bulletsInRange.get(i));
 	    
-	    for(MultiplierPiece piece : nearbyPieces){
-	    	if(isInRange(object, piece))
-	    		affectPiece(object, piece);
-	    }
-	    
-	    for(Bullet bullet : nearbyBullets){
-	    	if(isInRange(object, bullet))
-	    		affectBullet(object, bullet);
-	    }
-	    
-	    for(Enemy enemy : nearbyEnemies){
-	    	if(enemy == object)
+	    n = enemiesInRange.size();
+	    for(int i = 0; i < n; i++){
+	    	Entity enemy = enemiesInRange.get(i);
+	    	if(enemy.equals(object))
 	    		continue;
-	    	if(isInRange(object, enemy))
-	    		affectEnemy(object, enemy);
+	    	affectEnemy(object, enemy);
 	    }
 	    
 	    Vector2f scale = object.getTransform().getScale();
@@ -88,7 +86,7 @@ public class BlackHoleBehaviour implements Behavior{
 	    time++;
 	}
 	
-	private void affectParticle(Entity blackHole, Particle particle){
+	private void affectParticle(Entity blackHole, Entity particle){
         Vector2f pVel = new Vector2f(particle.getVelocity().x, particle.getVelocity().y);
 
         Vector2f dPos = blackHole.getTransform().getTranslation().sub(particle.getTransform().getTranslation());
@@ -97,20 +95,19 @@ public class BlackHoleBehaviour implements Behavior{
         pVel = pVel.add(n.scale(10000.0F).scale(1.0F / (distance * distance + 10000.0F)));
 
         if (distance < BLACK_HOLE_RADIUS){
-        	particle.setCurrentLife(particle.getCurrentLife() - 1);
         	pVel = pVel.add(new Vector2f(n.y, -n.x).scale(10 + FastMath.random() * 40).scale(1.0F / (distance)));
         }
         
         particle.getVelocity().set(pVel.clone());
 	}
 	
-	private void affectBullet(Entity blackHole, Bullet bullet){
+	private void affectBullet(Entity blackHole, Entity bullet){
 		Vector2f v = bullet.getVelocity().add(bullet.getTransform().getTranslation().sub(blackHole.getTransform().getTranslation()).scale(0.005f));
 		bullet.getVelocity().set(v);
 		//e.setVelocity(e.getVelocity().add(e.transform.getTranslation().sub(object.transform.getTranslation()).scale(0.005F)));
 	}
 	
-	private void affectPiece(Entity blackHole, MultiplierPiece piece){
+	private void affectPiece(Entity blackHole, Entity piece){
 		Vector2f v = piece.getVelocity().add(blackHole.getTransform().getTranslation().sub(piece.getTransform().getTranslation()).scale(0.002f));
 		piece.getVelocity().set(v);
 		//e.setVelocity(e.getVelocity().add(object.transform.getTranslation().sub(e.transform.getTranslation()).scale(0.002F)));
@@ -122,7 +119,7 @@ public class BlackHoleBehaviour implements Behavior{
 		//other.setVelocity(e.getVelocity().add(object.transform.getTranslation().sub(e.transform.getTranslation()).scale(0.00055F)));
 	}
 	
-	private void affectPlayer(Entity blackHole, Player player){
+	private void affectPlayer(Entity blackHole, Entity player){
 		Vector2f v = blackHole.getTransform().getTranslation().sub(player.getTransform().getTranslation()).scale(0.0005F);
 		player.getVelocity().addi(v);
 	}
@@ -152,7 +149,7 @@ public class BlackHoleBehaviour implements Behavior{
 		} else if(other instanceof Bullet){
 			if(particlesInRange.size() > 250){
 				for(int i = 0; i < particlesInRange.size(); i+=2){
-					Particle p = particlesInRange.get(i);
+					Entity p = particlesInRange.get(i);
 					Vector2f acceleration = p.getAcceleration();
 					acceleration.x += FastMath.randomf(-4, 4);
 					acceleration.y += FastMath.randomf(-4, 4);
@@ -168,19 +165,19 @@ public class BlackHoleBehaviour implements Behavior{
 		}
 			
 		if (numKills == maxKills){
-			onDestroy(object);
+			destroy(object);
 			for (int i = 0; i < 8; i++){
 				float a = FastMath.random() * 360.0F;
 		        Vector2f pos = object.getTransform().getTranslation().add(new Vector2f(FastMath.cosd(a) * object.getRadius(), FastMath.sind(a) * object.getRadius()));
-		        Enemy e = Enemy.createChaser(pos);
-		        EntityManager.add(e);
+		        Enemy e = Enemy.createChaser(pos, scene);
+		        scene.add(e);
 			}
 		}
 	}
 	
 	@Override
-	public void onDestroy(Entity object) {
-		for(Particle p : particlesInRange){
+	public void destroy(Entity object) {
+		for(Entity p : particlesInRange){
 			p.getAcceleration().addi(new Vector2f(FastMath.randomf(-15, 15), FastMath.randomf(-15, 15)));
 		}
 	}
