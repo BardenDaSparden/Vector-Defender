@@ -99,6 +99,10 @@ public class Enemy extends Entity{
 	    	 b.onDestroy(this);
 	}
 	
+	public int getEntityType(){
+		return Masks.Entities.ENEMY;
+	}
+	
 	public boolean isExpired(){
 		return wakeupTimer.percentComplete() >= 1;
 	}

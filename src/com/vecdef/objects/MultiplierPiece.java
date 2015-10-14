@@ -107,8 +107,11 @@ public class MultiplierPiece extends Entity{
 		bExpired = true;
 	}
 	
+	public int getEntityType(){
+		return Masks.Entities.MULTIPLIER;
+	}
+	
 	public Mesh getMesh(){
 		return mesh;
 	}
-
 }

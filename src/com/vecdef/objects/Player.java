@@ -259,6 +259,10 @@ public class Player extends Entity{
 	    stats.resetMultiplier();
 	}
 	
+	public int getEntityType(){
+		return Masks.Entities.PLAYER;
+	}
+	
 	public void lookAtMouse(Vector2f mousePosition){
 		transform.setOrientation(mousePosition.sub(transform.getTranslation()).direction());
 	}

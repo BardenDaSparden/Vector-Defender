@@ -36,4 +36,8 @@ public class Bullet extends Entity{
 	    	bExpired = true;
 	}
 	
+	public int getEntityType(){
+		return Masks.Entities.BULLET;
+	}
+	
 }

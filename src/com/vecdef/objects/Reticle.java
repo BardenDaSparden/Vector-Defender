@@ -43,6 +43,10 @@ public class Reticle extends Entity{
 	public void destroy(){
 		
 	}
+	
+	public int getEntityType(){
+		return Masks.Entities.OTHER;
+	}
 
 	public void setPosition(Vector2f position){
 		transform.setTranslation(position);

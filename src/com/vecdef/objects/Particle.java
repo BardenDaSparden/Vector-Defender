@@ -81,6 +81,11 @@ public class Particle extends Entity{
 		
 	}
 	
+	@Override
+	public int getEntityType(){
+		return Masks.Entities.PARTICLE;
+	}
+	
 	public Mesh getMesh(){
 		return mesh;
 	}
