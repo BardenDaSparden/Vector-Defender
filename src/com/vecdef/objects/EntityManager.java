@@ -7,12 +7,10 @@ import com.vecdef.gamestate.ShapeRenderer;
 
 public class EntityManager{
 	
-	static final float TIME_STEP = 1.0f / 60.0f;
-	
 	static ArrayList<Entity> entities = new ArrayList<Entity>();
 
 	static EntityRenderer renderer = new EntityRenderer();
-	static PhysicsManager physicsWorld = new PhysicsManager();
+	static PhysicsSystem physicsWorld = new PhysicsSystem();
 	
 	public static void add(Entity entity){
 		addEntity(entity);
@@ -35,12 +33,10 @@ public class EntityManager{
 		        removeEntity(entity);
 		      else {
 		        entity.update(grid);
-		        physicsWorld.add(entity);
 		      }
 		}
 		
-		physicsWorld.integrate(TIME_STEP);
-		physicsWorld.clear();
+		physicsWorld.integrate();
 		
 		handleCollisions();
 	}
