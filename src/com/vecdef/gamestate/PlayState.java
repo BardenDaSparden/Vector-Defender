@@ -64,7 +64,7 @@ public class PlayState{
 		switch(state){
 			case PLAYING:
 				spawner.trySpawn();
-				scene.getPlayer().lookAtMouse(mousePosition);
+				scene.getPlayer().look(mousePosition);
 				EntityManager.update(scene.getGrid());
 				break;
 			
@@ -80,7 +80,7 @@ public class PlayState{
 		
 		mousePosition.x = Input.getMouseX() * Display.getWidth() / 2 + camera.getTranslation().x;
 		mousePosition.y = Input.getMouseY() * Display.getHeight() / 2 + camera.getTranslation().y;
-		reticle.setPosition(mousePosition);
+		reticle.getTransform().getTranslation().set(mousePosition);
 	}
 	
 	public void draw(){
