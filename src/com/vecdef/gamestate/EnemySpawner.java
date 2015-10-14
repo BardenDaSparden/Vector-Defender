@@ -8,7 +8,6 @@ import org.javatroid.core.Window;
 import org.javatroid.math.Vector2f;
 
 import com.vecdef.objects.Enemy;
-import com.vecdef.objects.Entity;
 import com.vecdef.objects.EntityManager;
 import com.vecdef.objects.Player;
 
