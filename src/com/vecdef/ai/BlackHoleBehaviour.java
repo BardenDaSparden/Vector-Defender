@@ -171,7 +171,7 @@ public class BlackHoleBehaviour implements Behavior{
 			onDestroy(object);
 			for (int i = 0; i < 8; i++){
 				float a = FastMath.random() * 360.0F;
-		        Vector2f pos = object.getTransform().getTranslation().add(new Vector2f(FastMath.cosd(a) * object.radius, FastMath.sind(a) * object.radius));
+		        Vector2f pos = object.getTransform().getTranslation().add(new Vector2f(FastMath.cosd(a) * object.getRadius(), FastMath.sind(a) * object.getRadius()));
 		        Enemy e = Enemy.createChaser(pos);
 		        EntityManager.add(e);
 			}
