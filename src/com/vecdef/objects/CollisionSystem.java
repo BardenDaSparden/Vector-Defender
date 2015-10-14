@@ -9,9 +9,11 @@ import com.vecdef.model.Transform2D;
 public class CollisionSystem {
 
 	ArrayList<ICollidable> collidables;
+	ArrayList<ICollidable> nearbyCollidables;
 	
 	public CollisionSystem(){
 		collidables = new ArrayList<ICollidable>();
+		nearbyCollidables = new ArrayList<ICollidable>();
 	}
 	
 	public void add(ICollidable collidable){
@@ -23,15 +25,20 @@ public class CollisionSystem {
 	}
 	
 	public void checkCollision(){
-		int n = collidables.size();
 		
 		ICollidable A = null;
 		ICollidable B = null;
 		
+		int n = collidables.size();
 		for(int i = 0; i < n; i++){
-			for(int j = 0; j < n; j++){
-				A = collidables.get(i);
-				B = collidables.get(j);
+			A = collidables.get(i);
+			
+			nearbyCollidables.clear();
+			getNearbyCollidables(A.getTransform().getTranslation(), 70, nearbyCollidables);
+			
+			for(int j = 0; j < nearbyCollidables.size(); j++){
+				
+				B = nearbyCollidables.get(j);
 				
 				//If and A and B are the same references
 				if(A.equals(B)){
@@ -54,6 +61,16 @@ public class CollisionSystem {
 					B.onContact(eventBA);
 				}	
 			}
+		}
+	}
+	
+	void getNearbyCollidables(Vector2f position, int radius, ArrayList<ICollidable> list){
+		int n = collidables.size();
+		for(int i = 0; i < n; i++){
+			ICollidable collidable = collidables.get(i);
+			Vector2f dPos = collidable.getTransform().getTranslation().sub(position);
+			if(dPos.lengthSquared() <= radius * radius)
+				list.add(collidable);
 		}
 	}
 	
