@@ -16,6 +16,7 @@ import com.vecdef.ai.PrototypeBehaviour;
 import com.vecdef.ai.StalkerBehaviour;
 import com.vecdef.ai.WandererBehavior;
 import com.vecdef.ai.ZoomerBehaviour;
+import com.vecdef.gamestate.Scene;
 import com.vecdef.model.LinePrimitive;
 import com.vecdef.model.Mesh;
 import com.vecdef.model.MeshLayer;
@@ -30,15 +31,28 @@ public class Enemy extends Entity{
 	boolean bAwake = false;
 	int health = 1;
 	int killValue = 1;
+	
+	int groupMask;
 	int radius;
 	
-	public Enemy(){
-		this(new Vector2f(0, 0));
-	}
-	
-	public Enemy(Vector2f position){
-	    transform.setTranslation(position);
+	public Enemy(Scene scene){
+		super(scene);
+		
 	    radius = 16;
+	    groupMask = Masks.Entities.ENEMY;
+	    
+	    final Entity reference = this;
+	    
+	    addContactListener(new ContactEventListener() {
+			@Override
+			public void process(ContactEvent event) {
+				ICollidable other = event.other;
+				if(other.getGroupMask() == Masks.Collision.BULLET){
+					reference.expire();
+					System.out.println("ENEMY-BULLET_COLLISION");
+				}
+			}
+		});
 	    
 	    wakeupTimer.setCallback(new TimerCallback() {
 			public void execute(Timer timer) {
@@ -48,63 +62,41 @@ public class Enemy extends Entity{
 	    wakeupTimer.start();
 	}
 
-	public void update(Grid grid){
+	public void update(){
 		wakeupTimer.tick();
 		if(!bAwake)
 			return;
 		
 		for (Behavior b : behaviors)
-	        b.onUpdate(this, grid);
-	}
-
-	public void collision(Entity other){
-		
-		if(other instanceof Bullet){
-			wasShot();
-			if(isExpired){
-				Player player = getScene().getPlayer();
-				player.registerBulletKill(this);
-			}
-		}
-		
-		for(Behavior b : behaviors)
-			b.onCollision(this, other);
+	        b.update(this);
 	}
 
 	public void wasShot(){
 		 health -= 1;
 		 if(health <= 0){
-			destroy();
+			expire();
+			Player player = scene.getPlayer();
+			player.registerBulletKill(this);
 		 }
 	}
 	
 	public void destroy(){
-		
-		 //new DestroyEffect(transform.getTranslation(), 100, 16, getBaseColor(), 6, 70);
-		 
-		 isExpired = true;
-	     
 	     int numPieces = FastMath.randomi(1, 4);
-	     float av = 4;
 	     float speed = 2;
 	     
 	     for(int i = 0; i < numPieces; i++){
-	    	 MultiplierPiece piece = new MultiplierPiece(transform.getTranslation(), FastMath.random() * 360, -av / 2.0f + FastMath.random() * av);
+	    	 MultiplierPiece piece = new MultiplierPiece(transform.getTranslation(), scene);
 	    	 float a = FastMath.random() * 360; 
 	    	 piece.velocity = new Vector2f(FastMath.cosd(a) * speed, FastMath.sind(a) * speed);
-	    	 EntityManager.add(piece);
+	    	 scene.add(piece);
 	     }
 	     
 	     for(Behavior b : behaviors)
-	    	 b.onDestroy(this);
+	    	 b.destroy(this);
 	}
 	
 	public int getEntityType(){
 		return Masks.Entities.ENEMY;
-	}
-	
-	public boolean isExpired(){
-		return wakeupTimer.percentComplete() >= 1;
 	}
 	
 	public void addBehavior(Behavior behavior){
@@ -119,8 +111,8 @@ public class Enemy extends Entity{
 		return baseColor;
 	}
 	
-	public static Enemy createSeeker(Vector2f position){
-		Enemy enemy = new Enemy();
+	public static Enemy createSeeker(Vector2f position, Scene scene){
+		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
 		enemy.baseColor = new Vector4f(0, 1, 1, 1);
 		
@@ -145,16 +137,16 @@ public class Enemy extends Entity{
 		bodyLayer.addPrimitive(topBody);
 		enemy.mesh.addLayer(bodyLayer);
 		
-	    enemy.addBehavior(new FollowerBehavior());
+	    enemy.addBehavior(new FollowerBehavior(scene));
 	    enemy.killValue = 10;
 	    return enemy;
 	}
 
-	public static Enemy createWanderer(Vector2f position){
-		Enemy enemy = new Enemy();
+	public static Enemy createWanderer(Vector2f position, Scene scene){
+		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
 		enemy.baseColor = new Vector4f(1, 1, 0, 1);
-	    enemy.addBehavior(new WandererBehavior());
+	    enemy.addBehavior(new WandererBehavior(scene));
 	    enemy.killValue = 5;
 		
 		enemy.mesh = new Mesh();
@@ -209,8 +201,8 @@ public class Enemy extends Entity{
 	    return enemy;
 	}
 
-	public static Enemy createFollower(Vector2f position){
-		Enemy enemy = new Enemy();
+	public static Enemy createFollower(Vector2f position, Scene scene){
+		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
 		enemy.baseColor = new Vector4f(0.5f, 0.1f, 0.75f, 1);
 		enemy.mesh = new Mesh();
@@ -274,14 +266,14 @@ public class Enemy extends Entity{
 		bodyLayer.addPrimitive(body);
 		enemy.mesh.addLayer(bodyLayer);
 		
-	    enemy.addBehavior(new StalkerBehaviour());
+	    enemy.addBehavior(new StalkerBehaviour(scene));
 	    enemy.killValue = 15;
 	    enemy.radius = 10;
 	    return enemy;
 	}
 
-	public static Enemy createChaser(Vector2f position){
-		Enemy enemy = new Enemy();
+	public static Enemy createChaser(Vector2f position, Scene scene){
+		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
 		enemy.baseColor = new Vector4f(0.85f, 0.54f, 0, 1);
 		enemy.mesh = new Mesh();
@@ -302,15 +294,15 @@ public class Enemy extends Entity{
 		enemy.mesh.addLayer(layer);
 		
 		
-	    enemy.addBehavior(new ChaserBehaviour());
+	    enemy.addBehavior(new ChaserBehaviour(scene));
 	    enemy.killValue = 5;
 	    enemy.radius = 10;
 	    return enemy;
 	}
 
-	public static Enemy createPrototype(Vector2f position){
-		Player player = getScene().getPlayer();
-		Enemy enemy = new Enemy();
+	public static Enemy createPrototype(Vector2f position, Scene scene){
+		Player player = scene.getPlayer();
+		Enemy enemy = new Enemy(scene);
 		
 		enemy.transform.setTranslation(position);
 		enemy.baseColor = new Vector4f(1, 0.44f, 0, 1);
@@ -343,14 +335,14 @@ public class Enemy extends Entity{
 		enemy.mesh.addLayer(bodyLayer);
 		
 	    enemy.transform.setOrientation(player.getTransform().getTranslation().sub(position).direction());
-	    enemy.addBehavior(new PrototypeBehaviour());
+	    enemy.addBehavior(new PrototypeBehaviour(scene));
 	    enemy.killValue = 25;
 	    enemy.radius = 15;
 	    return enemy;
 	}
 	
-	public static Enemy createZoomer(Vector2f position){
-		Enemy enemy = new Enemy();
+	public static Enemy createZoomer(Vector2f position, Scene scene){
+		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
 		
 		enemy.baseColor = new Vector4f(0.25f, 1, 0.25f, 1);
@@ -418,7 +410,7 @@ public class Enemy extends Entity{
 		enemy.mesh.addLayer(layer);
 		
 		enemy.getTransform().setOrientation(0);
-		enemy.addBehavior(new ZoomerBehaviour());
+		enemy.addBehavior(new ZoomerBehaviour(scene));
 		enemy.killValue = 20;
 		enemy.radius = 12;
 		enemy.health = 3;
@@ -426,13 +418,14 @@ public class Enemy extends Entity{
 		return enemy;
 	}
 	
-	public static Enemy createBlackHole(Vector2f position){
-		Enemy enemy = new Enemy();
+	public static Enemy createBlackHole(Vector2f position, Scene scene){
+		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
 		
 		enemy.baseColor = new Vector4f(1, 1, 1, 1);
 		enemy.mesh = new Mesh();
 	    enemy.radius = 16;
+	    enemy.groupMask = Masks.Entities.ENEMY | Masks.Entities.BLACK_HOLE;
 	    
 		float radius = enemy.radius;
 	    int segments = 32;
@@ -452,7 +445,7 @@ public class Enemy extends Entity{
 	    bodyLayer.addPrimitive(circle);
 	    enemy.mesh.addLayer(bodyLayer);
 	    enemy.killValue = 200;
-	    enemy.addBehavior(new BlackHoleBehaviour());
+	    enemy.addBehavior(new BlackHoleBehaviour(scene));
 	    enemy.health = 15;
 	    
 	    return enemy;
@@ -465,7 +458,7 @@ public class Enemy extends Entity{
 
 	@Override
 	public int getGroupMask() {
-		return Masks.Collision.ENEMY;
+		return groupMask;
 	}
 
 	@Override

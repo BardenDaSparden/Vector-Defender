@@ -12,6 +12,7 @@ import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 import org.javatroid.math.Vector4f;
 
+import com.vecdef.gamestate.Scene;
 import com.vecdef.model.LinePrimitive;
 import com.vecdef.model.Mesh;
 import com.vecdef.model.MeshLayer;
@@ -49,6 +50,8 @@ public class Player extends Entity{
 	Vector2f moveToSpawn = new Vector2f();
 	Interpolator interpolator = new CubicInterpolator(new Vector2f(0.35f, 0.0f), new Vector2f(1, 0.65f));
 	
+	ArrayList<Entity> allEnemies;
+	
 	//Possible refactor for new firing modes
 	boolean useOffset1 = true;
 	float bulletSpeed = 15;
@@ -58,12 +61,12 @@ public class Player extends Entity{
 	boolean canUseWeapon = false;
 	
 	float time = 0.0f;
-	Grid grid;
 	PlayerStats stats;
 	
-	public Player(){
-		transform.setTranslation(new Vector2f(0, 0));
+	public Player(Scene scene){
+		super(scene);
 		
+		transform.setTranslation(new Vector2f(0, 0));
 		mesh = new Mesh();
 		
 		LinePrimitive body = new LinePrimitive();
@@ -119,13 +122,12 @@ public class Player extends Entity{
 		});
 		respawnTimer.start();
 		
+		allEnemies = new ArrayList<Entity>();
+		
 		stats = new PlayerStats();
 	}
 	
-	public void update(Grid grid){
-		
-		if(this.grid == null)
-			this.grid = grid;
+	public void update(){
 		
 		weaponTimer.tick();
 		respawnTimer.tick();
@@ -161,15 +163,17 @@ public class Player extends Entity{
 	    velocity.y = FastMath.clamp(-MAX_SPEED, MAX_SPEED, velocity.y);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void useBomb(){
 		Vector3f pos = new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F);
-		grid.applyExplosiveForce(1200.0F, pos, 1000.0F);
+		scene.getGrid().applyExplosiveForce(1200.0F, pos, 1000.0F);
 	    
-	    ArrayList<Enemy> enemies = (ArrayList<Enemy>) EntityManager.getEntities(Enemy.class);
-	    for(int i = 0; i < enemies.size(); i++){
-	    	Enemy e = enemies.get(i);
-	    	e.destroy();
+		allEnemies.clear();
+		scene.getEntitiesByType(Masks.Entities.ENEMY, allEnemies);
+		
+		int n = allEnemies.size();
+	    for(int i = 0; i < n; i++){
+	    	Entity entity = allEnemies.get(i);
+	    	entity.expire();
 	    }
 	    
 	    stats.useBomb();
@@ -192,8 +196,8 @@ public class Player extends Entity{
 			Vector2f bulletPosition = bulletOffset.rotate(direction).add(transform.getTranslation());
 			Vector2f bulletVelocity = new Vector2f(FastMath.cosd(direction) * bulletSpeed, FastMath.sind(direction) * bulletSpeed);
 	        
-			Bullet bullet = new Bullet(bulletPosition, bulletVelocity);
-	        EntityManager.add(bullet);
+			Bullet bullet = new Bullet(bulletPosition, bulletVelocity, scene);
+	        scene.add(bullet);
 			
 		    useOffset1 = !useOffset1;
 		    canUseWeapon = false;
@@ -212,17 +216,17 @@ public class Player extends Entity{
 			
 			Vector2f bulletVelocity = new Vector2f(FastMath.cosd(direction) * bulletSpeed, FastMath.sind(direction) * bulletSpeed);
 			
-			Bullet bullet = new Bullet(o1, bulletVelocity);
-	        EntityManager.add(bullet);
+			Bullet bullet = new Bullet(o1, bulletVelocity, scene);
+	        scene.add(bullet);
 			
-	        Bullet bullet2 = new Bullet(o2, bulletVelocity);
-	        EntityManager.add(bullet2);
+	        Bullet bullet2 = new Bullet(o2, bulletVelocity, scene);
+	        scene.add(bullet2);
 	        
-	        Bullet bullet3 = new Bullet(o3, bulletVelocity);
-	        EntityManager.add(bullet3);
+	        Bullet bullet3 = new Bullet(o3, bulletVelocity, scene);
+	        scene.add(bullet3);
 	        
-	        Bullet bullet4 = new Bullet(o4, bulletVelocity);
-	        EntityManager.add(bullet4);
+	        Bullet bullet4 = new Bullet(o4, bulletVelocity, scene);
+	        scene.add(bullet4);
 	        canUseWeapon = false;
 		    weaponTimer.restart();
 			
@@ -232,7 +236,7 @@ public class Player extends Entity{
 	}
 
 	public void respawn(){
-		grid.applyDirectedForce(new Vector3f(0.0F, 0.0F, 10000.0F), new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 400.0F);
+		scene.getGrid().applyDirectedForce(new Vector3f(0.0F, 0.0F, 10000.0F), new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 400.0F);
 		moveToSpawn.x = 0;
 		moveToSpawn.y = 0;
 	}
@@ -249,7 +253,6 @@ public class Player extends Entity{
 		stats.addScore(e.getKillValue());
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void destroy(){
 		respawnTimer.restart();
 		
@@ -258,10 +261,13 @@ public class Player extends Entity{
 	    moveToSpawn.x = -transform.getTranslation().x;
 	    moveToSpawn.y = -transform.getTranslation().y;    
 	    
-	    ArrayList<Enemy> enemies = (ArrayList<Enemy>) EntityManager.getEntities(Enemy.class);
-	    for(int i = 0; i < enemies.size(); i++){
-	    	Enemy e = enemies.get(i);
-	    	e.destroy();
+	    allEnemies.clear();
+		scene.getEntitiesByType(Masks.Entities.ENEMY, allEnemies);
+		
+		int n = allEnemies.size();
+	    for(int i = 0; i < n; i++){
+	    	Entity entity = allEnemies.get(i);
+	    	entity.expire();
 	    }
 	    
 	    stats.useLife();

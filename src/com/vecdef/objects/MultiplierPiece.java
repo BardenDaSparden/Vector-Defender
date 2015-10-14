@@ -7,6 +7,7 @@ import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
 
+import com.vecdef.gamestate.Scene;
 import com.vecdef.model.LinePrimitive;
 import com.vecdef.model.Mesh;
 import com.vecdef.model.MeshLayer;
@@ -21,10 +22,11 @@ public class MultiplierPiece extends Entity{
 	
 	Timer timer = new Timer(500);
 	
-	public MultiplierPiece(Vector2f position, float startRotation, float av){
+	public MultiplierPiece(Vector2f position, Scene scene){
+		super(scene);
 		transform.setTranslation(position);
-		transform.setOrientation(startRotation);
-		angularVelocity = av;
+		transform.setOrientation(FastMath.random() * (float)Math.PI * 2);
+		angularVelocity = FastMath.randomf(1, 4);
 		mesh = new Mesh();
 		
 		final float WIDTH = 6;
@@ -49,20 +51,29 @@ public class MultiplierPiece extends Entity{
 		
 		mesh.addLayer(bodyLayer);
 		
+		final Entity reference = this;
 		timer.setCallback(new TimerCallback() {
 			
 			public void execute(Timer timer) {
-				isExpired = true;
+				reference.expire();
 			}
 		});
 		
 		timer.start();
 		
+		addContactListener(new ContactEventListener() {
+			
+			@Override
+			public void process(ContactEvent event) {
+				MultiplierPiece.this.expire();
+			}
+		});
+		
 	}
 	
-	public void update(Grid grid) {
+	public void update() {
 		
-		Player player = getScene().getPlayer();
+		Player player = scene.getPlayer();
 		
 		timer.tick();
 		
@@ -94,14 +105,9 @@ public class MultiplierPiece extends Entity{
 		
 	}
 	
-	public void collision(Entity other){
-		if(other instanceof Player){
-			isExpired = true;
-		}
-	}
-	
+	@Override
 	public void destroy(){
-		isExpired = true;
+		
 	}
 	
 	public int getEntityType(){
