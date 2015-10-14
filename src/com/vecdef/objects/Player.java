@@ -19,7 +19,7 @@ import com.vecdef.model.MeshLayer;
 public class Player extends Entity{
 	
 	private static final float MAX_SPEED = 8.0F;
-	private static final float VELOCITY_DAMPING = 0.96F;
+	private static final float VELOCITY_DAMPING = 0.975F;
 	private static final float THRUST = 0.75F;
 	
 	private static final int MOVE_LEFT = Input.KEY_A;
