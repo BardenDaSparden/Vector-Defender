@@ -59,7 +59,6 @@ public class RenderSystem {
 				}
 			}
 		}
-		renderables.clear();
 		
 		renderList(DrawType.LINES, BlendState.ADDITIVE, lines, renderer);
 		renderList(DrawType.TRIANGLES, BlendState.ALPHA, triangles, renderer);
@@ -91,8 +90,8 @@ public class RenderSystem {
 		renderer.end();
 	}
 	
-	public void clear(){
-		renderables.clear();
+	public int numObjects(){
+		return renderables.size();
 	}
 	
 }
