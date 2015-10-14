@@ -61,7 +61,7 @@ public class Enemy extends Entity{
 		
 		if(other instanceof Bullet){
 			wasShot();
-			if(bExpired){
+			if(isExpired){
 				Player player = getScene().getPlayer();
 				player.registerBulletKill(this);
 			}
@@ -82,7 +82,7 @@ public class Enemy extends Entity{
 		
 		 //new DestroyEffect(transform.getTranslation(), 100, 16, getBaseColor(), 6, 70);
 		 
-		 bExpired = true;
+		 isExpired = true;
 	     
 	     int numPieces = FastMath.randomi(1, 4);
 	     float av = 4;

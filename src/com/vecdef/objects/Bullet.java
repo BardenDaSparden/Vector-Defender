@@ -22,7 +22,7 @@ public class Bullet extends Entity{
 
 	public void destroy(){
 		new DestroyEffect(transform.getTranslation(), 25, 8, new Vector4f(1, 0, 1, 1), 8, 25);
-	    bExpired = true;
+	    isExpired = true;
 	}
 	
 	public void update(Grid grid){
@@ -32,7 +32,7 @@ public class Bullet extends Entity{
 	      transform.setOrientation(velocity.direction());
 	    }
 	    if(timeActive > 400)
-	    	bExpired = true;
+	    	isExpired = true;
 	}
 	
 	public int getEntityType(){

@@ -9,7 +9,7 @@ public class EntityManager{
 	
 	static ArrayList<Entity> entities = new ArrayList<Entity>();
 
-	static EntityRenderer renderer = new EntityRenderer();
+	static RenderSystem renderer = new RenderSystem();
 	static PhysicsSystem physicsWorld = new PhysicsSystem();
 	
 	public static void add(Entity entity){
@@ -29,7 +29,7 @@ public class EntityManager{
 	public static void update(Grid grid){
 		for (int i = 0; i < entities.size(); i++){
 			Entity entity = (Entity)entities.get(i);
-		      if (entity.bExpired)
+		      if (entity.isExpired)
 		        removeEntity(entity);
 		      else {
 		        entity.update(grid);
@@ -124,7 +124,7 @@ public class EntityManager{
 	private static boolean isColliding(Entity a, Entity b){
 		float radius = a.getRadius() + b.getRadius();
 	    float ds = (a.getTransform().getTranslation().x - b.getTransform().getTranslation().x) * (a.getTransform().getTranslation().x - b.getTransform().getTranslation().x) + (a.getTransform().getTranslation().y - b.getTransform().getTranslation().y) * (a.getTransform().getTranslation().y - b.getTransform().getTranslation().y);
-	    return (!a.bExpired) && (!b.bExpired) && (ds < radius * radius);
+	    return (!a.isExpired) && (!b.isExpired) && (ds < radius * radius);
 	}
 	
 	public static ArrayList<Entity> getNearbyEntities(Vector2f position, float radius){
@@ -147,10 +147,10 @@ public class EntityManager{
 	
 	public static void draw(ShapeRenderer shapeRenderer){
 		for(int i = 0; i < entities.size(); i++){
-			renderer.draw(entities.get(i));
+			renderer.add(entities.get(i));
 		}
 		
-		renderer.render(shapeRenderer);
+		renderer.draw(shapeRenderer);
 		
 	}
 	

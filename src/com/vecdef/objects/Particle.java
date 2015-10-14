@@ -64,7 +64,7 @@ public class Particle extends Entity{
 		}
 		
 		if(currentLife == maxLife){
-			bExpired = true;
+			isExpired = true;
 		}
 		
 		opacity = (maxLife - currentLife) / (float)maxLife;

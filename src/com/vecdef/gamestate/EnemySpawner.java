@@ -38,7 +38,7 @@ public class EnemySpawner{
 		int score = scene.getPlayer().getStats().getScore();
 		
 		int entityCount = EntityManager.getEntities(Enemy.class).size();
-		Player player = Entity.getScene().getPlayer();
+		Player player = scene.getPlayer();
 		
 		if((!player.isDead()) && (entityCount < MAX_ENEMIES))
 	    {
@@ -90,7 +90,7 @@ public class EnemySpawner{
 	}
 	
 	Vector2f getSpawnPosition(){
-		Player player = Entity.getScene().getPlayer();
+		Player player = scene.getPlayer();
 		
 		Vector2f position;
 	    Vector2f playerPosition = player.getTransform().getTranslation();

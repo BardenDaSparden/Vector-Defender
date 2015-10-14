@@ -13,7 +13,6 @@ import org.lwjgl.opengl.Display;
 
 import com.vecdef.objects.Bullet;
 import com.vecdef.objects.Enemy;
-import com.vecdef.objects.Entity;
 import com.vecdef.objects.EntityManager;
 import com.vecdef.objects.MultiplierPiece;
 import com.vecdef.objects.Reticle;
@@ -44,13 +43,15 @@ public class PlayState{
 		reticle = new Reticle(new Vector4f(1, 1, 1, 1));
 		mousePosition = new Vector2f();
 	    
-	    scene = new Scene();
+	    scene = new Scene(renderer);
 	    spawner = new EnemySpawner(scene);
 	    hudController = new HUDController(scene, Display.getWidth(), Display.getHeight());
 	    
-	    Entity.setScene(scene);
 	    EntityManager.add(scene.getPlayer());
 	    EntityManager.add(reticle);
+	    
+	    //scene.add(player);
+	    //scene.add(reticle);
 	}
 	
 	public void update() {

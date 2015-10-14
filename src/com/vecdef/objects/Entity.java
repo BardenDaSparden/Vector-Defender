@@ -26,7 +26,7 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	//ICollidable Dependencies
 	protected ArrayList<ContactEventListener> contactListeners;
 	
-	protected boolean bExpired = false;
+	protected boolean isExpired;
 	protected static Scene scene = null;
 	
 	public Entity(){
@@ -41,6 +41,8 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 		torque = 0;
 		
 		contactListeners = new ArrayList<ContactEventListener>();
+		
+		isExpired = true;
 	}
 	
 	public abstract void update(Grid grid);
@@ -126,7 +128,7 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	}
 	
 	public boolean isExpired(){
-		return bExpired;
+		return isExpired;
 	}
 	
 	public static void setScene(Scene scene){

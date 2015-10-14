@@ -52,7 +52,7 @@ public class MultiplierPiece extends Entity{
 		timer.setCallback(new TimerCallback() {
 			
 			public void execute(Timer timer) {
-				bExpired = true;
+				isExpired = true;
 			}
 		});
 		
@@ -96,12 +96,12 @@ public class MultiplierPiece extends Entity{
 	
 	public void collision(Entity other){
 		if(other instanceof Player){
-			bExpired = true;
+			isExpired = true;
 		}
 	}
 	
 	public void destroy(){
-		bExpired = true;
+		isExpired = true;
 	}
 	
 	public int getEntityType(){
