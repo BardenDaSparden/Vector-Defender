@@ -2,37 +2,39 @@ package com.vecdef.objects;
 
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
-import org.javatroid.math.Vector4f;
+
+import com.vecdef.gamestate.Scene;
 
 public class Bullet extends Entity{
 	
 	int timeActive = 0;
 	
-	public Bullet(Vector2f pos, Vector2f vel){
+	public Bullet(Vector2f pos, Vector2f vel, Scene scene){
+		super(scene);
 	    transform.setTranslation(pos);
 	    transform.setOrientation(vel.direction());
 	    velocity = vel;
-	}
-	
-	public void collision(Entity other){
-		if(other instanceof Enemy){
-			destroy();
-		}
+	    
+	    addContactListener(new ContactEventListener() {
+			@Override
+			public void process(ContactEvent event) {
+				Bullet.this.expire();
+			}
+		});
 	}
 
 	public void destroy(){
-		new DestroyEffect(transform.getTranslation(), 25, 8, new Vector4f(1, 0, 1, 1), 8, 25);
-	    isExpired = true;
+		
 	}
 	
-	public void update(Grid grid){
+	public void update(){
 		timeActive++;
-		grid.applyExplosiveForce(velocity.length(), new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 80.0F);
+		scene.getGrid().applyExplosiveForce(velocity.length(), new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 80.0F);
 	    if (velocity.lengthSquared() > 0.0F) {
 	      transform.setOrientation(velocity.direction());
 	    }
-	    if(timeActive > 400)
-	    	isExpired = true;
+	    if(timeActive > 340)
+	    	expire();
 	}
 	
 	public int getEntityType(){
