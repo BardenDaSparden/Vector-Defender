@@ -13,25 +13,34 @@ import com.vecdef.model.Primitive;
 import com.vecdef.model.Transform2D;
 import com.vecdef.model.Primitive.DrawType;
 
-public class EntityRenderer {
+public class RenderSystem {
 
-	private static final int MAX_DRAWABLE_ENTITIES = 1000;
-	private ArrayList<IRenderable> entitiesToDraw;
+	private ArrayList<IRenderable> renderables;
+	private ArrayList<RenderData> lines;
+	private ArrayList<RenderData> triangles;
 	
-	private ArrayList<RenderData> lines = new ArrayList<RenderData>();
-	private ArrayList<RenderData> triangles = new ArrayList<RenderData>();
-	
-	public EntityRenderer(){
-		entitiesToDraw = new ArrayList<IRenderable>(MAX_DRAWABLE_ENTITIES);
+	public RenderSystem(){
+		renderables = new ArrayList<IRenderable>();
+		lines = new ArrayList<RenderData>();
+		triangles = new ArrayList<RenderData>();
 	}
 	
-	public void draw(IRenderable renderable){
-		entitiesToDraw.add(renderable);
+	public void add(IRenderable renderable){
+		renderables.add(renderable);
 	}
 	
-	public void render(ShapeRenderer renderer){
-		for(int i  = 0; i < entitiesToDraw.size(); i++){
-			IRenderable renderable = entitiesToDraw.get(i);
+	public void remove(IRenderable renderable){
+		renderables.remove(renderable);
+	}
+	
+	public void draw(ShapeRenderer renderer){
+		for(int i  = 0; i < renderables.size(); i++){
+			IRenderable renderable = renderables.get(i);
+			
+			if(!renderable.isDrawn()){
+				continue;
+			}
+			
 			Mesh mesh = renderable.getMesh();
 			Transform2D transform = renderable.getTransform();
 			float opacity = renderable.getOpacity();
@@ -49,16 +58,14 @@ public class EntityRenderer {
 					}
 				}
 			}
-			
 		}
-		entitiesToDraw.clear();
+		renderables.clear();
 		
 		renderList(DrawType.LINES, BlendState.ADDITIVE, lines, renderer);
 		renderList(DrawType.TRIANGLES, BlendState.ALPHA, triangles, renderer);
 		
 		lines.clear();
 		triangles.clear();
-		
 	}
 	
 	private void renderList(DrawType drawType, BlendState blendState, ArrayList<RenderData> dataList, ShapeRenderer renderer){
@@ -85,7 +92,7 @@ public class EntityRenderer {
 	}
 	
 	public void clear(){
-		entitiesToDraw.clear();
+		renderables.clear();
 	}
 	
 }
