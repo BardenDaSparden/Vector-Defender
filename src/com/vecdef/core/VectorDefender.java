@@ -17,7 +17,7 @@ public class VectorDefender implements Application {
 		Resources.loadTexture("textures/Player.png", "player");
 		Resources.loadTexture("textures/bomb.png", "bomb");
 		Resources.loadTexture("textures/white.png", "blank");
-		Input.setMouseGrabbed(true);
+		//Input.setMouseGrabbed(true);
 		
 		playState = new PlayState();
 		playState.initialize();

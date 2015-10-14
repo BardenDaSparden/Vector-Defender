@@ -22,7 +22,7 @@ public class PhysicsSystem {
 		objects.remove(object);
 	}
 	
-	public void integrate(){
+	public void integrate(float dt){
 		for(int i = 0; i < objects.size(); i++){
 			IPhysics object = objects.get(i);
 			
@@ -44,4 +44,8 @@ public class PhysicsSystem {
 			object.setTorque(0f);
 		}
 	}	
+	
+	public int numObjects(){
+		return objects.size();
+	}
 }

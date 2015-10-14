@@ -19,7 +19,7 @@ public class CollisionSystem {
 	}
 	
 	public void remove(ICollidable collidable){
-		collidables.remove(collidables);
+		collidables.remove(collidable);
 	}
 	
 	public void checkCollision(){
@@ -50,7 +50,6 @@ public class CollisionSystem {
 				if(intersect){
 					ContactEvent eventAB = new ContactEvent(A, B);
 					ContactEvent eventBA = new ContactEvent(B, A);
-					
 					A.onContact(eventAB);
 					B.onContact(eventBA);
 				}	
@@ -76,6 +75,10 @@ public class CollisionSystem {
 		float rSqr = (float)Math.pow(ra + rb, 2);
 		
 		return lenSqr <= rSqr;
+	}
+	
+	public int numObjects(){
+		return collidables.size();
 	}
 	
 }
