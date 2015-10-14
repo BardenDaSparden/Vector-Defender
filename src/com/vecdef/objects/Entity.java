@@ -46,13 +46,13 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	public abstract int getEntityType();
 	
 	@Override
-	public Mesh getMesh(){
-		return mesh;
+	public Transform2D getTransform(){
+		return transform;
 	}
 	
 	@Override
-	public Transform2D getTransform(){
-		return transform;
+	public Mesh getMesh(){
+		return mesh;
 	}
 	
 	@Override
