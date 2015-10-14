@@ -13,8 +13,7 @@ public class Reticle extends Entity{
 		new Vector2f(-10, 0), new Vector2f(10, 0),
 		new Vector2f(0, -10), new Vector2f(0, 10)
 	};
-	
-	private Mesh mesh;
+	Mesh mesh;
 	
 	public Reticle(Vector4f color){
 		mesh = new Mesh();
@@ -31,25 +30,25 @@ public class Reticle extends Entity{
 		mesh.addLayer(layer);
 	}
 	
-	public void update(Grid grid) {
-		
-	}
-
-	@Override
-	public void collision(Entity other) {
-		
-	}
-	
-	public void destroy(){
-		
-	}
-	
+	public void update(Grid grid){}
+	public void destroy(){}
 	public int getEntityType(){
 		return Masks.Entities.OTHER;
 	}
 
-	public void setPosition(Vector2f position){
-		transform.setTranslation(position);
+	@Override
+	public int getRadius() {
+		return 0;
+	}
+
+	@Override
+	public int getGroupMask() {
+		return Masks.NONE;
+	}
+
+	@Override
+	public int getCollisionMask() {
+		return Masks.NONE;
 	}
 	
 	public Mesh getMesh(){

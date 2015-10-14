@@ -13,22 +13,19 @@ import com.vecdef.model.MeshLayer;
 
 public class MultiplierPiece extends Entity{
 
-	private static final float ROTATIONAL_DAMPING = 0.99f;
-	private static final float VELOCITY_DAMPING = 0.95f;
-	
-	private static final float range = 150;
+	final float ROTATIONAL_DAMPING = 0.99f;
+	final float VELOCITY_DAMPING = 0.95f;
+	final float RANGE = 150;
 	
 	Mesh mesh;
 	
 	Timer timer = new Timer(500);
 	
-	public MultiplierPiece(Vector2f position, float startRotation, float angularVelocity){
+	public MultiplierPiece(Vector2f position, float startRotation, float av){
 		transform.setTranslation(position);
 		transform.setOrientation(startRotation);
-		this.radius = 7;
-		this.angularVelocity = angularVelocity;
+		angularVelocity = av;
 		mesh = new Mesh();
-		transform.setTranslation(position);
 		
 		final float WIDTH = 6;
 		final float HEIGHT = 6;
@@ -75,9 +72,9 @@ public class MultiplierPiece extends Entity{
 		transform.setTranslation(getTransform().getTranslation().add(velocity));
 		
 		Vector2f dPos = player.getTransform().getTranslation().sub(getTransform().getTranslation());
-		if(dPos.lengthSquared() < range * range){
+		if(dPos.lengthSquared() < RANGE * RANGE){
 			if(!player.isDead()){
-				float s = 0.1f * (range - dPos.length());
+				float s = 0.1f * (RANGE - dPos.length());
 				transform.setTranslation(getTransform().getTranslation().add(dPos.normalize().scale(s)));
 			}
 		}
@@ -113,5 +110,20 @@ public class MultiplierPiece extends Entity{
 	
 	public Mesh getMesh(){
 		return mesh;
+	}
+
+	@Override
+	public int getRadius() {
+		return 7;
+	}
+
+	@Override
+	public int getGroupMask() {
+		return Masks.Collision.MULTIPLIER;
+	}
+
+	@Override
+	public int getCollisionMask() {
+		return Masks.Collision.ENEMY | Masks.Collision.PLAYER;
 	}
 }

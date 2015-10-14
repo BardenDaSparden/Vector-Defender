@@ -63,7 +63,6 @@ public class Player extends Entity{
 	
 	public Player(){
 		transform.setTranslation(new Vector2f(0, 0));
-		radius = 15;
 		
 		mesh = new Mesh();
 		
@@ -232,6 +231,16 @@ public class Player extends Entity{
 		}
 	}
 
+	public void respawn(){
+		grid.applyDirectedForce(new Vector3f(0.0F, 0.0F, 10000.0F), new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 400.0F);
+		moveToSpawn.x = 0;
+		moveToSpawn.y = 0;
+	}
+	
+	public void reset(){
+		stats.reset();
+	}
+	
 	public boolean isDead(){
 		return respawnTimer.percentComplete() < 1.0f;
 	}
@@ -263,18 +272,8 @@ public class Player extends Entity{
 		return Masks.Entities.PLAYER;
 	}
 	
-	public void lookAtMouse(Vector2f mousePosition){
+	public void look(Vector2f mousePosition){
 		transform.setOrientation(mousePosition.sub(transform.getTranslation()).direction());
-	}
-	
-	public void respawn(){
-		grid.applyDirectedForce(new Vector3f(0.0F, 0.0F, 10000.0F), new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 400.0F);
-		moveToSpawn.x = 0;
-		moveToSpawn.y = 0;
-	}
-	
-	public void reset(){
-		stats.reset();
 	}
 	
 	public Mesh getMesh(){
@@ -283,6 +282,21 @@ public class Player extends Entity{
 	
 	public PlayerStats getStats(){
 		return stats;
+	}
+
+	@Override
+	public int getRadius() {
+		return 15;
+	}
+
+	@Override
+	public int getGroupMask() {
+		return Masks.Collision.PLAYER;
+	}
+
+	@Override
+	public int getCollisionMask() {
+		return Masks.Collision.ENEMY | Masks.Collision.MULTIPLIER;
 	}
 	
 }

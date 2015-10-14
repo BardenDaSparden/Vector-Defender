@@ -21,7 +21,6 @@ public class Particle extends Entity{
 	
 	protected int currentLife = 0;
 	protected int maxLife = 60;
-	protected float opacity = 1;
 	
 	ArrayList<Behavior> behaviors = new ArrayList<Behavior>();
 	
@@ -90,10 +89,6 @@ public class Particle extends Entity{
 		return mesh;
 	}
 	
-	public float getOpacity(){
-		return opacity;
-	}
-	
 	public void addBehavior(Behavior b){
 		behaviors.add(b);
 	}
@@ -111,6 +106,21 @@ public class Particle extends Entity{
 	}
 	public void setMaxLife(int ml){
 		this.maxLife = ml;
+	}
+
+	@Override
+	public int getRadius() {
+		return 0;
+	}
+
+	@Override
+	public int getGroupMask() {
+		return Masks.NONE;
+	}
+
+	@Override
+	public int getCollisionMask() {
+		return Masks.NONE;
 	}
 	
 }

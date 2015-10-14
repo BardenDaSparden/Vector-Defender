@@ -8,11 +8,10 @@ public class Bullet extends Entity{
 	
 	int timeActive = 0;
 	
-	public Bullet(Vector2f position, Vector2f velocity){
-	    transform.setTranslation(position);
-	    transform.setOrientation(velocity.direction());
-	    this.velocity = velocity;
-	    this.radius = 8.0F;
+	public Bullet(Vector2f pos, Vector2f vel){
+	    transform.setTranslation(pos);
+	    transform.setOrientation(vel.direction());
+	    velocity = vel;
 	}
 	
 	public void collision(Entity other){
@@ -38,6 +37,21 @@ public class Bullet extends Entity{
 	
 	public int getEntityType(){
 		return Masks.Entities.BULLET;
+	}
+
+	@Override
+	public int getRadius() {
+		return 6;
+	}
+
+	@Override
+	public int getGroupMask() {
+		return Masks.Collision.BULLET;
+	}
+
+	@Override
+	public int getCollisionMask() {
+		return Masks.Collision.ENEMY;
 	}
 	
 }

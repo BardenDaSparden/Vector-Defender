@@ -28,17 +28,17 @@ public class Enemy extends Entity{
 	ArrayList<Behavior> behaviors = new ArrayList<Behavior>();
 	Timer wakeupTimer = new Timer(WAKEUP_TIME);
 	boolean bAwake = false;
-	
 	int health = 1;
 	int killValue = 1;
-
+	int radius;
+	
 	public Enemy(){
 		this(new Vector2f(0, 0));
 	}
 	
 	public Enemy(Vector2f position){
 	    transform.setTranslation(position);
-	    this.radius = 16;
+	    radius = 16;
 	    
 	    wakeupTimer.setCallback(new TimerCallback() {
 			public void execute(Timer timer) {
@@ -276,7 +276,7 @@ public class Enemy extends Entity{
 		
 	    enemy.addBehavior(new StalkerBehaviour());
 	    enemy.killValue = 15;
-	    enemy.radius = 10.0F;
+	    enemy.radius = 10;
 	    return enemy;
 	}
 
@@ -304,7 +304,7 @@ public class Enemy extends Entity{
 		
 	    enemy.addBehavior(new ChaserBehaviour());
 	    enemy.killValue = 5;
-	    enemy.radius = 10.0F;
+	    enemy.radius = 10;
 	    return enemy;
 	}
 
@@ -345,7 +345,7 @@ public class Enemy extends Entity{
 	    enemy.transform.setOrientation(player.getTransform().getTranslation().sub(position).direction());
 	    enemy.addBehavior(new PrototypeBehaviour());
 	    enemy.killValue = 25;
-	    enemy.radius = 15.0F;
+	    enemy.radius = 15;
 	    return enemy;
 	}
 	
@@ -456,6 +456,21 @@ public class Enemy extends Entity{
 	    enemy.health = 15;
 	    
 	    return enemy;
+	}
+
+	@Override
+	public int getRadius() {
+		return radius;
+	}
+
+	@Override
+	public int getGroupMask() {
+		return Masks.Collision.ENEMY;
+	}
+
+	@Override
+	public int getCollisionMask() {
+		return Masks.Collision.BULLET | Masks.Collision.MULTIPLIER | Masks.Collision.PLAYER;
 	}
 	
 }
