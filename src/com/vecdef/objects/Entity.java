@@ -26,10 +26,11 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	//ICollidable Dependencies
 	protected ArrayList<ContactEventListener> contactListeners;
 	
-	protected boolean isExpired;
-	protected static Scene scene = null;
+	private boolean isExpired;
+	protected Scene scene;
 	
-	public Entity(){
+	public Entity(Scene scene){
+		this.scene = scene;
 		transform = new Transform2D();
 		mesh = new DefaultMesh();
 		opacity = 1;
@@ -45,8 +46,9 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 		isExpired = false;
 	}
 	
-	public abstract void update(Grid grid);
+	public abstract void update();
 	public abstract void destroy();
+	
 	public abstract int getEntityType();
 	
 	@Override
@@ -131,12 +133,7 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 		return isExpired;
 	}
 	
-	public static void setScene(Scene scene){
-		Entity.scene = scene;
+	public void expire(){
+		isExpired = true;
 	}
-	
-	public static Scene getScene(){
-		return scene;
-	}
-	
 }
