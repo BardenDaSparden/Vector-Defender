@@ -8,7 +8,8 @@ import org.javatroid.core.Window;
 import org.javatroid.math.Vector2f;
 
 import com.vecdef.objects.Enemy;
-import com.vecdef.objects.EntityManager;
+import com.vecdef.objects.Entity;
+import com.vecdef.objects.Masks;
 import com.vecdef.objects.Player;
 
 public class EnemySpawner{
@@ -19,73 +20,80 @@ public class EnemySpawner{
 	static final float START_SPAWN_CHANCE = 60.0f;
 	static final float MIN_SPAWN_CHANCE = 16.0f;
 	
-	ArrayList<Enemy> spawnedBlackHoles = new ArrayList<Enemy>();
 	Random random = new Random();
+	
+	ArrayList<Entity> allEnemies;
+	ArrayList<Entity> allBlackholes;
+	
 	float basicUnitSpawnChance = START_SPAWN_CHANCE;
 	float stalkerUnitSpawnChance = 300.0F;
 	float specialUnitSpawnChance = 500.0f;
 	float blackholeSpawnChance = 1200.0F;
 	
 	Scene scene;
+	Player player;
 	
 	public EnemySpawner(Scene scene){
 		this.scene = scene;
+		player = scene.getPlayer();
+		allEnemies = new ArrayList<Entity>();
+		allBlackholes = new ArrayList<Entity>();
 	}
 	
 	public void trySpawn(){
+		if(player.isDead())
+			return;
 		
 		int score = scene.getPlayer().getStats().getScore();
 		
-		int entityCount = EntityManager.getEntities(Enemy.class).size();
-		Player player = scene.getPlayer();
+		allEnemies.clear();
+		scene.getEntitiesByType(Masks.Entities.ENEMY, allEnemies);
+		int enemyCount = allEnemies.size();
 		
-		if((!player.isDead()) && (entityCount < MAX_ENEMIES))
-	    {
-			
-	      if (random.nextInt((int)basicUnitSpawnChance) == 0) {
-	        EntityManager.add(Enemy.createWanderer(getSpawnPosition()));
-	      }
-	      
-	      if ((score >= 5000) && 
-	        (random.nextInt((int)basicUnitSpawnChance) == 0)) {
-	        EntityManager.add(Enemy.createSeeker(getSpawnPosition()));
-	      }
-
-	      if (score >= 10000){
-	    	  if (random.nextInt((int)stalkerUnitSpawnChance) == 0) {
-		          EntityManager.add(Enemy.createFollower(getSpawnPosition()));
-		        }
-	      }
-	      
-	      if(score >= 20000){
-	    	  if(random.nextInt((int)specialUnitSpawnChance) == 0){
-		    	  EntityManager.add(Enemy.createPrototype(getSpawnPosition()));
-		      }if(random.nextInt((int)specialUnitSpawnChance) == 0){
-		    	  EntityManager.add(Enemy.createZoomer(getSpawnPosition()));
-		      }
-	      }
-	      
-	      if ((score >= 30000 && basicUnitSpawnChance > 30.0f)){
-		      
-	    	  if((random.nextInt((int)blackholeSpawnChance) == 0)){
-	    		  for(int i = 0; i < spawnedBlackHoles.size(); i++){
-	    			  Enemy e = spawnedBlackHoles.get(i);
-	    			  if(e.isExpired())
-	    				  spawnedBlackHoles.remove(i);
-	    		  }
-	    		  if(spawnedBlackHoles.size() < MAX_BLACK_HOLES){
-			    	  Enemy enemy = Enemy.createBlackHole(getSpawnPosition());
-			    	  EntityManager.add(enemy);
-			    	  spawnedBlackHoles.add(enemy);
-			      }
-	    	  }
-	    	  
-		      
-	      }
-
-	      if (basicUnitSpawnChance > MIN_SPAWN_CHANCE)
-	        basicUnitSpawnChance -= 0.004F;
-	    }
+		allBlackholes.clear();
+		scene.getEntitiesByType(Masks.Entities.BLACK_HOLE, allBlackholes);
+		int blackholeCount = allBlackholes.size();
+		
+		if(enemyCount >= MAX_ENEMIES)
+			return;
+		
+		if(canSpawn(basicUnitSpawnChance)){
+			Enemy enemy = Enemy.createWanderer(getSpawnPosition(), scene);
+			scene.add(enemy);
+		}
+		
+		if(score >= 5000 && canSpawn(basicUnitSpawnChance)){
+			Enemy enemy = Enemy.createSeeker(getSpawnPosition(), scene);
+			scene.add(enemy);
+		}
+		
+		if(score >= 15000 && canSpawn(stalkerUnitSpawnChance)){
+			Enemy enemy = Enemy.createFollower(getSpawnPosition(), scene);
+			scene.add(enemy);
+		}
+		
+		if(score >= 30000){
+			if(canSpawn(specialUnitSpawnChance)){
+				Enemy enemy = Enemy.createPrototype(getSpawnPosition(), scene);
+				scene.add(enemy);
+			}
+			if(canSpawn(specialUnitSpawnChance)){
+				Enemy enemy = Enemy.createZoomer(getSpawnPosition(), scene);
+				scene.add(enemy);
+			}
+		}
+		
+		if(blackholeCount < MAX_BLACK_HOLES){
+			if(score > 45000 && basicUnitSpawnChance > 30.0f){
+				if(canSpawn(blackholeSpawnChance)){
+					Enemy enemy = Enemy.createBlackHole(getSpawnPosition(), scene);
+					scene.add(enemy);
+				}
+			}
+		}
+		
+		if(basicUnitSpawnChance > MIN_SPAWN_CHANCE)
+			basicUnitSpawnChance -= 0.004f;
 	}
 	
 	Vector2f getSpawnPosition(){
@@ -99,6 +107,10 @@ public class EnemySpawner{
 	      position.sub(playerPosition).lengthSquared() < 40000.0F);
 
 	    return position;
+	}
+	
+	boolean canSpawn(float chance){
+		return random.nextInt((int)chance) == 0;
 	}
 	
 	public void reset(){
