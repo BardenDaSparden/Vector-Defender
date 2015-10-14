@@ -39,6 +39,7 @@ public abstract class Entity implements IRenderable, IPhysics{
 	public abstract void update(Grid grid);
 	public abstract void collision(Entity other);
 	public abstract void destroy();
+	public abstract int getEntityType();
 	
 	@Override
 	public Mesh getMesh(){
