@@ -15,6 +15,7 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	protected Transform2D transform;
 	protected Mesh mesh;
 	protected float opacity;
+	protected boolean isDrawn;
 	
 	//IPhysics Dependencies
 	protected Vector2f velocity;
@@ -32,6 +33,7 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 		transform = new Transform2D();
 		mesh = new DefaultMesh();
 		opacity = 1;
+		isDrawn = true;
 		
 		velocity = new Vector2f();
 		acceleration = new Vector2f();
@@ -63,6 +65,15 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	@Override
 	public void setOpacity(float opacity){
 		this.opacity = opacity;
+	}
+	
+	@Override
+	public boolean isDrawn(){
+		return isDrawn;
+	}
+	
+	public void setDraw(boolean bDraw){
+		isDrawn = bDraw;
 	}
 	
 	@Override

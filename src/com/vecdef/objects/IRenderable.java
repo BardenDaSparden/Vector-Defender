@@ -9,5 +9,7 @@ public interface IRenderable {
 	public Transform2D getTransform();
 	public float getOpacity();
 	public void setOpacity(float opacity);
+	public boolean isDrawn();
+	public void setDraw(boolean bDraw);
 	
 }
