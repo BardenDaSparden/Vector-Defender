@@ -126,7 +126,7 @@ public class EntityManager{
 	}
 	
 	private static boolean isColliding(Entity a, Entity b){
-		float radius = a.radius + b.radius;
+		float radius = a.getRadius() + b.getRadius();
 	    float ds = (a.getTransform().getTranslation().x - b.getTransform().getTranslation().x) * (a.getTransform().getTranslation().x - b.getTransform().getTranslation().x) + (a.getTransform().getTranslation().y - b.getTransform().getTranslation().y) * (a.getTransform().getTranslation().y - b.getTransform().getTranslation().y);
 	    return (!a.bExpired) && (!b.bExpired) && (ds < radius * radius);
 	}
