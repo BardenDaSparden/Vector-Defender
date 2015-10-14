@@ -7,6 +7,7 @@ import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
 
 import com.vecdef.ai.Behavior;
+import com.vecdef.gamestate.Scene;
 import com.vecdef.model.LinePrimitive;
 import com.vecdef.model.Mesh;
 import com.vecdef.model.MeshLayer;
@@ -22,13 +23,10 @@ public class Particle extends Entity{
 	protected int currentLife = 0;
 	protected int maxLife = 60;
 	
-	ArrayList<Behavior> behaviors = new ArrayList<Behavior>();
+	ArrayList<Behavior> behaviors;
 	
-	public Particle(float x, float y){
-		this(x, y, new Vector4f(1, 1, 1, 1));
-	}
-	
-	public Particle(float x, float y, Vector4f color){
+	public Particle(float x, float y, Vector4f color, Scene scene){
+		super(scene);
 		transform.setTranslation(new Vector2f(x, y));
 		transform.setOrientation(FastMath.random() * 360f);
 		
@@ -41,9 +39,12 @@ public class Particle extends Entity{
 		layer.addPrimitive(l);
 		
 		mesh.addLayer(layer);
+		
+		behaviors = new ArrayList<Behavior>();
 	}
 	
-	public Particle(Vector2f start, Vector2f end, Vector4f color){
+	public Particle(Vector2f start, Vector2f end, Vector4f color, Scene scene){
+		super(scene);
 		transform.setTranslation(start.add(end.sub(start).scale(0.5f)));
 		
 		mesh = new Mesh();
@@ -57,23 +58,16 @@ public class Particle extends Entity{
 		mesh.addLayer(layer);
 	}
 
-	public void update(Grid grid) {
+	public void update() {
 		
 		for(Behavior b : behaviors){
-			b.onUpdate(this, grid);
-		}
-		
-		if(currentLife == maxLife){
-			isExpired = true;
+			b.update(this);
 		}
 		
 		opacity = (maxLife - currentLife) / (float)maxLife;
-		
 		currentLife++;
-	}
-
-	public void collision(Entity other) {
-
+		if(currentLife >= maxLife)
+			expire();
 	}
 	
 	public void destroy(){
