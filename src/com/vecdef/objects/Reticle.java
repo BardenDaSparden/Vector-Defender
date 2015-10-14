@@ -3,6 +3,7 @@ package com.vecdef.objects;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
 
+import com.vecdef.gamestate.Scene;
 import com.vecdef.model.LinePrimitive;
 import com.vecdef.model.Mesh;
 import com.vecdef.model.MeshLayer;
@@ -13,12 +14,15 @@ public class Reticle extends Entity{
 		new Vector2f(-10, 0), new Vector2f(10, 0),
 		new Vector2f(0, -10), new Vector2f(0, 10)
 	};
+	
 	Mesh mesh;
 	
-	public Reticle(Vector4f color){
+	public Reticle(Scene scene){
+		super(scene);
 		mesh = new Mesh();
 		LinePrimitive p = new LinePrimitive();
 		
+		Vector4f color = new Vector4f(0, 1, 0, 1);
 		p.addVertex(vertices[0], color);
 		p.addVertex(vertices[1], color);
 		p.addVertex(vertices[2], color);
@@ -30,7 +34,7 @@ public class Reticle extends Entity{
 		mesh.addLayer(layer);
 	}
 	
-	public void update(Grid grid){}
+	public void update(){}
 	public void destroy(){}
 	public int getEntityType(){
 		return Masks.Entities.OTHER;
