@@ -61,10 +61,7 @@ public class MultiplierPiece extends Entity{
 		addContactListener(new ContactEventListener() {
 			@Override
 			public void process(ContactEvent event) {
-				ICollidable other = event.other;
-				if(other.getGroupMask() == Masks.Entities.PLAYER){
-					MultiplierPiece.this.expire();
-				}
+				MultiplierPiece.this.expire();
 			}
 		});
 	}
