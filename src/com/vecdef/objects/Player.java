@@ -127,7 +127,7 @@ public class Player extends Entity{
 			public void process(ContactEvent event) {
 				ICollidable other = event.other;
 				if(other.getGroupMask() == Masks.Collision.ENEMY){
-					respawnTimer.restart();
+					kill();
 				} else if(other.getGroupMask() == Masks.Collision.MULTIPLIER){
 					stats.increaseMultiplier();
 				}
@@ -245,6 +245,11 @@ public class Player extends Entity{
 	
 	public void reset(){
 		stats.reset();
+	}
+	
+	public void kill(){
+		respawnTimer.restart();
+		stats.useLife();
 	}
 	
 	public boolean isDead(){
