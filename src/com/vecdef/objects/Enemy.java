@@ -25,20 +25,26 @@ public class Enemy extends Entity{
 	
 	final int WAKEUP_TIME = 60;
 	
-	Vector4f baseColor = new Vector4f(1, 1, 1, 1);
-	ArrayList<Behavior> behaviors = new ArrayList<Behavior>();
-	Timer wakeupTimer = new Timer(WAKEUP_TIME);
-	boolean bAwake = false;
-	int health = 1;
-	int killValue = 1;
+	Vector4f baseColor;
+	ArrayList<Behavior> behaviors;
+	Timer wakeupTimer;
+	boolean bAwake;
+	int health;
+	int killValue;
 	
 	int groupMask;
 	int collisionMask;
-	
 	int radius;
 	
 	public Enemy(Scene scene){
 		super(scene);
+		
+		baseColor = new Vector4f(1, 1, 1, 1);
+		behaviors = new ArrayList<Behavior>();
+		wakeupTimer = new Timer(WAKEUP_TIME);
+		bAwake = false;
+		health = 1;
+		killValue = 1;
 		
 	    radius = 16;
 	    groupMask = Masks.Entities.ENEMY;
