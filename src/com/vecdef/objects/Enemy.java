@@ -451,6 +451,8 @@ public class Enemy extends Entity{
 	    enemy.addBehavior(new BlackHoleBehaviour(scene));
 	    enemy.health = 15;
 	    
+	    //TODO add proper blackhole -> enemy collision
+	    
 	    return enemy;
 	}
 
