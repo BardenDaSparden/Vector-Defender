@@ -52,16 +52,13 @@ public class MultiplierPiece extends Entity{
 		mesh.addLayer(bodyLayer);
 		
 		timer.setCallback(new TimerCallback() {
-			
 			public void execute(Timer timer) {
-				
+				MultiplierPiece.this.expire();
 			}
 		});
-		
 		timer.start();
 		
 		addContactListener(new ContactEventListener() {
-			
 			@Override
 			public void process(ContactEvent event) {
 				MultiplierPiece.this.expire();
