@@ -10,6 +10,7 @@ public class CollisionSystem {
 
 	ArrayList<ICollidable> collidables;
 	ArrayList<ICollidable> nearbyCollidables;
+	ArrayList<ContactEvent> eventStack;
 	
 	public CollisionSystem(){
 		collidables = new ArrayList<ICollidable>();
@@ -33,8 +34,11 @@ public class CollisionSystem {
 		for(int i = 0; i < n; i++){
 			A = collidables.get(i);
 			
+			if(A.getCollisionMask() == Masks.NONE)
+				continue;
+			
 			nearbyCollidables.clear();
-			getNearbyCollidables(A.getTransform().getTranslation(), 70, nearbyCollidables);
+			getNearbyCollidables(A.getTransform().getTranslation(), 70, nearbyCollidables, A);
 			
 			for(int j = 0; j < nearbyCollidables.size(); j++){
 				
@@ -56,21 +60,20 @@ public class CollisionSystem {
 				boolean intersect = testIntersection(A, B);
 				if(intersect){
 					ContactEvent eventAB = new ContactEvent(A, B);
-					ContactEvent eventBA = new ContactEvent(B, A);
 					A.onContact(eventAB);
-					B.onContact(eventBA);
 				}	
 			}
 		}
 	}
 	
-	void getNearbyCollidables(Vector2f position, int radius, ArrayList<ICollidable> list){
+	void getNearbyCollidables(Vector2f position, int radius, ArrayList<ICollidable> list, ICollidable self){
 		int n = collidables.size();
 		for(int i = 0; i < n; i++){
 			ICollidable collidable = collidables.get(i);
 			Vector2f dPos = collidable.getTransform().getTranslation().sub(position);
 			if(dPos.lengthSquared() <= radius * radius)
-				list.add(collidable);
+				if(!self.equals(collidable))
+					list.add(collidable);
 		}
 	}
 	
