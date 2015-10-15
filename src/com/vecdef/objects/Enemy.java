@@ -47,8 +47,8 @@ public class Enemy extends Entity{
 		killValue = 1;
 		
 	    radius = 16;
-	    groupMask = Masks.Entities.ENEMY;
-	    collisionMask = Masks.Entities.PLAYER | Masks.Entities.BULLET;
+	    groupMask = Masks.Collision.ENEMY;
+	    collisionMask = Masks.Collision.PLAYER | Masks.Collision.BULLET;
 	    
 	    addContactListener(new ContactEventListener() {
 			@Override
@@ -427,8 +427,8 @@ public class Enemy extends Entity{
 		enemy.baseColor = new Vector4f(1, 1, 1, 1);
 		enemy.mesh = new Mesh();
 	    enemy.radius = 16;
-	    enemy.groupMask = Masks.Entities.ENEMY | Masks.Entities.BLACK_HOLE;
-	    enemy.collisionMask |= Masks.Entities.MULTIPLIER;
+	    enemy.groupMask = Masks.Collision.ENEMY | Masks.Collision.BLACK_HOLE;
+	    enemy.collisionMask |= Masks.Collision.MULTIPLIER | Masks.Collision.ENEMY;
 	    
 		float radius = enemy.radius;
 	    int segments = 32;
