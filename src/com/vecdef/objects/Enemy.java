@@ -49,7 +49,6 @@ public class Enemy extends Entity{
 				ICollidable other = event.other;
 				if(other.getGroupMask() == Masks.Collision.BULLET){
 					reference.expire();
-					System.out.println("ENEMY-BULLET_COLLISION");
 				}
 			}
 		});

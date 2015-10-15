@@ -51,11 +51,10 @@ public class MultiplierPiece extends Entity{
 		
 		mesh.addLayer(bodyLayer);
 		
-		final Entity reference = this;
 		timer.setCallback(new TimerCallback() {
 			
 			public void execute(Timer timer) {
-				reference.expire();
+				
 			}
 		});
 		
@@ -68,7 +67,6 @@ public class MultiplierPiece extends Entity{
 				MultiplierPiece.this.expire();
 			}
 		});
-		
 	}
 	
 	public void update() {
@@ -130,6 +128,6 @@ public class MultiplierPiece extends Entity{
 
 	@Override
 	public int getCollisionMask() {
-		return Masks.Collision.ENEMY | Masks.Collision.PLAYER;
+		return Masks.Collision.BLACK_HOLE | Masks.Collision.PLAYER;
 	}
 }
