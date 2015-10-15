@@ -83,33 +83,31 @@ public class Scene {
 	}
 	
 	public void update(){
+		
+		collision.checkCollision();
+		
+		for(int i = 0; i < entities.size(); i++){
+			Entity entity = entities.get(i);
+			entity.update();
+		}
+			
+		physics.integrate(TIME_STEP);
+		
+		grid.update();
+		
 		for(int i = 0; i < entities.size(); i++){
 			Entity entity = entities.get(i);
 			if(entity.isExpired()){
 				entity.destroy();
-				entitiesToRemove.add(entity);
-			} else {
-				entity.update();
+				remove(entity);
 			}
 		}
-		
-		player.update();
-		
-		physics.integrate(TIME_STEP);
-		collision.checkCollision();
-		grid.update();
 		
 //		System.out.println("Collision: " + collision.numObjects());
 //		System.out.println("Physics: " + physics.numObjects());
 //		System.out.println("Renderer: " + renders.numObjects());
 //		System.out.println("==================================");
 //		System.out.println("Total Entities: " + entities.size());
-		
-		for(int i = 0; i < entitiesToRemove.size(); i++){
-			Entity entity = entitiesToRemove.get(i);
-			remove(entity);
-		}
-		entitiesToRemove.clear();
 	}
 	
 	public void draw(){
