@@ -47,7 +47,7 @@ public class Player extends Entity{
 	Vector2f weaponOffset1 = new Vector2f(25, 11);
 	Vector2f weaponOffset2 = new Vector2f(25, -11);
 	
-	Vector2f moveToSpawn = new Vector2f();
+	//Vector2f moveToSpawn = new Vector2f();
 	Interpolator interpolator = new CubicInterpolator(new Vector2f(0.35f, 0.0f), new Vector2f(1, 0.65f));
 	
 	ArrayList<Entity> allEnemies;
@@ -241,8 +241,6 @@ public class Player extends Entity{
 
 	public void respawn(){
 		scene.getGrid().applyDirectedForce(new Vector3f(0.0F, 0.0F, 10000.0F), new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 400.0F);
-		moveToSpawn.x = 0;
-		moveToSpawn.y = 0;
 	}
 	
 	public void reset(){
@@ -261,9 +259,7 @@ public class Player extends Entity{
 		respawnTimer.restart();
 		
 	    velocity.x = 0.0F;
-	    velocity.y = 0.0F;
-	    moveToSpawn.x = -transform.getTranslation().x;
-	    moveToSpawn.y = -transform.getTranslation().y;    
+	    velocity.y = 0.0F;  
 	    
 	    allEnemies.clear();
 		scene.getEntitiesByType(Masks.Entities.ENEMY, allEnemies);
