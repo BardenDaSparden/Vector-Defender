@@ -33,6 +33,12 @@ public class BlackHoleBehaviour extends Behavior{
 	
 	public BlackHoleBehaviour(Scene scene){
 		super(scene);
+		
+		particlesInRange = new ArrayList<Entity>();
+		piecesInRange = new ArrayList<Entity>();
+		bulletsInRange = new ArrayList<Entity>();
+		enemiesInRange = new ArrayList<Entity>();
+		
 	}
 	
 	public void update(Entity object){
@@ -45,10 +51,10 @@ public class BlackHoleBehaviour extends Behavior{
 	    scene.getEntitiesByType(object.getTransform().getTranslation(), FORCE_RADIUS, Masks.Entities.MULTIPLIER, piecesInRange);
 	    
 	    bulletsInRange.clear();
-	    scene.getEntitiesByType(object.getTransform().getTranslation(), FORCE_RADIUS, Masks.Entities.MULTIPLIER, bulletsInRange);
+	    scene.getEntitiesByType(object.getTransform().getTranslation(), FORCE_RADIUS, Masks.Entities.BULLET, bulletsInRange);
 	    
 	    enemiesInRange.clear();
-	    scene.getEntitiesByType(object.getTransform().getTranslation(), FORCE_RADIUS, Masks.Entities.MULTIPLIER, enemiesInRange);
+	    scene.getEntitiesByType(object.getTransform().getTranslation(), FORCE_RADIUS, Masks.Entities.ENEMY, enemiesInRange);
 	    
 	    Player player = scene.getPlayer();
 	    
