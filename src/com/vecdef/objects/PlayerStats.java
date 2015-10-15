@@ -20,7 +20,6 @@ public class PlayerStats{
 
 	public void increaseMultiplier(){
 		multiplier++;
-		System.out.println("Multiplier Add");
 	}
 	
 	public void resetMultiplier(){
