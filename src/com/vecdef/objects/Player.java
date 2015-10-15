@@ -250,6 +250,18 @@ public class Player extends Entity{
 	public void kill(){
 		respawnTimer.restart();
 		stats.useLife();
+		
+		allEnemies.clear();
+		scene.getEntitiesByType(Masks.Entities.ENEMY, allEnemies);
+		
+		int n = allEnemies.size();
+	    for(int i = 0; i < n; i++){
+	    	Entity entity = allEnemies.get(i);
+	    	entity.expire();
+	    }
+		
+	    stats.resetMultiplier();
+	    
 	}
 	
 	public boolean isDead(){
