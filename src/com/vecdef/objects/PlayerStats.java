@@ -7,10 +7,6 @@ public class PlayerStats{
 	private int lives = 3;
 	private int bombs = 4;
 
-	public PlayerStats(){
-
-	}
-
 	public void reset(){
 		score = 0;
 		multiplier = 1;
@@ -24,6 +20,7 @@ public class PlayerStats{
 
 	public void increaseMultiplier(){
 		multiplier++;
+		System.out.println("Multiplier Add");
 	}
 	
 	public void resetMultiplier(){
