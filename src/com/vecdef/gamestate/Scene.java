@@ -56,8 +56,9 @@ public class Scene {
 		int n = entities.size();
 		for(int i = 0; i < n; i++){
 			Entity entity = entities.get(i);
-			if((entity.getEntityType() & mask) == 0x01)
-				list.add(entity);
+			if((entity.getEntityType() & mask) == 0x00)
+				continue;
+			list.add(entity);
 		}
 	}
 	
@@ -88,20 +89,17 @@ public class Scene {
 		
 		for(int i = 0; i < entities.size(); i++){
 			Entity entity = entities.get(i);
-			entity.update();
+			if(entity.isExpired()){
+				entity.destroy();
+				remove(entity);
+			} else {
+				entity.update();
+			}
 		}
 			
 		physics.integrate(TIME_STEP);
 		
 		grid.update();
-		
-		for(int i = 0; i < entities.size(); i++){
-			Entity entity = entities.get(i);
-			if(entity.isExpired()){
-				entity.destroy();
-				remove(entity);
-			}
-		}
 		
 //		System.out.println("Collision: " + collision.numObjects());
 //		System.out.println("Physics: " + physics.numObjects());
