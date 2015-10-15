@@ -33,6 +33,8 @@ public class Enemy extends Entity{
 	int killValue = 1;
 	
 	int groupMask;
+	int collisionMask;
+	
 	int radius;
 	
 	public Enemy(Scene scene){
@@ -40,6 +42,7 @@ public class Enemy extends Entity{
 		
 	    radius = 16;
 	    groupMask = Masks.Entities.ENEMY;
+	    collisionMask = Masks.Entities.PLAYER | Masks.Entities.BULLET;
 	    
 	    final Entity reference = this;
 	    
@@ -425,6 +428,7 @@ public class Enemy extends Entity{
 		enemy.mesh = new Mesh();
 	    enemy.radius = 16;
 	    enemy.groupMask = Masks.Entities.ENEMY | Masks.Entities.BLACK_HOLE;
+	    enemy.collisionMask |= Masks.Entities.MULTIPLIER;
 	    
 		float radius = enemy.radius;
 	    int segments = 32;
@@ -462,7 +466,7 @@ public class Enemy extends Entity{
 
 	@Override
 	public int getCollisionMask() {
-		return Masks.Collision.BULLET | Masks.Collision.MULTIPLIER | Masks.Collision.PLAYER;
+		return collisionMask;
 	}
 	
 }
