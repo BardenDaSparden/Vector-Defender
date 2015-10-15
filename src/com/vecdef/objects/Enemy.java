@@ -44,14 +44,17 @@ public class Enemy extends Entity{
 	    groupMask = Masks.Entities.ENEMY;
 	    collisionMask = Masks.Entities.PLAYER | Masks.Entities.BULLET;
 	    
-	    final Entity reference = this;
-	    
 	    addContactListener(new ContactEventListener() {
 			@Override
 			public void process(ContactEvent event) {
 				ICollidable other = event.other;
 				if(other.getGroupMask() == Masks.Collision.BULLET){
-					reference.expire();
+					health -= 1;
+					 if(health <= 0){
+						expire();
+						Player player = scene.getPlayer();
+						player.registerBulletKill(Enemy.this);
+					 }
 				}
 			}
 		});
@@ -71,15 +74,6 @@ public class Enemy extends Entity{
 		
 		for (Behavior b : behaviors)
 	        b.update(this);
-	}
-
-	public void wasShot(){
-		 health -= 1;
-		 if(health <= 0){
-			expire();
-			Player player = scene.getPlayer();
-			player.registerBulletKill(this);
-		 }
 	}
 	
 	public void destroy(){
