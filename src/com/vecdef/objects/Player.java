@@ -122,6 +122,18 @@ public class Player extends Entity{
 		});
 		respawnTimer.start();
 		
+		addContactListener(new ContactEventListener() {
+			@Override
+			public void process(ContactEvent event) {
+				ICollidable other = event.other;
+				if(other.getGroupMask() == Masks.Collision.ENEMY){
+					respawnTimer.restart();
+				} else if(other.getGroupMask() == Masks.Collision.MULTIPLIER){
+					stats.increaseMultiplier();
+				}
+			}
+		});
+		
 		allEnemies = new ArrayList<Entity>();
 		
 		stats = new PlayerStats();
@@ -177,14 +189,6 @@ public class Player extends Entity{
 	    }
 	    
 	    stats.useBomb();
-	}
-	
-	public void collision(Entity other){
-		if(other instanceof Enemy){
-			destroy();
-		} else if(other instanceof MultiplierPiece){
-			stats.increaseMultiplier();
-		}
 	}
 	
 	private void fireWeapon(){
