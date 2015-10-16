@@ -111,7 +111,7 @@ public class Scene {
 	public void draw(){
 		ShapeRenderer sRenderer = renderer.ShapeRenderer();
 		grid.draw(sRenderer);
-		renders.draw(sRenderer);
+		renders.draw(renderer);
 	}
 	
 	public Player getPlayer(){
