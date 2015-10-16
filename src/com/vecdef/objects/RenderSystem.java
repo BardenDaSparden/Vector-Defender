@@ -3,15 +3,19 @@ package com.vecdef.objects;
 import java.util.ArrayList;
 
 import org.javatroid.graphics.BlendState;
+import org.javatroid.graphics.FrameBuffer;
+import org.javatroid.graphics.SpriteBatch;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
+import org.lwjgl.opengl.Display;
 
+import com.vecdef.gamestate.Renderer;
 import com.vecdef.gamestate.ShapeRenderer;
 import com.vecdef.model.Mesh;
 import com.vecdef.model.MeshLayer;
 import com.vecdef.model.Primitive;
-import com.vecdef.model.Transform2D;
 import com.vecdef.model.Primitive.DrawType;
+import com.vecdef.model.Transform2D;
 
 public class RenderSystem {
 
@@ -19,10 +23,21 @@ public class RenderSystem {
 	private ArrayList<RenderData> lines;
 	private ArrayList<RenderData> triangles;
 	
+	private int screenWidth;
+	private int screenHeight;
+	
+	private FrameBuffer diffuseBuffer;
+	
 	public RenderSystem(){
 		renderables = new ArrayList<IRenderable>();
 		lines = new ArrayList<RenderData>();
 		triangles = new ArrayList<RenderData>();
+		
+		screenWidth = Display.getWidth();
+		screenHeight = Display.getHeight();
+		
+		diffuseBuffer = new FrameBuffer(screenWidth, screenHeight);
+		
 	}
 	
 	public void add(IRenderable renderable){
@@ -33,7 +48,11 @@ public class RenderSystem {
 		renderables.remove(renderable);
 	}
 	
-	public void draw(ShapeRenderer renderer){
+	public void draw(Renderer renderer){
+		
+		ShapeRenderer sRenderer = renderer.ShapeRenderer();
+		SpriteBatch batch = renderer.SpriteBatch();
+		
 		for(int i  = 0; i < renderables.size(); i++){
 			IRenderable renderable = renderables.get(i);
 			
@@ -60,8 +79,14 @@ public class RenderSystem {
 			}
 		}
 		
-		renderList(DrawType.LINES, BlendState.ADDITIVE, lines, renderer);
-		renderList(DrawType.TRIANGLES, BlendState.ALPHA, triangles, renderer);
+		diffuseBuffer.bind();
+			renderList(DrawType.LINES, BlendState.ADDITIVE, lines, sRenderer);
+			renderList(DrawType.TRIANGLES, BlendState.ALPHA, triangles, sRenderer);
+		diffuseBuffer.release();
+		
+		batch.begin();
+			batch.draw(0, 0, screenWidth, screenHeight, 0, diffuseBuffer.getTexture());
+		batch.end();
 		
 		lines.clear();
 		triangles.clear();
