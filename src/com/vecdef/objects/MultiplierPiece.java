@@ -2,7 +2,6 @@ package com.vecdef.objects;
 
 import org.javatroid.core.Timer;
 import org.javatroid.core.TimerCallback;
-import org.javatroid.core.Window;
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
