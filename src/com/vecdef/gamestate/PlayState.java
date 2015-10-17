@@ -14,6 +14,8 @@ import com.vecdef.objects.Entity;
 import com.vecdef.objects.Masks;
 import com.vecdef.objects.Reticle;
 
+import static org.lwjgl.opengl.GL11.*;
+
 public class PlayState{
 
 	enum State{
@@ -76,6 +78,7 @@ public class PlayState{
 	
 	public void draw(){
 		GLUtil.clear(true, false, false, false);
+		glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		
 	    renderer.setCamera(camera);
 	    scene.draw();
