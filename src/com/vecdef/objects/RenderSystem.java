@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.javatroid.graphics.BlendState;
 import org.javatroid.graphics.FrameBuffer;
+import org.javatroid.graphics.OrthogonalCamera;
+import org.javatroid.graphics.ShaderProgram;
 import org.javatroid.graphics.SpriteBatch;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
@@ -23,10 +25,17 @@ public class RenderSystem {
 	private ArrayList<RenderData> lines;
 	private ArrayList<RenderData> triangles;
 	
-	private int screenWidth;
-	private int screenHeight;
+	final Vector2f BLUR_DIR_V = new Vector2f(0, 1);
+	final Vector2f BLUR_DIR_H = new Vector2f(1, 0);
 	
-	private FrameBuffer diffuseBuffer;
+	OrthogonalCamera camera;
+	int screenWidth;
+	int screenHeight;
+	FrameBuffer diffuseBuffer;
+	
+	FrameBuffer blurBuffer;
+	
+	ShaderProgram blur;
 	
 	public RenderSystem(){
 		renderables = new ArrayList<IRenderable>();
@@ -35,8 +44,16 @@ public class RenderSystem {
 		
 		screenWidth = Display.getWidth();
 		screenHeight = Display.getHeight();
+		camera = new OrthogonalCamera(screenWidth, screenHeight);
 		
 		diffuseBuffer = new FrameBuffer(screenWidth, screenHeight);
+		
+		blurBuffer = new FrameBuffer(screenWidth, screenHeight);
+		
+		blur = new ShaderProgram();
+		blur.addVertexShader("shaders/blur.vs");
+		blur.addFragmentShader("shaders/blur.fs");
+		blur.compile();
 		
 	}
 	
@@ -50,6 +67,8 @@ public class RenderSystem {
 	
 	public void draw(Renderer renderer){
 		
+		
+		//renderer.setCamera(camera);
 		ShapeRenderer sRenderer = renderer.ShapeRenderer();
 		SpriteBatch batch = renderer.SpriteBatch();
 		
@@ -79,15 +98,31 @@ public class RenderSystem {
 			}
 		}
 		
-		diffuseBuffer.bind();
+		//diffuseBuffer.bind();
+		//diffuseBuffer.clear(0, 0, 0, 1);
 			renderList(DrawType.LINES, BlendState.ADDITIVE, lines, sRenderer);
 			renderList(DrawType.TRIANGLES, BlendState.ALPHA, triangles, sRenderer);
-		diffuseBuffer.release();
+		//diffuseBuffer.release();
 		
-		batch.begin();
-			batch.draw(0, 0, screenWidth, screenHeight, 0, diffuseBuffer.getTexture());
-		batch.end();
-		
+//		blur.bind();
+//			blur.setUniformf("texelSize", (float)1.0f / 900f);
+//			blur.setUniformf("blurDir", BLUR_DIR_V);
+//		blur.release();
+//		
+//		batch.setCamera(camera);
+//		batch.setShader(null);
+//		blurBuffer.bind();
+//		blurBuffer.clear(0, 0, 0, 1);
+//			batch.begin();
+//				batch.draw(0, 0, screenWidth, screenHeight, 0, diffuseBuffer.getTexture());
+//			batch.end();
+//		blurBuffer.release();
+//		
+//		batch.setShader(null);
+//		batch.begin();
+//			batch.draw(0, 0, screenWidth, screenHeight, 0, blurBuffer.getTexture());
+//		batch.end();
+//		
 		lines.clear();
 		triangles.clear();
 	}
