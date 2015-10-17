@@ -4,7 +4,6 @@ package com.vecdef.gamestate;
 import java.util.ArrayList;
 import java.util.Random;
 
-import org.javatroid.core.Window;
 import org.javatroid.math.Vector2f;
 
 import com.vecdef.objects.Enemy;
