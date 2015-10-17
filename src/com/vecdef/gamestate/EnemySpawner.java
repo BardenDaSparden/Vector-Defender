@@ -9,6 +9,7 @@ import org.javatroid.math.Vector2f;
 
 import com.vecdef.objects.Enemy;
 import com.vecdef.objects.Entity;
+import com.vecdef.objects.Grid;
 import com.vecdef.objects.Masks;
 import com.vecdef.objects.Player;
 
@@ -98,11 +99,15 @@ public class EnemySpawner{
 	
 	Vector2f getSpawnPosition(){
 		Player player = scene.getPlayer();
+		Grid grid = scene.getGrid();
+		
+		int regionWidth = grid.getWidth();
+		int regionHeight = grid.getHeight();
 		
 		Vector2f position;
 	    Vector2f playerPosition = player.getTransform().getTranslation();
 		do
-	      position = new Vector2f(-Window.getWidth() / 2 + 40 + random.nextInt(Window.getWidth() - 80), -Window.getHeight() / 2 + 40 + random.nextInt(Window.getHeight() - 80));
+	      position = new Vector2f(-regionWidth / 2 + 40 + random.nextInt(regionWidth - 80), -regionHeight / 2 + 40 + random.nextInt(regionHeight - 80));
 	    while (
 	      position.sub(playerPosition).lengthSquared() < 40000.0F);
 
