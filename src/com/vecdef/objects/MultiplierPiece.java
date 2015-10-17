@@ -88,13 +88,16 @@ public class MultiplierPiece extends Entity{
 		this.angularVelocity *= ROTATIONAL_DAMPING;
 		this.velocity = velocity.scale(VELOCITY_DAMPING);
 		
-		if ((getTransform().getTranslation().x < -Window.getWidth() / 2) || (getTransform().getTranslation().x > Window.getWidth() / 2)) {
-			getTransform().getTranslation().x = FastMath.clamp(-Window.getWidth() / 2 + 1, Window.getWidth() / 2 - 1,getTransform().getTranslation().x);
+		int gridWidth = scene.getGrid().getWidth();
+		int gridHeight = scene.getGrid().getHeight();
+		
+		if ((getTransform().getTranslation().x < -gridWidth / 2) || (getTransform().getTranslation().x > gridWidth / 2)) {
+			getTransform().getTranslation().x = FastMath.clamp(-gridWidth / 2 + 1, gridWidth / 2 - 1,getTransform().getTranslation().x);
 	    	velocity.x *= -1.0F;
 	    }
 
-	    if ((getTransform().getTranslation().y < -Window.getHeight() / 2) || (getTransform().getTranslation().y > Window.getHeight() / 2)) {
-	    	getTransform().getTranslation().y = FastMath.clamp(-Window.getHeight() / 2 + 1, Window.getHeight() / 2 - 1, getTransform().getTranslation().y);
+	    if ((getTransform().getTranslation().y < -gridHeight / 2) || (getTransform().getTranslation().y > gridHeight / 2)) {
+	    	getTransform().getTranslation().y = FastMath.clamp(-gridHeight / 2 + 1, gridHeight / 2 - 1, getTransform().getTranslation().y);
 	    	velocity.y *= -1.0F;
 	    }
 		
