@@ -225,4 +225,13 @@ public class Grid{
 	    renderer.draw(v0, color);
 	    renderer.draw(v1, color);
 	}
+	
+	public int getWidth(){
+		return gridWidth;
+	}
+
+	public int getHeight(){
+		return gridHeight;
+	}
+	
 }
