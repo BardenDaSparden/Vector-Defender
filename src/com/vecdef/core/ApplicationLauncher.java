@@ -55,7 +55,7 @@ public class ApplicationLauncher {
 			Display.setFullscreen(settings.fullscreen);
 			Display.setVSyncEnabled(settings.vsync);
 			Display.create(format, attributes);
-			glViewport(0, 0, Display.getWidth(), Display.getHeight());
+			//glViewport(0, 0, Display.getWidth(), Display.getHeight());
 			
 		} catch (LWJGLException e) {
 			e.printStackTrace();
