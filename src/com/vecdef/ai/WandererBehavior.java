@@ -7,14 +7,21 @@ import org.javatroid.math.Vector3f;
 
 import com.vecdef.gamestate.Scene;
 import com.vecdef.objects.Entity;
+import com.vecdef.objects.Grid;
 
 public class WandererBehavior extends Behavior{
 	
 	float speed = 2f;
 	boolean vIsSet = false;
 	
+	int gridWidth;
+	int gridHeight;
+	
 	public WandererBehavior(Scene scene){
 		super(scene);
+		Grid grid = scene.getGrid();
+		gridWidth = grid.getWidth();
+		gridHeight = grid.getHeight();
 	}
 	
 	public void update(Entity object){
@@ -29,13 +36,13 @@ public class WandererBehavior extends Behavior{
 		
 	    object.setAngularVelocity(-3);
 	    
-	    if ((object.getTransform().getTranslation().x < -Window.getWidth() / 2) || (object.getTransform().getTranslation().x > Window.getWidth() / 2)) {
-	    	object.getTransform().getTranslation().x = FastMath.clamp(-Window.getWidth() / 2 + 1, Window.getWidth() / 2 - 1, object.getTransform().getTranslation().x);
+	    if ((object.getTransform().getTranslation().x < -gridWidth / 2) || (object.getTransform().getTranslation().x > gridWidth / 2)) {
+	    	object.getTransform().getTranslation().x = FastMath.clamp(-gridWidth / 2 + 1, gridWidth / 2 - 1, object.getTransform().getTranslation().x);
 	    	object.getVelocity().x *= -1.0F;
 	    }
 
-	    if ((object.getTransform().getTranslation().y < -Window.getHeight() / 2) || (object.getTransform().getTranslation().y > Window.getHeight() / 2)) {
-	    	object.getTransform().getTranslation().y = FastMath.clamp(-Window.getHeight() / 2 + 1, Window.getHeight() / 2 - 1, object.getTransform().getTranslation().y);
+	    if ((object.getTransform().getTranslation().y < -gridHeight / 2) || (object.getTransform().getTranslation().y > gridHeight / 2)) {
+	    	object.getTransform().getTranslation().y = FastMath.clamp(-gridHeight / 2 + 1, gridHeight / 2 - 1, object.getTransform().getTranslation().y);
 	    	object.getVelocity().y *= -1.0F;
 	    }
 	    
