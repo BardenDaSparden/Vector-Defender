@@ -1,6 +1,5 @@
 package com.vecdef.ai;
 
-import org.javatroid.core.Window;
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
