@@ -275,8 +275,8 @@ public class Player extends Entity{
 	public void destroy(){
 		respawnTimer.restart();
 		
-	    velocity.x = 0.0F;
-	    velocity.y = 0.0F;  
+		acceleration.set(0, 0);
+		velocity.set(0, 0); 
 	    
 	    allEnemies.clear();
 		scene.getEntitiesByType(Masks.Entities.ENEMY, allEnemies);
