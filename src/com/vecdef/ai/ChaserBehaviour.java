@@ -22,19 +22,18 @@ public class ChaserBehaviour extends Behavior{
 		
 	}
 	
-	public void update(Entity object){
+	public void update(Entity self){
 		  if (speed < maxSpeed)
 			  speed += 0.1F;
 			
 		  Player player = scene.getPlayer();
-		  float angleToPlayer = player.getTransform().getTranslation().sub(object.getTransform().getTranslation()).direction();
-		  object.getVelocity().set(new Vector2f(FastMath.cosd(angleToPlayer) * speed, FastMath.sind(angleToPlayer) * speed));
-		  object.setAngularVelocity(object.getVelocity().length() * random);
+		  float angleToPlayer = player.getTransform().getTranslation().sub(self.getTransform().getTranslation()).direction();
+		  self.getVelocity().set(new Vector2f(FastMath.cosd(angleToPlayer) * speed, FastMath.sind(angleToPlayer) * speed));
+		  self.setAngularVelocity(self.getVelocity().length() * random);
 	  }
 
 	@Override
-	public void destroy(Entity object) {
-		// TODO Auto-generated method stub
+	public void destroy(Entity self) {
 		
 	}
 }
