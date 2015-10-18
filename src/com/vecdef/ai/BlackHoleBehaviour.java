@@ -55,7 +55,7 @@ public class BlackHoleBehaviour extends Behavior{
 				
 				if((group & Masks.Collision.ENEMY) == Masks.Collision.ENEMY){
 					Entity enemy = (Entity)other;
-					onKill(enemy);
+					onKill(self, enemy);
 				} else if((group & Masks.Collision.BULLET) == Masks.Collision.BULLET){
 					if(particlesInRange.size() > 250){
 						for(int i = 0; i < particlesInRange.size(); i+=2){
@@ -162,19 +162,13 @@ public class BlackHoleBehaviour extends Behavior{
 		return (lenSqr <= BLACK_HOLE_RADIUS * BLACK_HOLE_RADIUS);
 	}
 
-	public void onKill(Entity object){
+	public void onKill(Entity self, Entity other){
 		if (numKills < maxKills){
 			numKills++;
 		}
 			
-		if (numKills == maxKills){
-			object.expire();
-			for (int i = 0; i < 8; i++){
-				float a = FastMath.random() * 360.0F;
-		        Vector2f pos = object.getTransform().getTranslation().add(new Vector2f(FastMath.cosd(a) * object.getRadius() + 5, FastMath.sind(a) * object.getRadius() + 5));
-		        Enemy e = Enemy.createChaser(pos, scene);
-		        scene.add(e);
-			}
+		if (numKills >= maxKills){
+			self.expire();
 		}
 	}
 	
@@ -183,6 +177,16 @@ public class BlackHoleBehaviour extends Behavior{
 		for(Entity p : particlesInRange){
 			p.getAcceleration().addi(new Vector2f(FastMath.randomf(-12, 12), FastMath.randomf(-12, 12)));
 		}
+		
+		if(numKills >= maxKills){
+			for(int i = 0; i < 8; i++){
+				float a = FastMath.random() * 360.0F;
+		        Vector2f pos = object.getTransform().getTranslation().add(new Vector2f(FastMath.cosd(a) * object.getRadius() + object.getRadius(), FastMath.sind(a) * object.getRadius() + object.getRadius()));
+		        Enemy e = Enemy.createChaser(pos, scene);
+		        scene.add(e);
+			}
+		}
+		
 	}
 	
 }
