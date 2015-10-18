@@ -14,7 +14,7 @@ public class Main {
 		settings.vsync = false;
 		settings.renderrate = 60;
 		settings.updaterate = 60;
-		settings.multisamples = 1;
+		settings.multisamples = 4;
 			
 		launcher.launch();		
 	}
