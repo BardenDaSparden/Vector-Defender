@@ -2,8 +2,6 @@ package com.vecdef.objects;
 
 import java.util.ArrayList;
 
-import org.javatroid.core.Timer;
-import org.javatroid.core.TimerCallback;
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
@@ -23,12 +21,9 @@ import com.vecdef.model.MeshLayer;
 
 public class Enemy extends Entity{
 	
-	final int WAKEUP_TIME = 60;
-	
 	Vector4f baseColor;
 	ArrayList<Behavior> behaviors;
-	Timer wakeupTimer;
-	boolean bAwake;
+	boolean bCreate;
 	int health;
 	int killValue;
 	
@@ -41,8 +36,7 @@ public class Enemy extends Entity{
 		
 		baseColor = new Vector4f(1, 1, 1, 1);
 		behaviors = new ArrayList<Behavior>();
-		wakeupTimer = new Timer(WAKEUP_TIME);
-		bAwake = false;
+		bCreate = false;
 		health = 1;
 		killValue = 1;
 		
@@ -68,23 +62,25 @@ public class Enemy extends Entity{
 				}
 			}
 		});
-	    
-	    wakeupTimer.setCallback(new TimerCallback() {
-			public void execute(Timer timer) {
-				bAwake = true;
-			}
-		});
-	    wakeupTimer.start();
 	}
 
 	public void update(){
-		wakeupTimer.tick();
-		if(!bAwake)
-			return;
+		int n = behaviors.size();
+		if(!bCreate){
+			for(int i = 0; i < n; i++){
+				Behavior behavior = behaviors.get(i);
+				behavior.create(this);
+			}
+			bCreate = true;
+		}
 		
-		for (Behavior b : behaviors)
-	        b.update(this);
+		for(int i = 0; i < n; i++){
+			Behavior behavior = behaviors.get(i);
+			behavior.update(this);
+		}
 	}
+	
+	
 	
 	public void destroy(){
 	     int numPieces = FastMath.randomi(1, 4);
@@ -116,12 +112,33 @@ public class Enemy extends Entity{
 	    	 particle.getTransform().getTranslation().addi(offset);
 	    	 
 	    	 particle.getVelocity().set((float)Math.cos(angle) * pSpeed, (float)Math.sin(angle) * pSpeed);
+	    	 particle.addBehavior(new Behavior(scene) {
+				
+	    		 @Override
+    			public void create(Entity self){
+    				
+    			}
+	    		 
+				@Override
+				public void update(Entity self) {
+					Vector2f velocity = self.getVelocity();
+					self.getTransform().setOrientation((float)Math.toDegrees(Math.atan2(velocity.y, velocity.x)));
+				}
+				
+				@Override
+				public void destroy(Entity self) {
+					
+				}
+			});
 	    	 
 	    	 scene.add(particle);
 	     }
 	     
-	     for(Behavior b : behaviors)
-	    	 b.destroy(this);
+	     int n = behaviors.size();
+	     for(int i = 0; i < n; i++){
+			Behavior behavior = behaviors.get(i);
+			behavior.destroy(this);
+	     }
 	}
 	
 	public int getEntityType(){
