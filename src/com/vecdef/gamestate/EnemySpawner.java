@@ -57,13 +57,6 @@ public class EnemySpawner{
 		if(enemyCount >= MAX_ENEMIES)
 			return;
 		
-		if(blackholeCount < MAX_BLACK_HOLES){
-			if(canSpawn(blackholeSpawnChance)){
-				Enemy enemy = Enemy.createBlackHole(getSpawnPosition(), scene);
-				scene.add(enemy);
-			}
-		}
-		
 		if(canSpawn(basicUnitSpawnChance)){
 			Enemy enemy = Enemy.createWanderer(getSpawnPosition(), scene);
 			scene.add(enemy);
@@ -91,7 +84,7 @@ public class EnemySpawner{
 		}
 		
 		if(blackholeCount < MAX_BLACK_HOLES){
-			if(score > 45000 && basicUnitSpawnChance > 30.0f){
+			if(score > 50000 && basicUnitSpawnChance > 30.0f){
 				if(canSpawn(blackholeSpawnChance)){
 					Enemy enemy = Enemy.createBlackHole(getSpawnPosition(), scene);
 					scene.add(enemy);
