@@ -10,9 +10,7 @@ import com.vecdef.objects.Grid;
 
 public class WandererBehavior extends Behavior{
 	
-	float speed = 2f;
-	boolean vIsSet = false;
-	
+	float speed = 3f;	
 	int gridWidth;
 	int gridHeight;
 	
@@ -25,37 +23,30 @@ public class WandererBehavior extends Behavior{
 	
 	@Override
 	public void create(Entity self){
-		
+		float a = FastMath.random() * 360;
+		self.getVelocity().set(new Vector2f(FastMath.cosd(a) * speed, FastMath.sind(a) * speed));
 	}
 	
-	public void update(Entity object){
+	public void update(Entity self){
 		
-		if(!vIsSet){
-			float a = FastMath.random() * 360;
-			object.getVelocity().set(new Vector2f(FastMath.cosd(a) * speed, FastMath.sind(a) * speed));
-			vIsSet = true;
-		}
+		scene.getGrid().applyExplosiveForce(10, new Vector3f(self.getTransform().getTranslation().x, self.getTransform().getTranslation().y, 0), 100);
 		
-		scene.getGrid().applyExplosiveForce(10, new Vector3f(object.getTransform().getTranslation().x, object.getTransform().getTranslation().y, 0), 100);
-		
-	    object.setAngularVelocity(-3);
+		self.setAngularVelocity(-3);
 	    
-	    if ((object.getTransform().getTranslation().x < -gridWidth / 2) || (object.getTransform().getTranslation().x > gridWidth / 2)) {
-	    	object.getTransform().getTranslation().x = FastMath.clamp(-gridWidth / 2 + 1, gridWidth / 2 - 1, object.getTransform().getTranslation().x);
-	    	object.getVelocity().x *= -1.0F;
+	    if ((self.getTransform().getTranslation().x < -gridWidth / 2) || (self.getTransform().getTranslation().x > gridWidth / 2)) {
+	    	self.getTransform().getTranslation().x = FastMath.clamp(-gridWidth / 2 + 1, gridWidth / 2 - 1, self.getTransform().getTranslation().x);
+	    	self.getVelocity().x *= -1.0F;
 	    }
 
-	    if ((object.getTransform().getTranslation().y < -gridHeight / 2) || (object.getTransform().getTranslation().y > gridHeight / 2)) {
-	    	object.getTransform().getTranslation().y = FastMath.clamp(-gridHeight / 2 + 1, gridHeight / 2 - 1, object.getTransform().getTranslation().y);
-	    	object.getVelocity().y *= -1.0F;
+	    if ((self.getTransform().getTranslation().y < -gridHeight / 2) || (self.getTransform().getTranslation().y > gridHeight / 2)) {
+	    	self.getTransform().getTranslation().y = FastMath.clamp(-gridHeight / 2 + 1, gridHeight / 2 - 1, self.getTransform().getTranslation().y);
+	    	self.getVelocity().y *= -1.0F;
 	    }
 	    
 	}
 
 	@Override
 	public void destroy(Entity self) {
-		// TODO Auto-generated method stub
 		
 	}
-	
 }
