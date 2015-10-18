@@ -54,13 +54,17 @@ public class Enemy extends Entity{
 			@Override
 			public void process(ContactEvent event) {
 				ICollidable other = event.other;
-				if(other.getGroupMask() == Masks.Collision.BULLET){
+				int otherGroup = other.getGroupMask();
+				
+				if((otherGroup & Masks.Collision.BULLET) == Masks.Collision.BULLET){
 					health -= 1;
 					 if(health <= 0){
 						expire();
 						Player player = scene.getPlayer();
 						player.registerBulletKill(Enemy.this);
 					 }
+				} else if((otherGroup & Masks.Collision.BLACK_HOLE) == Masks.Collision.BLACK_HOLE){
+					Enemy.this.expire();
 				}
 			}
 		});
@@ -449,7 +453,20 @@ public class Enemy extends Entity{
 	    enemy.mesh.addLayer(bodyLayer);
 	    enemy.killValue = 200;
 	    enemy.addBehavior(new BlackHoleBehaviour(scene));
-	    enemy.health = 15;
+	    enemy.health = 8;
+	    
+	    enemy.addContactListener(new ContactEventListener() {
+			
+			@Override
+			public void process(ContactEvent event) {
+				ICollidable other = event.other;
+				int group = other.getGroupMask();
+				if((group & Masks.Collision.ENEMY) == Masks.Collision.ENEMY){
+					Entity eOther = (Entity)other;
+					eOther.expire();
+				}
+			}
+		});
 	    
 	    //TODO add proper blackhole -> enemy collision
 	    
