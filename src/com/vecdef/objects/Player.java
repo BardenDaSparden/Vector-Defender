@@ -56,7 +56,7 @@ public class Player extends Entity{
 	boolean useOffset1 = true;
 	float bulletSpeed = 15;
 	Timer weaponTimer = new Timer(5);
-	Timer respawnTimer = new Timer(60);
+	Timer respawnTimer = new Timer(90);
 	int firingMode = FIRING_MODE_0;
 	boolean canUseWeapon = false;
 	
@@ -249,31 +249,6 @@ public class Player extends Entity{
 	
 	public void kill(){
 		respawnTimer.restart();
-		stats.useLife();
-		
-		allEnemies.clear();
-		scene.getEntitiesByType(Masks.Entities.ENEMY, allEnemies);
-		
-		int n = allEnemies.size();
-	    for(int i = 0; i < n; i++){
-	    	Entity entity = allEnemies.get(i);
-	    	entity.expire();
-	    }
-		
-	    stats.resetMultiplier();
-	    
-	}
-	
-	public boolean isDead(){
-		return respawnTimer.percentComplete() < 1.0f;
-	}
-	
-	public void registerBulletKill(Enemy e){
-		stats.addScore(e.getKillValue());
-	}
-	
-	public void destroy(){
-		respawnTimer.restart();
 		
 		acceleration.set(0, 0);
 		velocity.set(0, 0); 
@@ -289,6 +264,23 @@ public class Player extends Entity{
 	    
 	    stats.useLife();
 	    stats.resetMultiplier();
+	    
+	}
+	
+	public boolean isDead(){
+		return respawnTimer.percentComplete() < 1.0f;
+	}
+	
+	public boolean isDrawn(){
+		return !isDead();
+	}
+	
+	public void registerBulletKill(Enemy e){
+		stats.addScore(e.getKillValue());
+	}
+	
+	public void destroy(){
+		
 	}
 	
 	public int getEntityType(){
