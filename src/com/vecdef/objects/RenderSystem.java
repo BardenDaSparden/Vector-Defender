@@ -6,7 +6,6 @@ import org.javatroid.graphics.BlendState;
 import org.javatroid.graphics.FrameBuffer;
 import org.javatroid.graphics.OrthogonalCamera;
 import org.javatroid.graphics.ShaderProgram;
-import org.javatroid.graphics.SpriteBatch;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
 import org.lwjgl.opengl.Display;
