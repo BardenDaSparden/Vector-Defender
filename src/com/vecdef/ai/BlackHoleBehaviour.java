@@ -7,11 +7,12 @@ import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 
 import com.vecdef.gamestate.Scene;
-import com.vecdef.objects.Bullet;
+import com.vecdef.objects.ContactEvent;
+import com.vecdef.objects.ContactEventListener;
 import com.vecdef.objects.Enemy;
 import com.vecdef.objects.Entity;
+import com.vecdef.objects.ICollidable;
 import com.vecdef.objects.Masks;
-import com.vecdef.objects.MultiplierPiece;
 import com.vecdef.objects.Particle;
 import com.vecdef.objects.Player;
 
@@ -26,7 +27,7 @@ public class BlackHoleBehaviour extends Behavior{
 	
 	int time = 0;
 	Vector2f toScale = new Vector2f(0, 0);
-	int wobbleSpeed = 3;
+	int wobbleSpeed = 4;
 	
 	int numKills = 0;
 	int maxKills = 10;
@@ -36,6 +37,8 @@ public class BlackHoleBehaviour extends Behavior{
 	ArrayList<Entity> bulletsInRange;
 	ArrayList<Entity> enemiesInRange;
 	
+	ContactEventListener listener;
+	
 	public BlackHoleBehaviour(Scene scene){
 		super(scene);
 		
@@ -43,12 +46,38 @@ public class BlackHoleBehaviour extends Behavior{
 		piecesInRange = new ArrayList<Entity>();
 		bulletsInRange = new ArrayList<Entity>();
 		enemiesInRange = new ArrayList<Entity>();
-		
 	}
 	
 	@Override
 	public void create(Entity self){
+		listener = new ContactEventListener() {
+			
+			@Override
+			public void process(ContactEvent event) {
+				ICollidable other = event.other;
+				int group = other.getGroupMask();
+				
+				if((group & Masks.Collision.ENEMY) == Masks.Collision.ENEMY){
+					
+					Entity enemy = (Entity)other;
+					Vector2f scale = self.getTransform().getScale();
+					toScale.x = scale.x + 0.05f;
+					toScale.y = scale.y + 0.05f;
+					onKill(enemy);
+				} else if((group & Masks.Collision.BULLET) == Masks.Collision.BULLET){
+					if(particlesInRange.size() > 250){
+						for(int i = 0; i < particlesInRange.size(); i+=2){
+							Entity p = particlesInRange.get(i);
+							Vector2f acceleration = p.getAcceleration();
+							acceleration.x += FastMath.randomf(-4, 4);
+							acceleration.y += FastMath.randomf(-4, 4);
+						}
+					}
+				}
+			}
+		};
 		
+		self.addContactListener(listener);
 	}
 	
 	public void update(Entity object){
@@ -154,27 +183,7 @@ public class BlackHoleBehaviour extends Behavior{
 	}
 	
 	public void onCollision(Entity object, Entity other) {
-		if(other instanceof Enemy){
-			other.destroy();
-			
-			Vector2f scale = object.getTransform().getScale();
-			
-			toScale.x = scale.x + 0.05f;
-			toScale.y = scale.y + 0.05f;
-			
-			onKill(object);
-		} else if(other instanceof MultiplierPiece) {
-			other.destroy();
-		} else if(other instanceof Bullet){
-			if(particlesInRange.size() > 250){
-				for(int i = 0; i < particlesInRange.size(); i+=2){
-					Entity p = particlesInRange.get(i);
-					Vector2f acceleration = p.getAcceleration();
-					acceleration.x += FastMath.randomf(-4, 4);
-					acceleration.y += FastMath.randomf(-4, 4);
-				}
-			}
-		}
+		
 	}
 
 	public void onKill(Entity object){
