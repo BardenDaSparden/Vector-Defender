@@ -126,9 +126,9 @@ public class Player extends Entity{
 			@Override
 			public void process(ContactEvent event) {
 				ICollidable other = event.other;
-				if(other.getGroupMask() == Masks.Collision.ENEMY){
+				if((other.getGroupMask() & Masks.Collision.ENEMY) == Masks.Collision.ENEMY){
 					kill();
-				} else if(other.getGroupMask() == Masks.Collision.MULTIPLIER){
+				} else if((other.getGroupMask() & Masks.Collision.MULTIPLIER) == Masks.Collision.MULTIPLIER){
 					stats.increaseMultiplier();
 				}
 			}
