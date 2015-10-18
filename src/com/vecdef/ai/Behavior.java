@@ -11,6 +11,7 @@ public abstract class Behavior{
 		this.scene = scene;
 	}
 	
+	public abstract void create(Entity self);
 	public abstract void update(Entity self);
 	public abstract void destroy(Entity self);
 	
