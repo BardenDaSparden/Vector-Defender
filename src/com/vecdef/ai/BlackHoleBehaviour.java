@@ -25,10 +25,6 @@ public class BlackHoleBehaviour extends Behavior{
 	static final float ENEMY_ATTRACT = 0.0005f;
 	static final float PLAYER_ATTRACT = 0.00025f;
 	
-	int time = 0;
-	Vector2f toScale = new Vector2f(0, 0);
-	int wobbleSpeed = 4;
-	
 	int numKills = 0;
 	int maxKills = 10;
 	
@@ -58,11 +54,7 @@ public class BlackHoleBehaviour extends Behavior{
 				int group = other.getGroupMask();
 				
 				if((group & Masks.Collision.ENEMY) == Masks.Collision.ENEMY){
-					
 					Entity enemy = (Entity)other;
-					Vector2f scale = self.getTransform().getScale();
-					toScale.x = scale.x + 0.05f;
-					toScale.y = scale.y + 0.05f;
 					onKill(enemy);
 				} else if((group & Masks.Collision.BULLET) == Masks.Collision.BULLET){
 					if(particlesInRange.size() > 250){
@@ -128,14 +120,6 @@ public class BlackHoleBehaviour extends Behavior{
 	    	
 	    	affectEnemy(object, enemy);
 	    }
-	    
-	    Vector2f scale = object.getTransform().getScale();
-	    toScale.x = scale.x + (float)Math.signum(FastMath.sind(time * wobbleSpeed)) * 0.001f;
-	    toScale.y = toScale.x;
-	    
-	    scale.set(approach(scale.x, toScale.x, 0.95f), approach(scale.y, toScale.y, 0.95f));
-	    
-	    time++;
 	}
 	
 	private void affectParticle(Entity blackHole, Entity particle){
@@ -178,25 +162,16 @@ public class BlackHoleBehaviour extends Behavior{
 		return (lenSqr <= BLACK_HOLE_RADIUS * BLACK_HOLE_RADIUS);
 	}
 
-	private float approach(float start, float end, float w){
-		return start + (end - start) * w;
-	}
-	
-	public void onCollision(Entity object, Entity other) {
-		
-	}
-
 	public void onKill(Entity object){
 		if (numKills < maxKills){
 			numKills++;
-			wobbleSpeed++;
 		}
 			
 		if (numKills == maxKills){
-			destroy(object);
+			object.expire();
 			for (int i = 0; i < 8; i++){
 				float a = FastMath.random() * 360.0F;
-		        Vector2f pos = object.getTransform().getTranslation().add(new Vector2f(FastMath.cosd(a) * object.getRadius(), FastMath.sind(a) * object.getRadius()));
+		        Vector2f pos = object.getTransform().getTranslation().add(new Vector2f(FastMath.cosd(a) * object.getRadius() + 5, FastMath.sind(a) * object.getRadius() + 5));
 		        Enemy e = Enemy.createChaser(pos, scene);
 		        scene.add(e);
 			}
