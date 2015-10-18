@@ -11,12 +11,14 @@ import com.vecdef.objects.Player;
 
 public class HUDController {
 
+	private Renderer renderer;
 	private OrthogonalCamera camera;
 	private Player player;
 	private Texture liveTexture, bombTexture;
 	private BitmapFont defaultFont, scoreFont;
 	
-	public HUDController(Scene scene, int width, int height){
+	public HUDController(Renderer renderer, Scene scene, int width, int height){
+		this.renderer = renderer;
 		camera = new OrthogonalCamera(width, height);
 		player = scene.getPlayer();
 		defaultFont = Resources.getFont("imagine16");
@@ -25,7 +27,7 @@ public class HUDController {
 		bombTexture = Resources.getTexture("bomb");
 	}
 	
-	public void draw(Renderer renderer){
+	public void draw(){
 		
 		renderer.setCamera(camera);
 		SpriteBatch spriteBatch = renderer.SpriteBatch();
