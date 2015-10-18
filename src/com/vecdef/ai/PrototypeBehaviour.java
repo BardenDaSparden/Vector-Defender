@@ -37,7 +37,6 @@ public class PrototypeBehaviour extends Behavior{
 	
 	@Override
 	public void destroy(Entity object) {
-		// TODO Auto-generated method stub
 		
 	}
 	
