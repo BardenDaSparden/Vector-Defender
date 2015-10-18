@@ -88,6 +88,7 @@ public class Enemy extends Entity{
 	
 	public void destroy(){
 	     int numPieces = FastMath.randomi(1, 4);
+	     final int numParticles = 30;
 	     float speed = 2;
 	     
 	     for(int i = 0; i < numPieces; i++){
@@ -95,6 +96,28 @@ public class Enemy extends Entity{
 	    	 float a = FastMath.random() * 360; 
 	    	 piece.velocity = new Vector2f(FastMath.cosd(a) * speed, FastMath.sind(a) * speed);
 	    	 scene.add(piece);
+	     }
+	     
+	     
+	     Vector2f position = getTransform().getTranslation();
+	     Vector2f offset = new Vector2f();
+	     float radius = 32;
+	     float pSpeed = 7.25f;
+	     
+	     for(int i = 0; i < numParticles; i++){
+	    	 
+	    	 float angle = (float) (((float)i / (float)numParticles) * Math.PI * 2);
+	    	 offset.x = (float)Math.cos(angle) * radius;
+	    	 offset.y = (float)Math.sin(angle) * radius;
+	    	 
+	    	 Particle particle = new Particle(position.x, position.y, new Vector4f(1, 0.5f, 0, 1), scene);
+	    	 
+	    	 particle.getTransform().setOrientation((float)Math.toDegrees(angle));
+	    	 particle.getTransform().getTranslation().addi(offset);
+	    	 
+	    	 particle.getVelocity().set((float)Math.cos(angle) * pSpeed, (float)Math.sin(angle) * pSpeed);
+	    	 
+	    	 scene.add(particle);
 	     }
 	     
 	     for(Behavior b : behaviors)
