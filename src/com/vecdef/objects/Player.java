@@ -57,7 +57,7 @@ public class Player extends Entity{
 	float bulletSpeed = 15;
 	Timer weaponTimer = new Timer(5);
 	Timer respawnTimer = new Timer(90);
-	int firingMode = FIRING_MODE_0;
+	int firingMode = FIRING_MODE_1;
 	boolean canUseWeapon = false;
 	
 	float time = 0.0f;
