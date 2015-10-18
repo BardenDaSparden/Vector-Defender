@@ -19,6 +19,11 @@ public class FollowerBehavior extends Behavior{
 		super(scene);
 	}
   
+	@Override
+	public void create(Entity self){
+		
+	}
+	
 	public void update(Entity object){
 		time += 4;
 	  

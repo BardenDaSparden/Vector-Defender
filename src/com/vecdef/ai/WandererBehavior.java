@@ -23,6 +23,11 @@ public class WandererBehavior extends Behavior{
 		gridHeight = grid.getHeight();
 	}
 	
+	@Override
+	public void create(Entity self){
+		
+	}
+	
 	public void update(Entity object){
 		
 		if(!vIsSet){

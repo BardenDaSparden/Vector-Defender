@@ -18,6 +18,11 @@ public class ZoomerBehaviour extends Behavior{
 	}
 	
 	@Override
+	public void create(Entity self){
+		
+	}
+	
+	@Override
 	public void update(Entity self) {
 		if(!isVelocitySet){
 			isVelocitySet = true;

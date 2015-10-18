@@ -17,6 +17,11 @@ public class ChaserBehaviour extends Behavior{
 		super(scene);
 	}
 	
+	@Override
+	public void create(Entity self){
+		
+	}
+	
 	public void update(Entity object){
 		  if (speed < maxSpeed)
 			  speed += 0.1F;

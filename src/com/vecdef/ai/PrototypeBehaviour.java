@@ -18,6 +18,11 @@ public class PrototypeBehaviour extends Behavior{
 		super(scene);
 	}
 	
+	@Override
+	public void create(Entity self){
+		
+	}
+	
 	public void update(Entity object){	
 		scene.getGrid().applyExplosiveForce(50, new Vector3f(object.getTransform().getTranslation().x, object.getTransform().getTranslation().y, 0), 100);
 		
