@@ -43,7 +43,7 @@ public class PlayState{
 	    
 	    scene = new Scene(renderer);
 	    spawner = new EnemySpawner(scene);
-	    hudController = new HUDController(scene, Display.getWidth(), Display.getHeight());
+	    hudController = new HUDController(renderer, scene, Display.getWidth(), Display.getHeight());
 
 	    scene.add(reticle);
 	}
@@ -82,7 +82,7 @@ public class PlayState{
 		
 	    renderer.setCamera(camera);
 	    scene.draw();
-	    hudController.draw(renderer);
+	    hudController.draw();
 	    
 	    if(state == State.PAUSED){
 	    	SpriteBatch sb = renderer.SpriteBatch();
