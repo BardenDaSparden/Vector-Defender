@@ -70,7 +70,6 @@ public class RenderSystem {
 		
 		//renderer.setCamera(camera);
 		ShapeRenderer sRenderer = renderer.ShapeRenderer();
-		SpriteBatch batch = renderer.SpriteBatch();
 		
 		for(int i  = 0; i < renderables.size(); i++){
 			IRenderable renderable = renderables.get(i);
