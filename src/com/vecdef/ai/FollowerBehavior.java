@@ -10,8 +10,7 @@ import com.vecdef.objects.Player;
 
 public class FollowerBehavior extends Behavior{
 	
-	private static final float MAX_SPEED = 2.5f;
-	
+	final float MAX_SPEED = 2.5f;
 	float speed = 3.5f;
 	int time = 0;
   
@@ -46,7 +45,7 @@ public class FollowerBehavior extends Behavior{
 	}
 
 	@Override
-	public void destroy(Entity object) {
-		// TODO Auto-generated method stub
+	public void destroy(Entity self) {
+		
 	}
 }
