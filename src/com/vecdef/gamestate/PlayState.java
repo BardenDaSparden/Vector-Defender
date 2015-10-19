@@ -10,6 +10,7 @@ import org.javatroid.graphics.SpriteBatch;
 import org.javatroid.math.Vector2f;
 import org.lwjgl.opengl.Display;
 
+import com.vecdef.objects.EnemyFactory;
 import com.vecdef.objects.Entity;
 import com.vecdef.objects.Masks;
 import com.vecdef.objects.Reticle;
@@ -32,6 +33,7 @@ public class PlayState{
 	
 	Scene scene;
 	
+	EnemyFactory factory;
 	EnemySpawner spawner;
 	HUDController hudController;
 	
@@ -42,7 +44,9 @@ public class PlayState{
 		mousePosition = new Vector2f();
 	    
 	    scene = new Scene(renderer);
-	    spawner = new EnemySpawner(scene);
+	    
+	    factory = new EnemyFactory(scene);
+	    spawner = new EnemySpawner(factory, scene);
 	    hudController = new HUDController(renderer, scene, Display.getWidth(), Display.getHeight());
 
 	    scene.add(reticle);
