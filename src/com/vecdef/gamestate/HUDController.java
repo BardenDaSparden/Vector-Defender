@@ -11,6 +11,9 @@ import com.vecdef.objects.Player;
 
 public class HUDController {
 
+	final String VERSION = "ALPHA v0.2";
+	final String AUTHOR = "Branden Monroe";	
+	
 	private Renderer renderer;
 	private OrthogonalCamera camera;
 	private Player player;
@@ -80,8 +83,8 @@ public class HUDController {
 	    defaultFont.drawStringCentered(0.5f, Display.getHeight() / 2 - 90, "Multiplier : " + player.getStats().getMultiplier(), spriteBatch);
 	    
 	    spriteBatch.setColor(1.0F, 1.0F, 1.0F, 0.4F);
-	    defaultFont.drawString(-Display.getWidth() / 2 + 20, -Display.getHeight() / 2 + 70, "PRE-ALPHA 0.12", spriteBatch);
-	    defaultFont.drawString(-Display.getWidth() / 2 + 20, -Display.getHeight() / 2 + 40, "BY Branden Monroe", spriteBatch);
+	    defaultFont.drawString(-Display.getWidth() / 2 + 20, -Display.getHeight() / 2 + 70, VERSION, spriteBatch);
+	    defaultFont.drawString(-Display.getWidth() / 2 + 20, -Display.getHeight() / 2 + 40, "By: " + AUTHOR, spriteBatch);
 		
 	    spriteBatch.end();
 	}
