@@ -6,7 +6,7 @@ import java.util.Random;
 
 import org.javatroid.math.Vector2f;
 
-import com.vecdef.objects.Enemy;
+import com.vecdef.objects.EnemyFactory;
 import com.vecdef.objects.Entity;
 import com.vecdef.objects.Grid;
 import com.vecdef.objects.Masks;
@@ -30,12 +30,14 @@ public class EnemySpawner{
 	float specialUnitSpawnChance = 500.0f;
 	float blackholeSpawnChance = 1200.0F;
 	
+	EnemyFactory factory;
 	Scene scene;
 	Player player;
 	
-	public EnemySpawner(Scene scene){
+	public EnemySpawner(EnemyFactory factory, Scene scene){
+		this.factory = factory;
 		this.scene = scene;
-		player = scene.getPlayer();
+		this.player = scene.getPlayer();
 		allEnemies = new ArrayList<Entity>();
 		allBlackholes = new ArrayList<Entity>();
 	}
@@ -44,7 +46,7 @@ public class EnemySpawner{
 		if(player.isDead())
 			return;
 		
-		int score = scene.getPlayer().getStats().getScore();
+		int score = player.getStats().getScore();
 		
 		allEnemies.clear();
 		scene.getEntitiesByType(Masks.Entities.ENEMY, allEnemies);
@@ -58,32 +60,27 @@ public class EnemySpawner{
 			return;
 		
 		if(canSpawn(basicUnitSpawnChance)){
-			Enemy enemy = Enemy.createWanderer(getSpawnPosition(), scene);
-			scene.add(enemy);
+			factory.createWanderer(getSpawnPosition());
 		}
 		
 		if(score >= 5000 && canSpawn(basicUnitSpawnChance)){
-			Enemy enemy = Enemy.createSeeker(getSpawnPosition(), scene);
-			scene.add(enemy);
+			factory.createSeeker(getSpawnPosition());
 		}
 		
 		if(score >= 15000 && canSpawn(stalkerUnitSpawnChance)){
-			Enemy enemy = Enemy.createFollower(getSpawnPosition(), scene);
-			scene.add(enemy);
+			factory.createFollower(getSpawnPosition());
 		}
 		
 		if(score >= 30000){
 			if(canSpawn(specialUnitSpawnChance)){
-				Enemy enemy = Enemy.createPrototype(getSpawnPosition(), scene);
-				scene.add(enemy);
+				factory.createPrototype(getSpawnPosition());
 			}
 		}
 		
 		if(blackholeCount < MAX_BLACK_HOLES){
 			if(score > 50000 && basicUnitSpawnChance > 30.0f){
 				if(canSpawn(blackholeSpawnChance)){
-					Enemy enemy = Enemy.createBlackHole(getSpawnPosition(), scene);
-					scene.add(enemy);
+					factory.createBlackHole(getSpawnPosition());
 				}
 			}
 		}
