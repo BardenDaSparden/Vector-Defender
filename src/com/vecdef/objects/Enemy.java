@@ -13,7 +13,6 @@ import com.vecdef.ai.FollowerBehavior;
 import com.vecdef.ai.PrototypeBehaviour;
 import com.vecdef.ai.StalkerBehaviour;
 import com.vecdef.ai.WandererBehavior;
-import com.vecdef.ai.ZoomerBehaviour;
 import com.vecdef.gamestate.Scene;
 import com.vecdef.model.LinePrimitive;
 import com.vecdef.model.Mesh;
@@ -385,83 +384,6 @@ public class Enemy extends Entity{
 	    enemy.killValue = 25;
 	    enemy.radius = 15;
 	    return enemy;
-	}
-	
-	public static Enemy createZoomer(Vector2f position, Scene scene){
-		Enemy enemy = new Enemy(scene);
-		enemy.transform.setTranslation(position);
-		
-		enemy.baseColor = new Vector4f(0.25f, 1, 0.25f, 1);
-		enemy.mesh = new Mesh();
-		
-		final int W = 8;
-		final int H = 8;
-		final int SPACING = 4;
-		
-		LinePrimitive l1 = new LinePrimitive();
-		l1.addVertex(new Vector2f(-W / 2f, - H / 2f), enemy.baseColor);
-		l1.addVertex(new Vector2f(-W / 2f,  H / 2f), enemy.baseColor);
-		
-		l1.addVertex(new Vector2f(-W / 2f,  H / 2f), enemy.baseColor);
-		l1.addVertex(new Vector2f(W / 2f,  H / 2f), enemy.baseColor);
-		
-		l1.addVertex(new Vector2f(W / 2f,  H / 2f), enemy.baseColor);
-		l1.addVertex(new Vector2f(W / 2f,  -H / 2f), enemy.baseColor);
-		
-		l1.addVertex(new Vector2f(W / 2f,  -H / 2f), enemy.baseColor);
-		l1.addVertex(new Vector2f(-W / 2f,  -H / 2f), enemy.baseColor);
-		
-		l1.addVertex(new Vector2f(-W / 2f, H / 2f + SPACING), enemy.baseColor);
-		l1.addVertex(new Vector2f(0, H + SPACING), enemy.baseColor);
-		
-		l1.addVertex(new Vector2f(0, H + SPACING), enemy.baseColor);
-		l1.addVertex(new Vector2f(W / 2f, H / 2f + SPACING), enemy.baseColor);
-		
-		l1.addVertex(new Vector2f(W / 2f, H / 2f + SPACING), enemy.baseColor);
-		l1.addVertex(new Vector2f(-W / 2f, H / 2f + SPACING), enemy.baseColor);
-		
-		
-		l1.addVertex(new Vector2f(-W / 2f, -H / 2f - SPACING), enemy.baseColor);
-		l1.addVertex(new Vector2f(0, -H - SPACING), enemy.baseColor);
-		
-		l1.addVertex(new Vector2f(0, -H - SPACING), enemy.baseColor);
-		l1.addVertex(new Vector2f(W / 2f, -H / 2f - SPACING), enemy.baseColor);
-		
-		l1.addVertex(new Vector2f(W / 2f, -H / 2f - SPACING), enemy.baseColor);
-		l1.addVertex(new Vector2f(-W / 2f, -H / 2f - SPACING), enemy.baseColor);
-		
-		
-		l1.addVertex(new Vector2f(-W / 2f - SPACING, -H / 2f), enemy.baseColor);
-		l1.addVertex(new Vector2f(-W / 2f - SPACING, H / 2f), enemy.baseColor);
-		
-		l1.addVertex(new Vector2f(-W / 2f - SPACING, H / 2f), enemy.baseColor);
-		l1.addVertex(new Vector2f(-W - SPACING, 0), enemy.baseColor);
-		
-		l1.addVertex(new Vector2f(-W - SPACING, 0), enemy.baseColor);
-		l1.addVertex(new Vector2f(-W / 2f - SPACING, -H / 2f), enemy.baseColor);
-		
-		
-		l1.addVertex(new Vector2f(W / 2f + SPACING, -H / 2f), enemy.baseColor);
-		l1.addVertex(new Vector2f(W / 2f + SPACING, H / 2f), enemy.baseColor);
-		
-		l1.addVertex(new Vector2f(W / 2f + SPACING, H / 2f), enemy.baseColor);
-		l1.addVertex(new Vector2f(W + SPACING, 0), enemy.baseColor);
-		
-		l1.addVertex(new Vector2f(W + SPACING, 0), enemy.baseColor);
-		l1.addVertex(new Vector2f(W / 2f + SPACING, -H / 2f), enemy.baseColor);
-		
-		MeshLayer layer = new MeshLayer();
-		layer.addPrimitive(l1);
-		
-		enemy.mesh.addLayer(layer);
-		
-		enemy.getTransform().setOrientation(0);
-		enemy.addBehavior(new ZoomerBehaviour(scene));
-		enemy.killValue = 20;
-		enemy.radius = 12;
-		enemy.health = 3;
-		
-		return enemy;
 	}
 	
 	public static Enemy createBlackHole(Vector2f position, Scene scene){
