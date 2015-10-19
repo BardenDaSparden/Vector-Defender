@@ -9,7 +9,7 @@ import org.javatroid.math.Vector3f;
 import com.vecdef.gamestate.Scene;
 import com.vecdef.objects.ContactEvent;
 import com.vecdef.objects.ContactEventListener;
-import com.vecdef.objects.Enemy;
+import com.vecdef.objects.EnemyFactory;
 import com.vecdef.objects.Entity;
 import com.vecdef.objects.ICollidable;
 import com.vecdef.objects.Masks;
@@ -35,8 +35,11 @@ public class BlackHoleBehaviour extends Behavior{
 	
 	ContactEventListener listener;
 	
-	public BlackHoleBehaviour(Scene scene){
+	EnemyFactory factory;
+	
+	public BlackHoleBehaviour(Scene scene, EnemyFactory factory){
 		super(scene);
+		this.factory = factory;
 		
 		particlesInRange = new ArrayList<Entity>();
 		piecesInRange = new ArrayList<Entity>();
@@ -182,8 +185,7 @@ public class BlackHoleBehaviour extends Behavior{
 			for(int i = 0; i < 8; i++){
 				float a = FastMath.random() * 360.0F;
 		        Vector2f pos = object.getTransform().getTranslation().add(new Vector2f(FastMath.cosd(a) * object.getRadius() + object.getRadius(), FastMath.sind(a) * object.getRadius() + object.getRadius()));
-		        Enemy e = Enemy.createChaser(pos, scene);
-		        scene.add(e);
+		        factory.createChaser(pos);
 			}
 		}
 		
