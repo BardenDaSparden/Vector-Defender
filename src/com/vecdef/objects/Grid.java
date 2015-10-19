@@ -26,7 +26,7 @@ public class Grid {
 	int rows;
 	int cols;
 	
-	Vector4f color = new Vector4f(0.05f, 0.43f, 1f, 0.28f);
+	Vector4f color = new Vector4f(0.05f, 0.43f, 1f, 0.22f);
 	
 	public Grid(int width, int height, int cellWidth, int cellHeight){
 		
