@@ -13,7 +13,7 @@ import com.vecdef.model.Primitive.DrawType;
 import debug.physics.PointMass;
 import debug.physics.Spring;
 
-public class Grid{
+public class Grid {
 	
 	ArrayList<Spring> springs = new ArrayList<Spring>();
 	ArrayList<PointMass> masses = new ArrayList<PointMass>();
@@ -25,7 +25,6 @@ public class Grid{
 	int cellHeight;
 	int rows;
 	int cols;
-	final Vector2f offset;
 	
 	Vector4f color = new Vector4f(0.05f, 0.43f, 1f, 0.28f);
 	
@@ -36,15 +35,13 @@ public class Grid{
 		this.cellWidth = cellWidth;
 		this.cellHeight = cellHeight;
 		
-		this.offset = new Vector2f(-cellWidth / 2.0f, -cellHeight / 2.0f);
-		
 		Vector2f min = new Vector2f(-gridWidth / 2.0F + 1.0F, -gridHeight / 2.0F + 1.0F);
 	    Vector2f max = new Vector2f(gridWidth / 2.0F - 1.0F, gridHeight / 2.0F - 1.0F);
 	    rows = (int)((max.y - min.y) / cellHeight) + 2;
 	    cols = (int)((max.x - min.x) / cellWidth) + 2;
 
-	    float offsetX = cellWidth / 2.0F;
-	    float offsetY = cellHeight / 2.0F;
+	    float offsetX = 0;
+	    float offsetY = 0;
 
 	    points = new PointMass[rows][cols];
 
