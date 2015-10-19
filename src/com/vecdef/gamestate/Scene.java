@@ -21,8 +21,6 @@ import com.vecdef.objects.Player;
 import com.vecdef.objects.RenderSystem;
 
 public class Scene {
-
-	final float TIME_STEP = 1.0f / 60.0f;
 	
 	Renderer renderer;
 	
@@ -139,7 +137,7 @@ public class Scene {
 			}
 		}
 			
-		physics.integrate(TIME_STEP);
+		physics.integrate();
 		
 		grid.update();
 		
@@ -201,8 +199,6 @@ public class Scene {
 		drawFullscreenFBO(bloom, null);
 		
 		//TODO move 2 lines to the beginning of HUDController's draw() method
-		batch.setShader(null);
-		glViewport(0, 0, Display.getWidth(), Display.getHeight());
 	}
 	
 	void setBlurSettings(float resolution, Vector2f blurDir){
