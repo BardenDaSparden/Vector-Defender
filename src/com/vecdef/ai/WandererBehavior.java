@@ -10,7 +10,7 @@ import com.vecdef.objects.Grid;
 
 public class WandererBehavior extends Behavior{
 	
-	float speed = 3f;	
+	float speed = 2f;	
 	int gridWidth;
 	int gridHeight;
 	
