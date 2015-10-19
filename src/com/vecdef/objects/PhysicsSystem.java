@@ -22,14 +22,14 @@ public class PhysicsSystem {
 		objects.remove(object);
 	}
 	
-	public void integrate(float dt){
+	public void integrate(){
 		for(int i = 0; i < objects.size(); i++){
 			IPhysics object = objects.get(i);
 			
 			Transform2D transform = object.getTransform();
 			//Vector2f position = transform.getTranslation();
 			
-			float newAngularVelocity = object.getAngularVelocity() + object.getTorque();
+			float newAngularVelocity = object.getAngularVelocity() + (object.getTorque());
 			float newOrientation = transform.getOrientation() + newAngularVelocity;
 			transform.setOrientation(newOrientation);
 			
