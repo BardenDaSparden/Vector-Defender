@@ -86,7 +86,7 @@ public class Enemy extends Entity{
 	     Vector2f position = getTransform().getTranslation();
 	     Vector2f offset = new Vector2f();
 	     float radius = 32;
-	     float pSpeed = 7f;
+	     float pSpeed = 6.5f;
 	     
 	     for(int i = 0; i < numParticles; i++){
 	    	 
@@ -95,6 +95,8 @@ public class Enemy extends Entity{
 	    	 offset.y = (float)Math.sin(angle) * radius;
 	    	 
 	    	 Particle particle = new Particle(position.x, position.y, baseColor, scene);
+	    	 
+	    	 particle.setMaxLife(30);
 	    	 
 	    	 particle.getTransform().setOrientation((float)Math.toDegrees(angle));
 	    	 particle.getTransform().getTranslation().addi(offset);
