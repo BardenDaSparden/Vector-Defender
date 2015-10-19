@@ -10,7 +10,7 @@ import com.vecdef.objects.Player;
 
 public class StalkerBehaviour extends Behavior{
 	
-	float speed = 3.0F;
+	float speed = 2.0F;
 	float angleSpeed = 4;
 	int time = 0;
 	
