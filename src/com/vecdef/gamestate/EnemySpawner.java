@@ -77,10 +77,6 @@ public class EnemySpawner{
 				Enemy enemy = Enemy.createPrototype(getSpawnPosition(), scene);
 				scene.add(enemy);
 			}
-			if(canSpawn(specialUnitSpawnChance)){
-				Enemy enemy = Enemy.createZoomer(getSpawnPosition(), scene);
-				scene.add(enemy);
-			}
 		}
 		
 		if(blackholeCount < MAX_BLACK_HOLES){
