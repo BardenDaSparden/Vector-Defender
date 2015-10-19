@@ -173,6 +173,18 @@ public class Player extends Entity{
 	    velocity.set(velocity.scale(VELOCITY_DAMPING));
 	    velocity.x = FastMath.clamp(-MAX_SPEED, MAX_SPEED, velocity.x);
 	    velocity.y = FastMath.clamp(-MAX_SPEED, MAX_SPEED, velocity.y);
+	    
+	    int gridWidth = scene.getGrid().getWidth();
+	    int gridHeight = scene.getGrid().getHeight();
+	    
+	    if ((getTransform().getTranslation().x < -gridWidth / 2) || (getTransform().getTranslation().x > gridWidth / 2)) {
+	    	getTransform().getTranslation().x = FastMath.clamp(-gridWidth / 2 + 1, gridWidth / 2 - 1, getTransform().getTranslation().x);
+	    }
+
+	    if ((getTransform().getTranslation().y < -gridHeight / 2) || (getTransform().getTranslation().y > gridHeight / 2)) {
+	    	getTransform().getTranslation().y = FastMath.clamp(-gridHeight / 2 + 1, gridHeight / 2 - 1, getTransform().getTranslation().y);
+	    }
+	    
 	}
 	
 	private void useBomb(){
