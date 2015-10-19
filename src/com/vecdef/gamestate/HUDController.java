@@ -1,5 +1,7 @@
 package com.vecdef.gamestate;
 
+import static org.lwjgl.opengl.GL11.glViewport;
+
 import org.javatroid.core.Resources;
 import org.javatroid.graphics.OrthogonalCamera;
 import org.javatroid.graphics.SpriteBatch;
@@ -31,10 +33,11 @@ public class HUDController {
 	}
 	
 	public void draw(){
-		
 		renderer.setCamera(camera);
 		SpriteBatch spriteBatch = renderer.SpriteBatch();
 		
+		glViewport(0, 0, Display.getWidth(), Display.getHeight());
+		spriteBatch.setShader(null);
 		spriteBatch.begin();
 		spriteBatch.setColor(1, 1, 1, 1);
 		
