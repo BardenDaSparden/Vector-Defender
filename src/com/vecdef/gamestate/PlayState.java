@@ -32,7 +32,7 @@ public class PlayState{
 	State state = State.PLAYING;
 	
 	Scene scene;
-	
+	SceneRenderer sceneRenderer;
 	EnemyFactory factory;
 	EnemySpawner spawner;
 	HUDController hudController;
@@ -43,8 +43,8 @@ public class PlayState{
 		reticle = new Reticle(scene);
 		mousePosition = new Vector2f();
 	    
-	    scene = new Scene(renderer);
-	    
+	    scene = new Scene();
+	    sceneRenderer = new SceneRenderer(scene, renderer);
 	    factory = new EnemyFactory(scene);
 	    spawner = new EnemySpawner(factory, scene);
 	    hudController = new HUDController(renderer, scene, Display.getWidth(), Display.getHeight());
@@ -85,7 +85,7 @@ public class PlayState{
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		
 	    renderer.setCamera(camera);
-	    scene.draw();
+	    sceneRenderer.draw();
 	    hudController.draw();
 	    
 	    if(state == State.PAUSED){
