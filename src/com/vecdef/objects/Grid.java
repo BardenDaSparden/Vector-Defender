@@ -27,6 +27,7 @@ public class Grid {
 	int cols;
 	
 	Vector4f color = new Vector4f(0.05f, 0.43f, 1f, 0.22f);
+	//Vector4f color = new Vector4f(1, 0.15f, 0, 0.22f);
 	
 	public Grid(int width, int height, int cellWidth, int cellHeight){
 		
@@ -66,6 +67,9 @@ public class Grid {
 
 	    float stiff = 0.25F;
 	    float damping = 0.001F;
+	    
+	   // float stiff = 0.125f;
+	    //float damping = 0.001f;
 	    
 	    PointMass start;
 	    PointMass right;
