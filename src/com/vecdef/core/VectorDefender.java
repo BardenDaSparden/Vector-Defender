@@ -2,6 +2,7 @@ package com.vecdef.core;
 
 import org.javatroid.core.Input;
 import org.javatroid.core.Resources;
+
 import com.vecdef.gamestate.PlayState;
 
 public class VectorDefender implements Application {
@@ -36,6 +37,6 @@ public class VectorDefender implements Application {
 
 	@Override
 	public void destroy() {
-		
+		playState.destroy();
 	}
 }
