@@ -156,7 +156,7 @@ public class BlackHoleBehaviour extends Behavior{
 	
 	void affectEnemy(Entity blackHole, Entity enemy){
 		Vector2f direction = blackHole.getTransform().getTranslation().sub(enemy.getTransform().getTranslation()).normalize();
-		enemy.getAcceleration().addi(direction);
+		enemy.getAcceleration().addi(direction.scale(4));
 	}
 	
 	private void affectPlayer(Entity blackHole, Entity player){
@@ -187,10 +187,12 @@ public class BlackHoleBehaviour extends Behavior{
 		}
 		
 		if(numKills >= maxKills){
-			for(int i = 0; i < 8; i++){
+			for(int i = 0; i < 6; i++){
 				float a = FastMath.random() * 360.0F;
 		        Vector2f pos = self.getTransform().getTranslation().add(new Vector2f(FastMath.cosd(a) * self.getRadius() + self.getRadius(), FastMath.sind(a) * self.getRadius() + self.getRadius()));
-		        factory.createChaser(pos);
+		        Vector2f accel = new Vector2f(FastMath.cosd(a), FastMath.sind(a));
+		        Enemy chaser = factory.createChaser(pos);
+		        chaser.getAcceleration().set(accel);
 			}
 		}
 	
