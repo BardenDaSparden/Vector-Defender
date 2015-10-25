@@ -23,8 +23,6 @@ public class BlackHoleBehaviour extends Behavior{
 	static final int BLACK_HOLE_RADIUS = 300;
 	
 	static final float BULLET_REPULSION = 0.0015f;
-	static final float MULTIPLIER_ATTRACT = 0.003f;
-	static final float ENEMY_ATTRACT = 0.0005f;
 	static final float PLAYER_ATTRACT = 0.00025f;
 	
 	int numKills = 0;
@@ -152,13 +150,13 @@ public class BlackHoleBehaviour extends Behavior{
 	}
 	
 	void affectPiece(Entity blackHole, Entity piece){
-		Vector2f v = piece.getVelocity().add(blackHole.getTransform().getTranslation().sub(piece.getTransform().getTranslation()).scale(MULTIPLIER_ATTRACT));
-		piece.getVelocity().set(v);
+		Vector2f direction = blackHole.getTransform().getTranslation().sub(piece.getTransform().getTranslation()).normalize();
+		piece.getAcceleration().addi(direction);
 	}
 	
-	void affectEnemy(Entity enemy, Entity other){
-		Vector2f v = enemy.getTransform().getTranslation().sub(other.getTransform().getTranslation()).scale(ENEMY_ATTRACT);
-		other.getVelocity().addi(v);
+	void affectEnemy(Entity blackHole, Entity enemy){
+		Vector2f direction = blackHole.getTransform().getTranslation().sub(enemy.getTransform().getTranslation()).normalize();
+		enemy.getAcceleration().addi(direction);
 	}
 	
 	private void affectPlayer(Entity blackHole, Entity player){
