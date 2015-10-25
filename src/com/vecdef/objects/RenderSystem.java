@@ -3,12 +3,8 @@ package com.vecdef.objects;
 import java.util.ArrayList;
 
 import org.javatroid.graphics.BlendState;
-import org.javatroid.graphics.FrameBuffer;
-import org.javatroid.graphics.OrthogonalCamera;
-import org.javatroid.graphics.ShaderProgram;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
-import org.lwjgl.opengl.Display;
 
 import com.vecdef.gamestate.Renderer;
 import com.vecdef.gamestate.ShapeRenderer;
@@ -24,36 +20,12 @@ public class RenderSystem {
 	private ArrayList<RenderData> lines;
 	private ArrayList<RenderData> triangles;
 	
-	final Vector2f BLUR_DIR_V = new Vector2f(0, 1);
-	final Vector2f BLUR_DIR_H = new Vector2f(1, 0);
-	
-	OrthogonalCamera camera;
-	int screenWidth;
-	int screenHeight;
-	FrameBuffer diffuseBuffer;
-	
-	FrameBuffer blurBuffer;
-	
-	ShaderProgram blur;
+	float rScale = 1;
 	
 	public RenderSystem(){
 		renderables = new ArrayList<IRenderable>();
 		lines = new ArrayList<RenderData>();
 		triangles = new ArrayList<RenderData>();
-		
-		screenWidth = Display.getWidth();
-		screenHeight = Display.getHeight();
-		camera = new OrthogonalCamera(screenWidth, screenHeight);
-		
-		diffuseBuffer = new FrameBuffer(screenWidth, screenHeight);
-		
-		blurBuffer = new FrameBuffer(screenWidth, screenHeight);
-		
-		blur = new ShaderProgram();
-		blur.addVertexShader("shaders/blur.vs");
-		blur.addFragmentShader("shaders/blur.fs");
-		blur.compile();
-		
 	}
 	
 	public void add(IRenderable renderable){
@@ -98,7 +70,7 @@ public class RenderSystem {
 		
 		//diffuseBuffer.bind();
 		//diffuseBuffer.clear(0, 0, 0, 1);
-			renderList(DrawType.LINES, BlendState.ADDITIVE, lines, sRenderer);
+			renderList(DrawType.LINES, BlendState.ALPHA, lines, sRenderer);
 			renderList(DrawType.TRIANGLES, BlendState.ALPHA, triangles, sRenderer);
 		//diffuseBuffer.release();
 		
@@ -138,7 +110,7 @@ public class RenderSystem {
 			
 			for(int j = 0; j < positions.size(); j++){
 				Vector2f position = new Vector2f(positions.get(j));
-				position = position.mul(transform.getScale()).rotate(transform.getOrientation()).add(transform.getTranslation());
+				position = position.mul(transform.getScale().add(new Vector2f(rScale, rScale))).rotate(transform.getOrientation()).add(transform.getTranslation());
 				
 				Vector4f color = new Vector4f(colors.get(j));
 				color.w *= opacity;
@@ -150,6 +122,10 @@ public class RenderSystem {
 	
 	public int numObjects(){
 		return renderables.size();
+	}
+
+	public void setRelativeScale(float scale){
+		this.rScale = scale;
 	}
 	
 }
