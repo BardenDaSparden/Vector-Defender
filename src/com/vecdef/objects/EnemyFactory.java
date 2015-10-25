@@ -29,8 +29,6 @@ public class EnemyFactory {
 		enemy.transform.setTranslation(position);
 		enemy.baseColor = new Vector4f(1, 1, 0, 1);
 	    enemy.killValue = 5;
-	    enemy.addBehavior(new WandererBehavior(scene));
-		
 		enemy.mesh = new Mesh();
 		final float WIDTH = 26;
 		final float HEIGHT = 26;
@@ -76,6 +74,7 @@ public class EnemyFactory {
 		MeshLayer bodyLayer = new MeshLayer();
 		bodyLayer.addPrimitive(p1);
 		enemy.mesh.addLayer(bodyLayer);
+		enemy.addBehavior(new WandererBehavior(scene, enemy));
 		
 		scene.add(enemy);
 	}
@@ -85,7 +84,6 @@ public class EnemyFactory {
 		enemy.transform.setTranslation(position);
 		enemy.baseColor = new Vector4f(0, 1, 0.5f, 1);
 	    enemy.killValue = 10;
-	    enemy.addBehavior(new FollowerBehavior(scene));
 		enemy.mesh = new Mesh();
 		
 		final float WIDTH = 20;
@@ -106,6 +104,7 @@ public class EnemyFactory {
 		MeshLayer bodyLayer = new MeshLayer();
 		bodyLayer.addPrimitive(topBody);
 		enemy.mesh.addLayer(bodyLayer);
+		enemy.addBehavior(new FollowerBehavior(scene, enemy));
 	    scene.add(enemy);
 	}
 	
@@ -115,8 +114,6 @@ public class EnemyFactory {
 		enemy.baseColor = new Vector4f(0.5f, 0.1f, 0.75f, 1);
 	    enemy.killValue = 15;
 	    enemy.radius = 10;
-	    enemy.addBehavior(new StalkerBehaviour(scene));
-	    
 		enemy.mesh = new Mesh();
 		
 		final float WIDTH = 18;
@@ -177,6 +174,7 @@ public class EnemyFactory {
 		MeshLayer bodyLayer = new MeshLayer();
 		bodyLayer.addPrimitive(body);
 		enemy.mesh.addLayer(bodyLayer);
+		enemy.addBehavior(new StalkerBehaviour(scene, enemy));
 		
 	    scene.add(enemy);
 	}
@@ -187,7 +185,6 @@ public class EnemyFactory {
 		enemy.baseColor = new Vector4f(0.85f, 0.54f, 0, 1);
 	    enemy.killValue = 5;
 	    enemy.radius = 10;
-	    enemy.addBehavior(new ChaserBehaviour(scene));
 		enemy.mesh = new Mesh();
 		
 		LinePrimitive l1 = new LinePrimitive();
@@ -205,6 +202,7 @@ public class EnemyFactory {
 		
 		enemy.mesh.addLayer(layer);
 		
+		enemy.addBehavior(new ChaserBehaviour(scene, enemy));
 	    scene.add(enemy);
 	}
 	
@@ -217,7 +215,6 @@ public class EnemyFactory {
 		enemy.transform.setOrientation(player.getTransform().getTranslation().sub(position).direction());
 	    enemy.killValue = 25;
 	    enemy.radius = 15;
-		enemy.addBehavior(new PrototypeBehaviour(scene));
 		enemy.mesh = new Mesh();
 		
 		final float WIDTH = 20;
@@ -245,6 +242,7 @@ public class EnemyFactory {
 		bodyLayer.addPrimitive(topBody);
 		
 		enemy.mesh.addLayer(bodyLayer);
+		enemy.addBehavior(new PrototypeBehaviour(scene, enemy));
 		
 	    scene.add(enemy);
 	}
@@ -258,7 +256,6 @@ public class EnemyFactory {
 	    enemy.radius = 16;
 	    enemy.groupMask = Masks.Collision.ENEMY | Masks.Collision.BLACK_HOLE;
 	    enemy.collisionMask |= Masks.Collision.MULTIPLIER | Masks.Collision.ENEMY;
-	    enemy.addBehavior(new BlackHoleBehaviour(scene, this));
 	    enemy.mesh = new Mesh();
 	    
 		float radius = enemy.radius;
@@ -278,7 +275,7 @@ public class EnemyFactory {
 	    MeshLayer bodyLayer = new MeshLayer();
 	    bodyLayer.addPrimitive(circle);
 	    enemy.mesh.addLayer(bodyLayer);
-	    
+	    enemy.addBehavior(new BlackHoleBehaviour(scene, this, enemy));
 	    enemy.addContactListener(new ContactEventListener() {
 			
 			@Override
