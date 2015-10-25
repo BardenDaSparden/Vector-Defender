@@ -1,10 +1,15 @@
 package com.vecdef.gamestate;
 
 import java.util.ArrayList;
+
 import org.javatroid.math.Vector2f;
+
 import com.vecdef.objects.CollisionSystem;
 import com.vecdef.objects.Entity;
 import com.vecdef.objects.Grid;
+import com.vecdef.objects.ICollidable;
+import com.vecdef.objects.IPhysics;
+import com.vecdef.objects.IRenderable;
 import com.vecdef.objects.PhysicsSystem;
 import com.vecdef.objects.Player;
 import com.vecdef.objects.RenderSystem;
@@ -38,6 +43,30 @@ public class Scene {
 		physics.add(entity);
 		renders.add(entity);
 		entities.add(entity);
+	}
+	
+	public void addCollidable(ICollidable collidable){
+		collision.add(collidable);
+	}
+	
+	public void removeCollidable(ICollidable collidable){
+		collision.remove(collidable);
+	}
+	
+	public void addPhysics(IPhysics physicsObj ){
+		physics.add(physicsObj);
+	}
+	
+	public void removePhysics(IPhysics physicsObj ){
+		physics.remove(physicsObj);
+	}
+	
+	public void addRenderable(IRenderable renderable){
+		renders.add(renderable);
+	}
+	
+	public void removeRenderable(IRenderable renderable){
+		renders.remove(renderable);
 	}
 	
 	public void remove(Entity entity){
