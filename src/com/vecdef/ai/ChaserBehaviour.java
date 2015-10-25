@@ -2,9 +2,9 @@ package com.vecdef.ai;
 
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
-
 import com.vecdef.gamestate.Scene;
-import com.vecdef.objects.Entity;
+import com.vecdef.objects.Enemy;
+import com.vecdef.objects.EnemySpawnEffect;
 import com.vecdef.objects.Player;
 
 public class ChaserBehaviour extends Behavior{
@@ -13,16 +13,21 @@ public class ChaserBehaviour extends Behavior{
 	float maxSpeed = 15.0F;
 	float random = 0.3f + FastMath.random() * 0.7f;
 	
-	public ChaserBehaviour(Scene scene){
-		super(scene);
+	EnemySpawnEffect spawnEffect;
+	
+	public ChaserBehaviour(Scene scene, Enemy enemy){
+		super(scene, enemy);
+		spawnEffect = new EnemySpawnEffect(scene, enemy, 250, 250);
+		scene.add(spawnEffect);
 	}
 	
 	@Override
-	public void create(Entity self){
+	public void create(){
 		
 	}
 	
-	public void update(Entity self){
+	@Override
+	public void update(){
 		  if (speed < maxSpeed)
 			  speed += 0.1F;
 			
@@ -33,7 +38,7 @@ public class ChaserBehaviour extends Behavior{
 	  }
 
 	@Override
-	public void destroy(Entity self) {
-		
+	public void destroy() {
+		spawnEffect.destroy();
 	}
 }

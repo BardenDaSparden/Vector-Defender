@@ -1,18 +1,20 @@
 package com.vecdef.ai;
 
 import com.vecdef.gamestate.Scene;
-import com.vecdef.objects.Entity;
+import com.vecdef.objects.Enemy;
 
 public abstract class Behavior{
 	
-	Scene scene;
+	protected Scene scene;
+	protected Enemy self;
 	
-	public Behavior(Scene scene){
+	public Behavior(Scene scene, Enemy enemy){
 		this.scene = scene;
+		this.self = enemy;
 	}
 	
-	public abstract void create(Entity self);
-	public abstract void update(Entity self);
-	public abstract void destroy(Entity self);
+	public abstract void create();
+	public abstract void update();
+	public abstract void destroy();
 	
 }
