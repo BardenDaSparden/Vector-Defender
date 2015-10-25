@@ -1,5 +1,7 @@
 package com.vecdef.gamestate;
 
+import static org.lwjgl.opengl.GL11.glViewport;
+
 import java.util.ArrayList;
 
 import org.javatroid.core.Input;
@@ -10,12 +12,13 @@ import org.javatroid.graphics.SpriteBatch;
 import org.javatroid.math.Vector2f;
 import org.lwjgl.opengl.Display;
 
+import com.vecdef.core.MinimFileHandler;
 import com.vecdef.objects.EnemyFactory;
 import com.vecdef.objects.Entity;
 import com.vecdef.objects.Masks;
 import com.vecdef.objects.Reticle;
 
-import static org.lwjgl.opengl.GL11.*;
+import ddf.minim.Minim;
 
 public class PlayState{
 
@@ -23,28 +26,33 @@ public class PlayState{
 		PLAYING, PAUSED
 	}
 	
+	MinimFileHandler fileHandler;
+	Minim minim;
+	
 	Renderer renderer;
 	OrthogonalCamera camera;
-	
 	Reticle reticle;
 	Vector2f mousePosition;
-	
 	State state = State.PLAYING;
 	
 	Scene scene;
+	
 	SceneRenderer sceneRenderer;
 	EnemyFactory factory;
 	EnemySpawner spawner;
 	HUDController hudController;
 	
 	public void initialize() {
+		fileHandler = new MinimFileHandler();
+		minim = new Minim(fileHandler);
+		
 		renderer = new Renderer();
 		camera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
 		reticle = new Reticle(scene);
 		mousePosition = new Vector2f();
 	    
 	    scene = new Scene();
-	    sceneRenderer = new SceneRenderer(scene, renderer);
+	    sceneRenderer = new SceneRenderer(scene, renderer, minim);
 	    factory = new EnemyFactory(scene);
 	    spawner = new EnemySpawner(factory, scene);
 	    hudController = new HUDController(renderer, scene, Display.getWidth(), Display.getHeight());
@@ -99,7 +107,7 @@ public class PlayState{
 	}
 	
 	public void destroy(){
-		
+		sceneRenderer.destroy();
 	}
 	
 	ArrayList<Entity> objectsToDestroy = new ArrayList<Entity>();
