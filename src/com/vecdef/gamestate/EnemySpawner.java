@@ -78,7 +78,7 @@ public class EnemySpawner{
 		}
 		
 		if(blackholeCount < MAX_BLACK_HOLES){
-			if(score > 50000 && basicUnitSpawnChance > 30.0f){
+			if(score > 50000){
 				if(canSpawn(blackholeSpawnChance)){
 					factory.createBlackHole(getSpawnPosition());
 				}
