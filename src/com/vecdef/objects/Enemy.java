@@ -57,14 +57,14 @@ public class Enemy extends Entity{
 		if(!bCreate){
 			for(int i = 0; i < n; i++){
 				Behavior behavior = behaviors.get(i);
-				behavior.create(this);
+				behavior.create();
 			}
 			bCreate = true;
 		}
 		
 		for(int i = 0; i < n; i++){
 			Behavior behavior = behaviors.get(i);
-			behavior.update(this);
+			behavior.update();
 		}
 	}
 	
@@ -102,21 +102,21 @@ public class Enemy extends Entity{
 	    	 particle.getTransform().getTranslation().addi(offset);
 	    	 
 	    	 particle.getVelocity().set((float)Math.cos(angle) * pSpeed, (float)Math.sin(angle) * pSpeed);
-	    	 particle.addBehavior(new Behavior(scene) {
+	    	 particle.addBehavior(new Behavior(scene, this) {
 				
 	    		 @Override
-    			public void create(Entity self){
+    			public void create(){
     				
     			}
 	    		 
 				@Override
-				public void update(Entity self) {
+				public void update() {
 					Vector2f velocity = self.getVelocity();
 					self.getTransform().setOrientation((float)Math.toDegrees(Math.atan2(velocity.y, velocity.x)));
 				}
 				
 				@Override
-				public void destroy(Entity self) {
+				public void destroy() {
 					
 				}
 			});
@@ -127,7 +127,7 @@ public class Enemy extends Entity{
 	     int n = behaviors.size();
 	     for(int i = 0; i < n; i++){
 			Behavior behavior = behaviors.get(i);
-			behavior.destroy(this);
+			behavior.destroy();
 	     }
 	}
 	
