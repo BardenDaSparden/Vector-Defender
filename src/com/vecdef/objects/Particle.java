@@ -61,7 +61,7 @@ public class Particle extends Entity{
 	public void update() {
 		
 		for(Behavior b : behaviors){
-			b.update(this);
+			b.update();
 		}
 		
 		opacity = (maxLife - currentLife) / (float)maxLife;
@@ -71,7 +71,9 @@ public class Particle extends Entity{
 	}
 	
 	public void destroy(){
-		
+		for(Behavior b : behaviors){
+			b.destroy();
+		}
 	}
 	
 	@Override
