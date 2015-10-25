@@ -10,9 +10,7 @@ import com.vecdef.objects.Player;
 
 public class PrototypeBehaviour extends Behavior{
 	
-	float currentOrientation = 0.0F;
-	float targetOrientation = 0.0F;
-	float speed = 7.6F;
+	float speed = 5.0f;
 	
 	EnemySpawnEffect spawnEffect;
 	
