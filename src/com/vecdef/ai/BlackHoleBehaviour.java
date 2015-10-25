@@ -136,7 +136,7 @@ public class BlackHoleBehaviour extends Behavior{
         Vector2f dPos = blackHole.getTransform().getTranslation().sub(particle.getTransform().getTranslation());
         float distance = dPos.length();
         Vector2f n = dPos.scale(1.0F / distance);
-        pVel.addi(n.scale(10000.0F).scale(1.0F / (distance * distance + 10000.0F)));
+        pVel.addi(n.scale(5000.0F).scale(1.0F / (distance * distance + 5000.0F)));
         
         Particle p = (Particle) particle;
         p.setCurrentLife(0);
