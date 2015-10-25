@@ -66,6 +66,9 @@ public class Particle extends Entity{
 		
 		opacity = (maxLife - currentLife) / (float)maxLife;
 		currentLife++;
+		
+		transform.setOrientation(velocity.direction());
+		
 		if(currentLife >= maxLife)
 			expire();
 	}
