@@ -18,7 +18,7 @@ public class ChaserBehaviour extends Behavior{
 	
 	EnemySpawnEffect spawnEffect;
 	
-	Timer activateTimer = new Timer(60);
+	Timer activateTimer = new Timer(20);
 	boolean active = false;
 	
 	public ChaserBehaviour(Scene scene, Enemy enemy){
