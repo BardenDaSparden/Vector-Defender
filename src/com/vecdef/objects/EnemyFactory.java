@@ -23,7 +23,7 @@ public class EnemyFactory {
 		this.scene = scene;
 	}
 	
-	public void createWanderer(Vector2f position){
+	public Enemy createWanderer(Vector2f position){
 		Enemy enemy = new Enemy(scene);
 		
 		enemy.transform.setTranslation(position);
@@ -77,12 +77,13 @@ public class EnemyFactory {
 		enemy.addBehavior(new WandererBehavior(scene, enemy));
 		
 		scene.add(enemy);
+		return enemy;
 	}
 	
-	public void createSeeker(Vector2f position){
+	public Enemy createSeeker(Vector2f position){
 		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
-		enemy.baseColor = new Vector4f(0, 1, 0.5f, 1);
+		enemy.baseColor = new Vector4f(0, 1, 0, 1);
 	    enemy.killValue = 10;
 		enemy.mesh = new Mesh();
 		
@@ -106,12 +107,13 @@ public class EnemyFactory {
 		enemy.mesh.addLayer(bodyLayer);
 		enemy.addBehavior(new FollowerBehavior(scene, enemy));
 	    scene.add(enemy);
+	    return enemy;
 	}
 	
-	public void createFollower(Vector2f position){
+	public Enemy createFollower(Vector2f position){
 		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
-		enemy.baseColor = new Vector4f(0.5f, 0.1f, 0.75f, 1);
+		enemy.baseColor = new Vector4f(0.75f, 0.4f, 0, 1);
 	    enemy.killValue = 15;
 	    enemy.radius = 10;
 		enemy.mesh = new Mesh();
@@ -177,25 +179,27 @@ public class EnemyFactory {
 		enemy.addBehavior(new StalkerBehaviour(scene, enemy));
 		
 	    scene.add(enemy);
+	    return enemy;
 	}
 	
-	public void createChaser(Vector2f position){
+	public Enemy createChaser(Vector2f position){
 		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
-		enemy.baseColor = new Vector4f(0.85f, 0.54f, 0, 1);
+		enemy.baseColor = new Vector4f(0, 1, 1, 1);
 	    enemy.killValue = 5;
 	    enemy.radius = 10;
 		enemy.mesh = new Mesh();
+		enemy.angularVelocity = FastMath.randomi(-2, 2);
 		
 		LinePrimitive l1 = new LinePrimitive();
-		l1.addVertex(new Vector2f(-3, -3), enemy.baseColor);
-		l1.addVertex(new Vector2f(0, 3.5f), enemy.baseColor);
+		l1.addVertex(new Vector2f(-6, -6), enemy.baseColor);
+		l1.addVertex(new Vector2f(0, 6f), enemy.baseColor);
 		
-		l1.addVertex(new Vector2f(0, 3.5f), enemy.baseColor);
-		l1.addVertex(new Vector2f(3, -3), enemy.baseColor);
+		l1.addVertex(new Vector2f(0, 6f), enemy.baseColor);
+		l1.addVertex(new Vector2f(6, -6), enemy.baseColor);
 		
-		l1.addVertex(new Vector2f(3, -3), enemy.baseColor);
-		l1.addVertex(new Vector2f(-3, -3), enemy.baseColor);
+		l1.addVertex(new Vector2f(6, -6), enemy.baseColor);
+		l1.addVertex(new Vector2f(-6, -6), enemy.baseColor);
 		
 		MeshLayer layer = new MeshLayer();
 		layer.addPrimitive(l1);
@@ -204,13 +208,14 @@ public class EnemyFactory {
 		
 		enemy.addBehavior(new ChaserBehaviour(scene, enemy));
 	    scene.add(enemy);
+	    return enemy;
 	}
 	
-	public void createPrototype(Vector2f position){
+	public Enemy createPrototype(Vector2f position){
 		Player player = scene.getPlayer();
 		
 		Enemy enemy = new Enemy(scene);
-		enemy.baseColor = new Vector4f(1, 0.15f, 0, 1);
+		enemy.baseColor = new Vector4f(1, 0, 1, 1);
 		enemy.transform.setTranslation(position);
 		enemy.transform.setOrientation(player.getTransform().getTranslation().sub(position).direction());
 	    enemy.killValue = 25;
@@ -245,9 +250,10 @@ public class EnemyFactory {
 		enemy.addBehavior(new PrototypeBehaviour(scene, enemy));
 		
 	    scene.add(enemy);
+	    return enemy;
 	}
 	
-	public void createBlackHole(Vector2f position){
+	public Enemy createBlackHole(Vector2f position){
 		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
 		enemy.baseColor = new Vector4f(1, 1, 1, 1);
@@ -290,6 +296,7 @@ public class EnemyFactory {
 		});
 	    
 	    scene.add(enemy);
+	    return enemy;
 	}
 	
 }
