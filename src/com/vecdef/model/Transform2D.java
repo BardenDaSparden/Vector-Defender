@@ -20,6 +20,12 @@ public class Transform2D {
 		this(translation, orientation, new Vector2f(1, 1));
 	}
 	
+	public Transform2D(Transform2D transform){
+		this.translation = new Vector2f(transform.getTranslation());
+		this.orientation = transform.getOrientation();
+		this.scale = new Vector2f(transform.getScale());
+	}
+	
 	public Transform2D(Vector2f translation, float orientation, Vector2f scale){
 		this.translation = translation;
 		this.orientation = orientation;
