@@ -113,7 +113,7 @@ public class EnemyFactory {
 	public Enemy createFollower(Vector2f position){
 		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
-		enemy.baseColor = new Vector4f(0.75f, 0.4f, 0, 1);
+		enemy.baseColor = new Vector4f(1, 0.75f, 0, 1);
 	    enemy.killValue = 15;
 	    enemy.radius = 10;
 		enemy.mesh = new Mesh();
