@@ -12,6 +12,7 @@ import org.javatroid.graphics.SpriteBatch;
 import org.javatroid.math.Vector2f;
 import org.lwjgl.opengl.Display;
 
+import com.toolkit.inputstate.Gamepad;
 import com.vecdef.core.MinimFileHandler;
 import com.vecdef.objects.EnemyFactory;
 import com.vecdef.objects.Entity;
@@ -31,6 +32,7 @@ public class PlayState{
 	
 	Renderer renderer;
 	OrthogonalCamera camera;
+	Gamepad gamepad;
 	Reticle reticle;
 	Vector2f mousePosition;
 	State state = State.PLAYING;
@@ -48,10 +50,11 @@ public class PlayState{
 		
 		renderer = new Renderer();
 		camera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
+		gamepad = new Gamepad();
 		reticle = new Reticle(scene);
 		mousePosition = new Vector2f();
 	    
-	    scene = new Scene();
+	    scene = new Scene(gamepad);
 	    sceneRenderer = new SceneRenderer(scene, renderer, minim);
 	    factory = new EnemyFactory(scene);
 	    spawner = new EnemySpawner(factory, scene);
@@ -61,7 +64,7 @@ public class PlayState{
 	}
 	
 	public void update() {
-		if(Input.isKeyPressed(Input.KEY_ESCAPE)){
+		if(gamepad.isButtonPressed(Gamepad.START_BUTTON)){
 			if(state == State.PLAYING)
 				state = State.PAUSED;
 			else if(state == State.PAUSED)
@@ -86,6 +89,7 @@ public class PlayState{
 		mousePosition.x = Input.getMouseX() * Display.getWidth() / 2 + camera.getTranslation().x;
 		mousePosition.y = Input.getMouseY() * Display.getHeight() / 2 + camera.getTranslation().y;
 		reticle.getTransform().getTranslation().set(mousePosition);
+		gamepad.poll();
 	}
 	
 	public void draw(){
