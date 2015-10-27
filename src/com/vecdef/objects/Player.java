@@ -1,8 +1,6 @@
 package com.vecdef.objects;
 
 import java.util.ArrayList;
-
-import org.javatroid.core.Input;
 import org.javatroid.core.Timer;
 import org.javatroid.core.TimerCallback;
 import org.javatroid.math.CubicInterpolator;
@@ -12,6 +10,7 @@ import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 import org.javatroid.math.Vector4f;
 
+import com.toolkit.inputstate.Gamepad;
 import com.vecdef.gamestate.Scene;
 import com.vecdef.model.LinePrimitive;
 import com.vecdef.model.Mesh;
@@ -19,17 +18,12 @@ import com.vecdef.model.MeshLayer;
 
 public class Player extends Entity{
 	
+	private static final float MOVEMENT_DEADZONE = 0.25f;
+	private static final float ORIENTATION_DEADZONE = 0.2f;
+	
 	private static final float MAX_SPEED = 8.0F;
 	private static final float VELOCITY_DAMPING = 0.975F;
 	private static final float THRUST = 0.75F;
-	
-	private static final int MOVE_LEFT = Input.KEY_A;
-	private static final int MOVE_RIGHT = Input.KEY_D;
-	private static final int MOVE_UP = Input.KEY_W;
-	private static final int MOVE_DOWN = Input.KEY_S;
-	
-	private static final int USE_WEAPON = 0;
-	private static final int USE_BOMB = 1;
 	
 	private static final int FIRING_MODE_0 = 0;
 	private static final int FIRING_MODE_1 = 1;
@@ -63,8 +57,14 @@ public class Player extends Entity{
 	float time = 0.0f;
 	PlayerStats stats;
 	
-	public Player(Scene scene){
+	Vector2f orientation = new Vector2f();
+	Vector2f newOrientation = new Vector2f();
+	
+	Gamepad gamepad;
+	
+	public Player(Scene scene, Gamepad gamepad){
 		super(scene);
+		this.gamepad = gamepad;
 		
 		transform.setTranslation(new Vector2f(0, 0));
 		mesh = new Mesh();
@@ -149,24 +149,52 @@ public class Player extends Entity{
 			return;
 		}
 		
-		if(Input.isKeyDown(MOVE_UP))
-			acceleration.y = THRUST;
+		float lax = (float)gamepad.getLeftStick().getX();
+		float lay = (float)gamepad.getLeftStick().getY();
+		float rax = (float)gamepad.getRightStick().getX();
+		float ray = (float)gamepad.getRightStick().getY();
 		
-		if(Input.isKeyDown(MOVE_DOWN))
-			acceleration.y = -THRUST;
+		boolean bRightBumper = gamepad.isButtonPressed(Gamepad.RB_BUTTON);
 		
-		if(Input.isKeyDown(MOVE_LEFT))
-			acceleration.x = -THRUST;
+		Vector2f direction = new Vector2f();
 		
-		if(Input.isKeyDown(MOVE_RIGHT)){
-			acceleration.x = THRUST;
+		boolean setAccel = false;
+		boolean setOrientation = false;
+		boolean bShoot = false;
+		
+		if(Math.abs(lax) > MOVEMENT_DEADZONE){
+			direction.x = lax;
+			setAccel = true;
+		}
+		if(Math.abs(lay) > MOVEMENT_DEADZONE){
+			direction.y = lay;
+			setAccel = true;
 		}
 		
-		if ((Input.isMouseButtonPressed(USE_BOMB)) && stats.getBombCount() > 0){
+		if(Math.abs(rax) > ORIENTATION_DEADZONE){
+			newOrientation.x = rax;
+			setOrientation = true;
+			bShoot = true;
+		}
+		
+		if(Math.abs(ray) > ORIENTATION_DEADZONE){
+			newOrientation.y = ray;
+			setOrientation = true;
+			bShoot = true;
+		}
+		
+		direction.normalizei();
+		if(setAccel)
+			acceleration.set(direction.scale(THRUST));
+		
+		orientation = interpolator.interpolate(orientation, newOrientation, 0.3f);
+		transform.setOrientation(orientation.direction());
+			
+		if (bRightBumper && stats.getBombCount() > 0){
 			useBomb();
 		}
 
-	    if ((Input.isMouseButtonDown(USE_WEAPON)) && canUseWeapon){
+	    if (bShoot && canUseWeapon){
 	    	fireWeapon();
 	    }
 	    
@@ -184,7 +212,6 @@ public class Player extends Entity{
 	    if ((getTransform().getTranslation().y < -gridHeight / 2) || (getTransform().getTranslation().y > gridHeight / 2)) {
 	    	getTransform().getTranslation().y = FastMath.clamp(-gridHeight / 2 + 1, gridHeight / 2 - 1, getTransform().getTranslation().y);
 	    }
-	    
 	}
 	
 	private void useBomb(){
