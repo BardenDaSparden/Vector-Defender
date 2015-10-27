@@ -88,41 +88,41 @@ public class Enemy extends Entity{
 	     float radius = 32;
 	     float pSpeed = 6.5f;
 	     
-	     for(int i = 0; i < numParticles; i++){
-	    	 
-	    	 float angle = (float) (((float)i / (float)numParticles) * Math.PI * 2);
-	    	 offset.x = (float)Math.cos(angle) * radius;
-	    	 offset.y = (float)Math.sin(angle) * radius;
-	    	 
-	    	 Particle particle = new Particle(position.x, position.y, baseColor, scene);
-	    	 
-	    	 particle.setMaxLife(30);
-	    	 
-	    	 particle.getTransform().setOrientation((float)Math.toDegrees(angle));
-	    	 particle.getTransform().getTranslation().addi(offset);
-	    	 
-	    	 particle.getVelocity().set((float)Math.cos(angle) * pSpeed, (float)Math.sin(angle) * pSpeed);
-	    	 particle.addBehavior(new Behavior(scene, this) {
-				
-	    		 @Override
-    			public void create(){
-    				
-    			}
-	    		 
-				@Override
-				public void update() {
-					Vector2f velocity = self.getVelocity();
-					self.getTransform().setOrientation((float)Math.toDegrees(Math.atan2(velocity.y, velocity.x)));
-				}
-				
-				@Override
-				public void destroy() {
-					
-				}
-			});
-	    	 
-	    	 scene.add(particle);
-	     }
+//	     for(int i = 0; i < numParticles; i++){
+//	    	 
+//	    	 float angle = (float) (((float)i / (float)numParticles) * Math.PI * 2);
+//	    	 offset.x = (float)Math.cos(angle) * radius;
+//	    	 offset.y = (float)Math.sin(angle) * radius;
+//	    	 
+//	    	 Particle particle = new Particle(position.x, position.y, baseColor, scene);
+//	    	 
+//	    	 particle.setMaxLife(30);
+//	    	 
+//	    	 particle.getTransform().setOrientation((float)Math.toDegrees(angle));
+//	    	 particle.getTransform().getTranslation().addi(offset);
+//	    	 
+//	    	 particle.getVelocity().set((float)Math.cos(angle) * pSpeed, (float)Math.sin(angle) * pSpeed);
+//	    	 particle.addBehavior(new Behavior(scene, this) {
+//				
+//	    		 @Override
+//    			public void create(){
+//    				
+//    			}
+//	    		 
+//				@Override
+//				public void update() {
+//					Vector2f velocity = self.getVelocity();
+//					self.getTransform().setOrientation((float)Math.toDegrees(Math.atan2(velocity.y, velocity.x)));
+//				}
+//				
+//				@Override
+//				public void destroy() {
+//					
+//				}
+//			});
+//	    	 
+//	    	 scene.add(particle);
+//	     }
 	     
 	     int n = behaviors.size();
 	     for(int i = 0; i < n; i++){
