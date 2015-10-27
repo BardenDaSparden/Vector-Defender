@@ -189,13 +189,13 @@ public class SceneRenderer {
 		
 		
 		
-		bloom.bind();
-			bloom.clear(0, 0, 0, 1);
-			drawFullscreenFBO(blurFBO[1], null);
-			drawFullscreenFBO(blurFBO[3], null);
-			drawFullscreenFBO(blurFBO[5], null);
-			drawFullscreenFBO(blurFBO[7], null);
-		bloom.release();
+//		bloom.bind();
+//			bloom.clear(0, 0, 0, 1);
+//			drawFullscreenFBO(blurFBO[1], null);
+//			drawFullscreenFBO(blurFBO[3], null);
+//			drawFullscreenFBO(blurFBO[5], null);
+//			drawFullscreenFBO(blurFBO[7], null);
+//		bloom.release();
 		
 		batch.setColor(1, 1, 1, opacity);
 		drawFullscreenFBO(bloom, null);
