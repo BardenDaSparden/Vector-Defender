@@ -9,5 +9,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/Minim"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Controller Tool"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
