@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.javatroid.math.Vector2f;
 
+import com.toolkit.inputstate.Gamepad;
 import com.vecdef.objects.CollisionSystem;
 import com.vecdef.objects.Entity;
 import com.vecdef.objects.Grid;
@@ -18,6 +19,7 @@ public class Scene {
 	
 	Renderer renderer;
 	
+	Gamepad gamepad;
 	Player player;
 	Grid grid;
 	ArrayList<Entity> entities;
@@ -27,9 +29,9 @@ public class Scene {
 	protected PhysicsSystem physics;
 	protected RenderSystem renders;
 	
-	public Scene(){
-		player = new Player(this);
-		grid = new Grid(1920, 1080, 40, 40);
+	public Scene(Gamepad gamepad){
+		player = new Player(this, gamepad);
+		grid = new Grid(600, 600, 70, 70);
 		entities = new ArrayList<Entity>();
 		entitiesToRemove = new ArrayList<Entity>();
 		collision = new CollisionSystem();
