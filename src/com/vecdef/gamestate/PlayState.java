@@ -21,7 +21,7 @@ import com.vecdef.objects.Reticle;
 
 import ddf.minim.Minim;
 
-public class PlayState{
+public class PlayState extends GState{
 
 	enum State{
 		PLAYING, PAUSED
@@ -43,6 +43,10 @@ public class PlayState{
 	EnemyFactory factory;
 	EnemySpawner spawner;
 	HUDController hudController;
+	
+	public PlayState(GameState gamestate){
+		super(gamestate);
+	}
 	
 	public void initialize() {
 		fileHandler = new MinimFileHandler();
