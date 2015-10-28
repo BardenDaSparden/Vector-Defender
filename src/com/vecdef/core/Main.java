@@ -7,14 +7,14 @@ public class Main {
 		ApplicationSettings settings = new ApplicationSettings();
 		ApplicationLauncher launcher = new ApplicationLauncher(application, settings);
 		
-		settings.width = 1280;
-		settings.height = 720;
+		settings.width = 1600;
+		settings.height = 900;
 		settings.fullscreen = true;
 		settings.borderless = false;
 		settings.vsync = false;
 		settings.renderrate = 60;
 		settings.updaterate = 60;
-		settings.multisamples = 1;
+		settings.multisamples = 4;
 			
 		launcher.launch();		
 	}
