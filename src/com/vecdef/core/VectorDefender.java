@@ -3,11 +3,13 @@ package com.vecdef.core;
 import org.javatroid.core.Input;
 import org.javatroid.core.Resources;
 
+import com.vecdef.gamestate.GameState;
+import com.vecdef.gamestate.MenuState;
 import com.vecdef.gamestate.PlayState;
 
 public class VectorDefender implements Application {
 	
-	PlayState playState;
+	GameState gamestate;
 	
 	@Override
 	public void initialize() {
@@ -20,23 +22,24 @@ public class VectorDefender implements Application {
 		Resources.loadTexture("textures/white.png", "blank");
 		Input.setMouseGrabbed(true);
 		
-		playState = new PlayState();
-		playState.initialize();
+		gamestate = new GameState();
+		gamestate.registerGState(new MenuState(gamestate));
+		gamestate.registerGState(new PlayState(gamestate));
 	}
 
 	@Override
 	public void update() {
-		playState.update();
+		gamestate.update();
 		Input.update();
 	}
 	
 	@Override
 	public void render() {
-		playState.draw();
+		gamestate.draw();
 	}
 
 	@Override
 	public void destroy() {
-		playState.destroy();
+		gamestate.destroy();
 	}
 }
