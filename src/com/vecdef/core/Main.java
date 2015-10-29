@@ -1,5 +1,8 @@
 package com.vecdef.core;
 
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
+
 public class Main {
 
 	public static void main(String[] args){
@@ -7,8 +10,10 @@ public class Main {
 		ApplicationSettings settings = new ApplicationSettings();
 		ApplicationLauncher launcher = new ApplicationLauncher(application, settings);
 		
-		settings.width = 1600;
-		settings.height = 900;
+		DisplayMode desktopDisplay = Display.getDesktopDisplayMode();
+		
+		settings.width = desktopDisplay.getWidth();
+		settings.height = desktopDisplay.getHeight();
 		settings.fullscreen = true;
 		settings.borderless = false;
 		settings.vsync = false;
