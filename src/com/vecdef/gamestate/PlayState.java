@@ -4,7 +4,6 @@ import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.util.ArrayList;
 
-import org.javatroid.core.Input;
 import org.javatroid.core.Resources;
 import org.javatroid.graphics.GLUtil;
 import org.javatroid.graphics.OrthogonalCamera;
@@ -17,7 +16,6 @@ import com.vecdef.core.MinimFileHandler;
 import com.vecdef.objects.EnemyFactory;
 import com.vecdef.objects.Entity;
 import com.vecdef.objects.Masks;
-import com.vecdef.objects.Reticle;
 
 import ddf.minim.Minim;
 
@@ -32,9 +30,6 @@ public class PlayState extends GState{
 	
 	Renderer renderer;
 	OrthogonalCamera camera;
-	Gamepad gamepad;
-	Reticle reticle;
-	Vector2f mousePosition;
 	State state = State.PLAYING;
 	
 	Scene scene;
@@ -54,21 +49,16 @@ public class PlayState extends GState{
 		
 		renderer = new Renderer();
 		camera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
-		gamepad = new Gamepad();
-		reticle = new Reticle(scene);
-		mousePosition = new Vector2f();
 	    
-	    scene = new Scene(gamepad);
+	    scene = new Scene(gamestate.gamepad);
 	    sceneRenderer = new SceneRenderer(scene, renderer, minim);
 	    factory = new EnemyFactory(scene);
 	    spawner = new EnemySpawner(factory, scene);
 	    hudController = new HUDController(renderer, scene, Display.getWidth(), Display.getHeight());
-
-	    scene.add(reticle);
 	}
 	
 	public void update() {
-		if(gamepad.isButtonPressed(Gamepad.START_BUTTON)){
+		if(gamestate.gamepad.isButtonPressed(Gamepad.START_BUTTON)){
 			if(state == State.PLAYING)
 				state = State.PAUSED;
 			else if(state == State.PAUSED)
@@ -78,7 +68,6 @@ public class PlayState extends GState{
 		switch(state){
 			case PLAYING:
 				spawner.trySpawn();
-				scene.getPlayer().look(mousePosition);
 				scene.update();
 				break;
 			
@@ -89,11 +78,6 @@ public class PlayState extends GState{
 		Vector2f position = scene.getPlayer().getTransform().getTranslation();
 		camera.getTranslation().set(position.x, position.y);
 		camera.update();
-		
-		mousePosition.x = Input.getMouseX() * Display.getWidth() / 2 + camera.getTranslation().x;
-		mousePosition.y = Input.getMouseY() * Display.getHeight() / 2 + camera.getTranslation().y;
-		reticle.getTransform().getTranslation().set(mousePosition);
-		gamepad.poll();
 	}
 	
 	public void draw(){
