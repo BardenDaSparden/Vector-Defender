@@ -21,9 +21,9 @@ public class Player extends Entity{
 	private static final float MOVEMENT_DEADZONE = 0.25f;
 	private static final float ORIENTATION_DEADZONE = 0.2f;
 	
-	private static final float MAX_SPEED = 8.0F;
-	private static final float VELOCITY_DAMPING = 0.975F;
-	private static final float THRUST = 0.75F;
+	private static final float MAX_SPEED = 10F;
+	private static final float VELOCITY_DAMPING = 0.979F;
+	private static final float THRUST = 1.2F;
 	
 	private static final int FIRING_MODE_0 = 0;
 	private static final int FIRING_MODE_1 = 1;
@@ -48,17 +48,17 @@ public class Player extends Entity{
 	
 	//Possible refactor for new firing modes
 	boolean useOffset1 = true;
-	float bulletSpeed = 15;
-	Timer weaponTimer = new Timer(5);
-	Timer respawnTimer = new Timer(90);
-	int firingMode = FIRING_MODE_1;
+	float bulletSpeed = 19;
+	Timer weaponTimer = new Timer(4);
+	Timer respawnTimer = new Timer(45);
+	int firingMode = FIRING_MODE_0;
 	boolean canUseWeapon = false;
 	
 	float time = 0.0f;
 	PlayerStats stats;
 	
-	Vector2f orientation = new Vector2f();
-	Vector2f newOrientation = new Vector2f();
+	Vector2f orientation = new Vector2f(0, 1);
+	Vector2f newOrientation = new Vector2f(0, 1);
 	
 	Gamepad gamepad;
 	
@@ -159,7 +159,6 @@ public class Player extends Entity{
 		Vector2f direction = new Vector2f();
 		
 		boolean setAccel = false;
-		boolean setOrientation = false;
 		boolean bShoot = false;
 		
 		if(Math.abs(lax) > MOVEMENT_DEADZONE){
@@ -173,13 +172,11 @@ public class Player extends Entity{
 		
 		if(Math.abs(rax) > ORIENTATION_DEADZONE){
 			newOrientation.x = rax;
-			setOrientation = true;
 			bShoot = true;
 		}
 		
 		if(Math.abs(ray) > ORIENTATION_DEADZONE){
 			newOrientation.y = ray;
-			setOrientation = true;
 			bShoot = true;
 		}
 		
@@ -187,7 +184,7 @@ public class Player extends Entity{
 		if(setAccel)
 			acceleration.set(direction.scale(THRUST));
 		
-		orientation = interpolator.interpolate(orientation, newOrientation, 0.3f);
+		orientation = interpolator.interpolate(orientation, newOrientation, 0.4f);
 		transform.setOrientation(orientation.direction());
 			
 		if (bRightBumper && stats.getBombCount() > 0){
@@ -212,12 +209,11 @@ public class Player extends Entity{
 	    if ((getTransform().getTranslation().y < -gridHeight / 2) || (getTransform().getTranslation().y > gridHeight / 2)) {
 	    	getTransform().getTranslation().y = FastMath.clamp(-gridHeight / 2 + 1, gridHeight / 2 - 1, getTransform().getTranslation().y);
 	    }
+	    
+	    scene.getGrid().applyExplosiveForce(velocity.length() * 2.5f, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0), 100);
 	}
 	
 	private void useBomb(){
-		Vector3f pos = new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F);
-		scene.getGrid().applyExplosiveForce(1200.0F, pos, 1000.0F);
-	    
 		allEnemies.clear();
 		scene.getEntitiesByType(Masks.Entities.ENEMY, allEnemies);
 		
@@ -279,7 +275,7 @@ public class Player extends Entity{
 	}
 
 	public void respawn(){
-		scene.getGrid().applyDirectedForce(new Vector3f(0.0F, 0.0F, 10000.0F), new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 400.0F);
+		scene.getGrid().applyExplosiveForce(500, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 400.0F);
 	}
 	
 	public void reset(){
@@ -294,6 +290,7 @@ public class Player extends Entity{
 	    
 	    allEnemies.clear();
 		scene.getEntitiesByType(Masks.Entities.ENEMY, allEnemies);
+		scene.getGrid().applyExplosiveForce(100, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 1000.0F);
 		
 		int n = allEnemies.size();
 	    for(int i = 0; i < n; i++){
