@@ -20,8 +20,6 @@ public class RenderSystem {
 	private ArrayList<RenderData> lines;
 	private ArrayList<RenderData> triangles;
 	
-	float rScale = 1;
-	
 	public RenderSystem(){
 		renderables = new ArrayList<IRenderable>();
 		lines = new ArrayList<RenderData>();
@@ -110,7 +108,7 @@ public class RenderSystem {
 			
 			for(int j = 0; j < positions.size(); j++){
 				Vector2f position = new Vector2f(positions.get(j));
-				position = position.mul(transform.getScale().add(new Vector2f(rScale, rScale))).rotate(transform.getOrientation()).add(transform.getTranslation());
+				position = position.mul(transform.getScale()).rotate(transform.getOrientation()).add(transform.getTranslation());
 				
 				Vector4f color = new Vector4f(colors.get(j));
 				color.w *= opacity;
@@ -122,10 +120,6 @@ public class RenderSystem {
 	
 	public int numObjects(){
 		return renderables.size();
-	}
-
-	public void setRelativeScale(float scale){
-		this.rScale = scale;
 	}
 	
 }
