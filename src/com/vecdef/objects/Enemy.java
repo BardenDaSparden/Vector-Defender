@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
+import org.javatroid.math.Vector3f;
 import org.javatroid.math.Vector4f;
 import com.vecdef.ai.Behavior;
 import com.vecdef.gamestate.Scene;
@@ -123,6 +124,8 @@ public class Enemy extends Entity{
 	    	 
 	    	 scene.add(particle);
 	     }
+	     
+	     scene.getGrid().applyImplosiveForce(1200, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 30), 200);
 	     
 	     int n = behaviors.size();
 	     for(int i = 0; i < n; i++){
