@@ -3,6 +3,8 @@ package com.vecdef.gamestate;
 import java.util.ArrayList;
 
 import org.javatroid.math.Vector2f;
+import org.javatroid.math.Vector3f;
+import org.lwjgl.opengl.Display;
 
 import com.toolkit.inputstate.Gamepad;
 import com.vecdef.objects.CollisionSystem;
@@ -31,13 +33,15 @@ public class Scene {
 	
 	public Scene(Gamepad gamepad){
 		player = new Player(this, gamepad);
-		grid = new Grid(600, 600, 70, 70);
+		grid = new Grid(Display.getWidth() + 200, Display.getHeight() + 200, 40, 40);
 		entities = new ArrayList<Entity>();
 		entitiesToRemove = new ArrayList<Entity>();
 		collision = new CollisionSystem();
 		physics = new PhysicsSystem();
 		renders = new RenderSystem();
+		
 		add(player);
+		grid.applyDirectedForce(new Vector3f(0, 0, -400), new Vector3f(0, 0, 0), 500);
 	}
 	
 	public void add(Entity entity){
