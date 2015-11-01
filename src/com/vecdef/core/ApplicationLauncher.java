@@ -10,6 +10,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class ApplicationLauncher {
 
+	static boolean isRunning = true;
 	Application application;
 	ApplicationSettings settings;
 	
@@ -55,8 +56,6 @@ public class ApplicationLauncher {
 			Display.setFullscreen(settings.fullscreen);
 			Display.setVSyncEnabled(settings.vsync);
 			Display.create(format, attributes);
-			//glViewport(0, 0, Display.getWidth(), Display.getHeight());
-			
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
@@ -78,7 +77,7 @@ public class ApplicationLauncher {
 		
 		application.initialize();
 		
-		while(!Display.isCloseRequested()){
+		while(!Display.isCloseRequested() && isRunning){
 			previousTime = currentTime;
 			currentTime = System.nanoTime();
 			unprocessedUpdateTime += (currentTime - previousTime);
@@ -104,6 +103,10 @@ public class ApplicationLauncher {
 		application.destroy();
 		AL.destroy();
 		Display.destroy();
+	}
+	
+	public static void exit(){
+		isRunning = false;
 	}
 	
 }
