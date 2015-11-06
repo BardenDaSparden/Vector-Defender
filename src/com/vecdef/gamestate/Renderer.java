@@ -19,6 +19,10 @@ public class Renderer {
 		spriteBatch.setCamera(camera);
 	}
 	
+	public OrthogonalCamera getCamera(){
+		return spriteBatch.getCamera();
+	}
+	
 	public SpriteBatch SpriteBatch(){
 		return spriteBatch;
 	}
