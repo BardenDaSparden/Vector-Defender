@@ -12,12 +12,9 @@ import org.javatroid.math.Vector2f;
 import org.lwjgl.opengl.Display;
 
 import com.toolkit.inputstate.Gamepad;
-import com.vecdef.core.MinimFileHandler;
 import com.vecdef.objects.EnemyFactory;
 import com.vecdef.objects.Entity;
 import com.vecdef.objects.Masks;
-
-import ddf.minim.Minim;
 
 public class PlayState extends GState{
 
@@ -25,36 +22,36 @@ public class PlayState extends GState{
 		PLAYING, PAUSED
 	}
 	
-	MinimFileHandler fileHandler;
-	Minim minim;
-	
 	Renderer renderer;
 	OrthogonalCamera camera;
-	State state = State.PLAYING;
 	
+	State state = State.PLAYING;
 	Scene scene;
 	
 	SceneRenderer sceneRenderer;
 	EnemyFactory factory;
 	EnemySpawner spawner;
-	HUDController hudController;
+	HUD hudController;
+
+	long frameCount;
 	
 	public PlayState(GameState gamestate){
 		super(gamestate);
 	}
 	
 	public void initialize() {
-		fileHandler = new MinimFileHandler();
-		minim = new Minim(fileHandler);
 		
 		renderer = new Renderer();
 		camera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
-	    
-	    scene = new Scene(gamestate.gamepad);
-	    sceneRenderer = new SceneRenderer(scene, renderer, minim);
+		
+	    scene = new Scene(gamestate.gamepad, gamestate.analyzer);
+	    sceneRenderer = new SceneRenderer(scene, renderer);
 	    factory = new EnemyFactory(scene);
 	    spawner = new EnemySpawner(factory, scene);
-	    hudController = new HUDController(renderer, scene, Display.getWidth(), Display.getHeight());
+	    hudController = new HUD(this, scene, renderer, Display.getWidth(), Display.getHeight());
+	    
+//	    gamestate.player.nextTrack();
+	    scene.getPlayer().reset();
 	}
 	
 	public void update() {
@@ -67,23 +64,31 @@ public class PlayState extends GState{
 		
 		switch(state){
 			case PLAYING:
+				
+				Vector2f position = scene.getPlayer().getTransform().getTranslation();
+				camera.getTranslation().set(position.x, position.y);
+				camera.update();
+				
 				spawner.trySpawn();
 				scene.update();
+				frameCount++;
+				int liveCount = scene.getPlayer().getStats().getLiveCount();
+				if(liveCount < 0){
+					scene.getPlayer().getStats().writeHighscore();
+					frameCount = 0;
+					gamestate.previous();
+				}
 				break;
 			
 			case PAUSED:
 				break;
 		}
-		
-		Vector2f position = scene.getPlayer().getTransform().getTranslation();
-		camera.getTranslation().set(position.x, position.y);
-		camera.update();
 	}
 	
 	public void draw(){
 		GLUtil.clear(true, false, false, false);
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
-		
+	    
 	    renderer.setCamera(camera);
 	    sceneRenderer.draw();
 	    hudController.draw();
@@ -119,6 +124,10 @@ public class PlayState extends GState{
 		
 		spawner.reset();
 		scene.getPlayer().reset();
+	}
+	
+	public long getFrameCount(){
+		return frameCount;
 	}
 	
 }
