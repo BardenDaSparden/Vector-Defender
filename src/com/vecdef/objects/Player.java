@@ -1,11 +1,13 @@
 package com.vecdef.objects;
 
 import java.util.ArrayList;
+
 import org.javatroid.core.Timer;
 import org.javatroid.core.TimerCallback;
 import org.javatroid.math.CubicInterpolator;
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Interpolator;
+import org.javatroid.math.SineInterpolator;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 import org.javatroid.math.Vector4f;
@@ -22,15 +24,11 @@ public class Player extends Entity{
 	private static final float ORIENTATION_DEADZONE = 0.2f;
 	
 	private static final float MAX_SPEED = 10F;
-	private static final float VELOCITY_DAMPING = 0.979F;
-	private static final float THRUST = 1.2F;
+	private static final float VELOCITY_DAMPING = 0.97F;
+	private static final float THRUST = 0.75F;
 	
-	private static final int FIRING_MODE_0 = 0;
-	private static final int FIRING_MODE_1 = 1;
-	private static final int FIRING_MODE_2 = 2;
-	
-	static final float BODY_WIDTH = 17;
-	static final float BODY_HEIGHT = 9;
+	final float BODY_WIDTH = 17;
+	final float BODY_HEIGHT = 9;
 	
 	Mesh mesh;
 	Vector4f bodyColor = new Vector4f(1, 1, 1, 1);
@@ -40,6 +38,7 @@ public class Player extends Entity{
 	Vector4f bulletColor = new Vector4f(0.7f, 0.4f, 1, 1);
 	Vector2f weaponOffset1 = new Vector2f(25, 11);
 	Vector2f weaponOffset2 = new Vector2f(25, -11);
+	float aimDirection = 0;
 	
 	//Vector2f moveToSpawn = new Vector2f();
 	Interpolator interpolator = new CubicInterpolator(new Vector2f(0.35f, 0.0f), new Vector2f(1, 0.65f));
@@ -49,9 +48,8 @@ public class Player extends Entity{
 	//Possible refactor for new firing modes
 	boolean useOffset1 = true;
 	float bulletSpeed = 19;
-	Timer weaponTimer = new Timer(4);
+	Timer weaponTimer = new Timer(3);
 	Timer respawnTimer = new Timer(45);
-	int firingMode = FIRING_MODE_0;
 	boolean canUseWeapon = false;
 	
 	float time = 0.0f;
@@ -59,6 +57,10 @@ public class Player extends Entity{
 	
 	Vector2f orientation = new Vector2f(0, 1);
 	Vector2f newOrientation = new Vector2f(0, 1);
+	
+	boolean shieldAdded = false;
+	boolean bShield = false;
+	ShieldComponent shield;
 	
 	Gamepad gamepad;
 	
@@ -137,9 +139,16 @@ public class Player extends Entity{
 		allEnemies = new ArrayList<Entity>();
 		
 		stats = new PlayerStats();
+		
+		shield = new ShieldComponent(scene);
 	}
 	
 	public void update(){
+		
+		if(!shieldAdded){
+			scene.add(shield);
+			shieldAdded = true;
+		}
 		
 		weaponTimer.tick();
 		respawnTimer.tick();
@@ -155,6 +164,8 @@ public class Player extends Entity{
 		float ray = (float)gamepad.getRightStick().getY();
 		
 		boolean bRightBumper = gamepad.isButtonPressed(Gamepad.RB_BUTTON);
+		boolean bLeftBumper = gamepad.isButtonPressed(Gamepad.LB_BUTTON);
+		boolean bTrigger = (gamepad.getLeftTrigger().getX() > 0.15f) || (gamepad.getRightTrigger().getX() > 0.15f);
 		
 		Vector2f direction = new Vector2f();
 		
@@ -184,10 +195,10 @@ public class Player extends Entity{
 		if(setAccel)
 			acceleration.set(direction.scale(THRUST));
 		
-		orientation = interpolator.interpolate(orientation, newOrientation, 0.4f);
-		transform.setOrientation(orientation.direction());
+		aimDirection = newOrientation.direction();
+		transform.setOrientation(velocity.direction());
 			
-		if (bRightBumper && stats.getBombCount() > 0){
+		if ((bRightBumper || bLeftBumper) && stats.getBombCount() > 0){
 			useBomb();
 		}
 
@@ -211,6 +222,17 @@ public class Player extends Entity{
 	    }
 	    
 	    scene.getGrid().applyExplosiveForce(velocity.length() * 2.5f, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0), 100);
+	    shield.getTransform().getTranslation().set(transform.getTranslation());
+	    if(bTrigger){
+	    	if(stats.hasEnergy(5)){
+		    	shield.activate();
+		    	stats.useEnergy(5);
+	    	} else {
+	    		shield.deactivate();
+	    	}
+	    } else {
+	    	shield.deactivate();
+	    }
 	}
 	
 	private void useBomb(){
@@ -227,55 +249,22 @@ public class Player extends Entity{
 	}
 	
 	private void fireWeapon(){
+		float direction = aimDirection;
 		
-		if(firingMode == FIRING_MODE_0){
-			float direction = transform.getOrientation();
-			
-			Vector2f bulletOffset = (useOffset1) ? weaponOffset1 : weaponOffset2 ;
-			Vector2f bulletPosition = bulletOffset.rotate(direction).add(transform.getTranslation());
-			Vector2f bulletVelocity = new Vector2f(FastMath.cosd(direction) * bulletSpeed, FastMath.sind(direction) * bulletSpeed);
-	        
-			Bullet bullet = new Bullet(bulletPosition, bulletVelocity, scene);
-	        scene.add(bullet);
-			
-		    useOffset1 = !useOffset1;
-		    canUseWeapon = false;
-		    weaponTimer.restart();
-		} else if(firingMode == FIRING_MODE_1){
-			float direction = transform.getOrientation();
-			Vector2f offset = new Vector2f(20, -12);
-			Vector2f offset2 = new Vector2f(15, -24);
-			Vector2f offset3 = new Vector2f(20, 12);
-			Vector2f offset4 = new Vector2f(15, 24);
-			
-			Vector2f o1 = offset.rotate(direction).add(transform.getTranslation());
-			Vector2f o2 = offset2.rotate(direction).add(transform.getTranslation());
-			Vector2f o3 = offset3.rotate(direction).add(transform.getTranslation());
-			Vector2f o4 = offset4.rotate(direction).add(transform.getTranslation());
-			
-			Vector2f bulletVelocity = new Vector2f(FastMath.cosd(direction) * bulletSpeed, FastMath.sind(direction) * bulletSpeed);
-			
-			Bullet bullet = new Bullet(o1, bulletVelocity, scene);
-	        scene.add(bullet);
-			
-	        Bullet bullet2 = new Bullet(o2, bulletVelocity, scene);
-	        scene.add(bullet2);
-	        
-	        Bullet bullet3 = new Bullet(o3, bulletVelocity, scene);
-	        scene.add(bullet3);
-	        
-	        Bullet bullet4 = new Bullet(o4, bulletVelocity, scene);
-	        scene.add(bullet4);
-	        canUseWeapon = false;
-		    weaponTimer.restart();
-			
-		} else if(firingMode == FIRING_MODE_2){
-			
-		}
+		Vector2f bulletOffset = (useOffset1) ? weaponOffset1 : weaponOffset2 ;
+		Vector2f bulletPosition = bulletOffset.rotate(direction).add(transform.getTranslation());
+		Vector2f bulletVelocity = new Vector2f(FastMath.cosd(direction) * bulletSpeed, FastMath.sind(direction) * bulletSpeed);
+        
+		Bullet bullet = new Bullet(bulletPosition, bulletVelocity, scene);
+        scene.add(bullet);
+		
+	    useOffset1 = !useOffset1;
+	    canUseWeapon = false;
+	    weaponTimer.restart();
 	}
 
 	public void respawn(){
-		scene.getGrid().applyExplosiveForce(500, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 400.0F);
+		scene.getGrid().applyExplosiveForce(500, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 250);
 	}
 	
 	public void reset(){
@@ -313,6 +302,7 @@ public class Player extends Entity{
 	
 	public void registerBulletKill(Enemy e){
 		stats.addScore(e.getKillValue());
+		stats.addEnergy(e.getEnergyValue());
 	}
 	
 	public void destroy(){
@@ -336,11 +326,6 @@ public class Player extends Entity{
 	}
 
 	@Override
-	public int getRadius() {
-		return 15;
-	}
-
-	@Override
 	public int getGroupMask() {
 		return Masks.Collision.PLAYER;
 	}
@@ -348,6 +333,119 @@ public class Player extends Entity{
 	@Override
 	public int getCollisionMask() {
 		return Masks.Collision.ENEMY | Masks.Collision.MULTIPLIER;
+	}
+	
+}
+
+class ShieldComponent extends Entity{
+	
+	final int MIN_RADIUS = 0;
+	final int MAX_RADIUS = 80;
+	
+	boolean active = false;
+	int radius = 0;
+	
+	Interpolator inter = new CubicInterpolator(new Vector2f(0.3f, 0), new Vector2f(0.7f, 1));
+	
+	public ShieldComponent(Scene scene) {
+		super(scene);
+		
+		this.mesh = new Mesh();
+		Vector4f white = new Vector4f(1, 1, 1, 1);
+		Vector4f cyan = new Vector4f(0, 1, 1, 1);
+		Vector4f purple = new Vector4f(0.45f, 0, 1, 1);
+	    int segments = 36;
+	    LinePrimitive circle = new LinePrimitive();
+	    
+	    for(int i = 0; i < segments; i++){
+	    	float a1 = (float)i / (float) segments * 360f;
+	    	float a2 = (float)((i + 1) % segments) / (float)segments * 360f;
+	    	
+	    	Vector2f v0 = new Vector2f(FastMath.cosd(a1) * MAX_RADIUS, FastMath.sind(a1) * MAX_RADIUS);
+	    	Vector2f v1 = new Vector2f(FastMath.cosd(a2) * MAX_RADIUS, FastMath.sind(a2) *MAX_RADIUS);
+	    	circle.addVertex(v0, white);
+	    	circle.addVertex(v1, white);
+	    }
+	    
+	    MeshLayer bodyLayer = new MeshLayer();
+	    
+	    LinePrimitive circle2 = new LinePrimitive();
+	    
+	    for(int i = 0; i < segments; i++){
+	    	float a1 = (float)i / (float) segments * 360f;
+	    	float a2 = (float)((i + 1) % segments) / (float)segments * 360f;
+	    	
+	    	Vector2f v0 = new Vector2f(FastMath.cosd(a1) * MAX_RADIUS * 0.995f, FastMath.sind(a1) * MAX_RADIUS * 0.995f);
+	    	Vector2f v1 = new Vector2f(FastMath.cosd(a2) * MAX_RADIUS  * 0.995f, FastMath.sind(a2) * MAX_RADIUS  * 0.995f);
+	    	circle.addVertex(v0, cyan);
+	    	circle.addVertex(v1, cyan);
+	    }
+	    
+	    LinePrimitive circle3 = new LinePrimitive();
+	    
+	    for(int i = 0; i < segments; i++){
+	    	float a1 = (float)i / (float) segments * 360f;
+	    	float a2 = (float)((i + 1) % segments) / (float)segments * 360f;
+	    	
+	    	Vector2f v0 = new Vector2f(FastMath.cosd(a1) * MAX_RADIUS * 0.985f, FastMath.sind(a1) * MAX_RADIUS * 0.985f);
+	    	Vector2f v1 = new Vector2f(FastMath.cosd(a2) * MAX_RADIUS  * 0.985f, FastMath.sind(a2) * MAX_RADIUS  * 0.985f);
+	    	circle.addVertex(v0, purple);
+	    	circle.addVertex(v1, purple);
+	    }
+	    
+	    bodyLayer.addPrimitive(circle);
+	    bodyLayer.addPrimitive(circle2);
+	    bodyLayer.addPrimitive(circle3);
+	    mesh.addLayer(bodyLayer);
+	}
+
+	@Override
+	public int getGroupMask() {
+		return Masks.Collision.ABILITY;
+	}
+
+	@Override
+	public int getCollisionMask() {
+		return Masks.Collision.ENEMY;
+	}
+
+	public void activate(){
+		active = true;
+	}
+	
+	public void deactivate(){
+		active = false;
+	}
+	
+	@Override
+	public void update() {
+		scene.getGrid().applyImplosiveForce(250, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0), radius);
+		
+		if(active){
+			radius = (int) inter.interpolate(radius, MAX_RADIUS, 0.2f);
+		} else {
+			radius = (int) inter.interpolate(radius, MIN_RADIUS, 0.2f);
+		}
+		
+		radius = (int) FastMath.clamp(MIN_RADIUS, MAX_RADIUS, radius);
+		float sFactor = (float)radius / (float)MAX_RADIUS;
+		transform.getScale().set(sFactor, sFactor);
+		
+		opacity = Math.max((float)(2 * radius - 35) / (float)MAX_RADIUS, 0);
+	}
+
+	@Override
+	public void destroy() {
+		// TODO Auto-generated method stub
+	}
+	
+	public int getRadius(){
+		return radius;
+	}
+	
+	@Override
+	public int getEntityType() {
+		return Masks.Entities.OTHER;
 	}
 	
 }
