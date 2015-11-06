@@ -27,6 +27,7 @@ public class BlackHoleBehaviour extends Behavior{
 	
 	int numKills = 0;
 	int maxKills = 10;
+	boolean wasHit = false;
 	
 	ArrayList<Entity> particlesInRange;
 	ArrayList<Entity> piecesInRange;
@@ -65,14 +66,7 @@ public class BlackHoleBehaviour extends Behavior{
 					Entity enemy = (Entity)other;
 					onKill(self, enemy);
 				} else if((group & Masks.Collision.BULLET) == Masks.Collision.BULLET){
-					if(particlesInRange.size() > 250){
-						for(int i = 0; i < particlesInRange.size(); i+=2){
-							Entity p = particlesInRange.get(i);
-							Vector2f acceleration = p.getAcceleration();
-							acceleration.x += FastMath.randomf(-4, 4);
-							acceleration.y += FastMath.randomf(-4, 4);
-						}
-					}
+					wasHit = true;
 				}
 			}
 		};
@@ -103,8 +97,22 @@ public class BlackHoleBehaviour extends Behavior{
 	    }
 	    
 	    int n = particlesInRange.size();
-	    for(int i = 0; i < n; i++)
+	    for(int i = 0; i < n; i++){
 	    	affectParticle(self, particlesInRange.get(i));
+	    }
+	    
+	    if(wasHit){
+	    	if(particlesInRange.size() > 0){
+				n = particlesInRange.size();
+				for(int i = 0; i < n; i++){
+					Entity p = particlesInRange.get(i);
+					float a = FastMath.randomf(0, 6.28f);
+					float s = FastMath.randomi(3, 6);
+					p.getAcceleration().addi(new Vector2f(FastMath.cos(a) * s, FastMath.sin(a) * s));
+				}
+			}
+	    	wasHit = false;
+	    }
 	    
 	    n = piecesInRange.size();
 	    for(int i = 0; i < n; i++)
@@ -136,7 +144,7 @@ public class BlackHoleBehaviour extends Behavior{
         Vector2f dPos = blackHole.getTransform().getTranslation().sub(particle.getTransform().getTranslation());
         float distance = dPos.length();
         Vector2f n = dPos.scale(1.0F / distance);
-        pVel.addi(n.scale(5000.0F).scale(1.0F / (distance * distance + 5000.0F)));
+        pVel.addi(n.scale(10000.0F).scale(1.0F / (distance * distance + 10000.0F)));
         
         Particle p = (Particle) particle;
         p.setCurrentLife(0);
@@ -186,11 +194,12 @@ public class BlackHoleBehaviour extends Behavior{
 			p.getAcceleration().addi(new Vector2f(FastMath.randomf(-12, 12), FastMath.randomf(-12, 12)));
 		}
 		
+		float force = 5;
 		if(numKills >= maxKills){
-			for(int i = 0; i < 6; i++){
+			for(int i = 0; i < 4; i++){
 				float a = FastMath.random() * 360.0F;
 		        Vector2f pos = self.getTransform().getTranslation().add(new Vector2f(FastMath.cosd(a) * self.getRadius() + self.getRadius(), FastMath.sind(a) * self.getRadius() + self.getRadius()));
-		        Vector2f accel = new Vector2f(FastMath.cosd(a), FastMath.sind(a));
+		        Vector2f accel = new Vector2f(FastMath.cosd(a) * force, FastMath.sind(a) * force);
 		        Enemy chaser = factory.createChaser(pos);
 		        chaser.getAcceleration().set(accel);
 			}
