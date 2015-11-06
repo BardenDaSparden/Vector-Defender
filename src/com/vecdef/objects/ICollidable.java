@@ -6,6 +6,7 @@ public interface ICollidable {
 
 	public Transform2D getTransform();
 	public int getRadius();
+	public void setRadius(int radius);
 	public void addContactListener(ContactEventListener listener);
 	public void removeContactListener(ContactEventListener listener);
 	public void onContact(ContactEvent event);
