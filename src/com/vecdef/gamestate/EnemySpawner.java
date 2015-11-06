@@ -46,7 +46,7 @@ public class EnemySpawner{
 		if(player.isDead())
 			return;
 		
-		int score = player.getStats().getScore();
+		long score = player.getStats().getScore();
 		
 		allEnemies.clear();
 		scene.getEntitiesByType(Masks.Entities.ENEMY, allEnemies);
