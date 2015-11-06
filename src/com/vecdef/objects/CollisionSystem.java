@@ -38,7 +38,7 @@ public class CollisionSystem {
 				continue;
 			
 			nearbyCollidables.clear();
-			getNearbyCollidables(A.getTransform().getTranslation(), 70, nearbyCollidables, A);
+			getNearbyCollidables(A.getTransform().getTranslation(), 300, nearbyCollidables, A);
 			
 			for(int j = 0; j < nearbyCollidables.size(); j++){
 				
