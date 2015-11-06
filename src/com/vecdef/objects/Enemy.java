@@ -16,6 +16,7 @@ public class Enemy extends Entity{
 	boolean bCreate;
 	int health;
 	int killValue;
+	int energyValue;
 	
 	int groupMask;
 	int collisionMask;
@@ -29,6 +30,7 @@ public class Enemy extends Entity{
 		bCreate = false;
 		health = 1;
 		killValue = 1;
+		energyValue = 5;
 	    radius = 16;
 	    groupMask = Masks.Collision.ENEMY;
 	    collisionMask = Masks.Collision.PLAYER | Masks.Collision.BULLET;
@@ -47,6 +49,10 @@ public class Enemy extends Entity{
 						player.registerBulletKill(Enemy.this);
 					 }
 				} else if((otherGroup & Masks.Collision.BLACK_HOLE) == Masks.Collision.BLACK_HOLE){
+					Enemy.this.expire();
+				} else if((otherGroup & Masks.Collision.PLAYER) == Masks.Collision.PLAYER){
+					Enemy.this.expire();
+				}  else if((otherGroup & Masks.Collision.ABILITY) == Masks.Collision.ABILITY){
 					Enemy.this.expire();
 				}
 			}
@@ -72,8 +78,8 @@ public class Enemy extends Entity{
 	
 	
 	public void destroy(){
-	     int numPieces = FastMath.randomi(1, 4);
-	     final int numParticles = 30;
+	     int numPieces = FastMath.randomi(2, 5);
+	     final int numParticles = 45;
 	     float speed = 2;
 	     
 	     for(int i = 0; i < numPieces; i++){
@@ -87,7 +93,7 @@ public class Enemy extends Entity{
 	     Vector2f position = getTransform().getTranslation();
 	     Vector2f offset = new Vector2f();
 	     float radius = 32;
-	     float pSpeed = 6.5f;
+	     float pSpeed = 7.5f;
 	     
 	     for(int i = 0; i < numParticles; i++){
 	    	 
@@ -97,30 +103,12 @@ public class Enemy extends Entity{
 	    	 
 	    	 Particle particle = new Particle(position.x, position.y, baseColor, scene);
 	    	 
-	    	 particle.setMaxLife(30);
+	    	 particle.setMaxLife(40);
 	    	 
 	    	 particle.getTransform().setOrientation((float)Math.toDegrees(angle));
 	    	 particle.getTransform().getTranslation().addi(offset);
 	    	 
 	    	 particle.getVelocity().set((float)Math.cos(angle) * pSpeed, (float)Math.sin(angle) * pSpeed);
-	    	 particle.addBehavior(new Behavior(scene, this) {
-				
-	    		 @Override
-    			public void create(){
-    				
-    			}
-	    		 
-				@Override
-				public void update() {
-					Vector2f velocity = self.getVelocity();
-					self.getTransform().setOrientation((float)Math.toDegrees(Math.atan2(velocity.y, velocity.x)));
-				}
-				
-				@Override
-				public void destroy() {
-					
-				}
-			});
 	    	 
 	    	 scene.add(particle);
 	     }
@@ -142,6 +130,10 @@ public class Enemy extends Entity{
 		return killValue;
 	}
 
+	public int getEnergyValue(){
+		return energyValue;
+	}
+	
 	public int getEntityType(){
 		return Masks.Entities.ENEMY;
 	}
@@ -153,7 +145,7 @@ public class Enemy extends Entity{
 
 	@Override
 	public int getCollisionMask() {
-		return collisionMask;
+		return collisionMask | Masks.Collision.ABILITY;
 	}
 	
 	@Override
