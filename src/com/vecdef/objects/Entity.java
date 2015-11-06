@@ -24,6 +24,7 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	protected float torque;
 	
 	//ICollidable Dependencies
+	protected int radius = 8;
 	protected ArrayList<ContactEventListener> contactListeners;
 	
 	private boolean isExpired;
@@ -135,5 +136,13 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	
 	public void expire(){
 		isExpired = true;
+	}
+	
+	public int getRadius(){
+		return radius;
+	}
+	
+	public void setRadius(int r){
+		this.radius = r;
 	}
 }
