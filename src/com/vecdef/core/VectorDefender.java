@@ -1,17 +1,12 @@
 package com.vecdef.core;
 
-import org.javatroid.core.Input;
 import org.javatroid.core.Resources;
-
-import com.toolkit.inputstate.Gamepad;
 import com.vecdef.gamestate.GameState;
 import com.vecdef.gamestate.MenuState;
 import com.vecdef.gamestate.PlayState;
 
 public class VectorDefender implements Application {
 	
-	Input input;
-	Gamepad gamepad;
 	GameState gamestate;
 	
 	@Override
@@ -19,17 +14,17 @@ public class VectorDefender implements Application {
 		Resources.loadFont("fonts/imagine_16.fnt", "imagine12");
 		Resources.loadFont("fonts/imagine_16.fnt", "imagine16");
 		Resources.loadFont("fonts/Imagine.fnt", "imagine18");
-		Resources.loadTexture("textures/Player.png", "player");
-		Resources.loadTexture("textures/bomb.png", "bomb");
+		Resources.loadFont("fonts/tech18.fnt", "tech18");
+		Resources.loadFont("fonts/tech30.fnt", "tech30");
+		Resources.loadFont("fonts/tech36.fnt", "tech36");
+		
 		Resources.loadTexture("textures/white.png", "blank");
 		Resources.loadTexture("textures/menuTitle.png", "title");
+		Resources.loadTexture("textures/energyBarOutline.png", "energyBar");
+		Resources.loadTexture("textures/livesBarOutline.png", "livesBar");
+		Resources.loadTexture("textures/life.png", "life");
 		
-		input = new Input();
-		input.setMouseGrabbed(true);
-		
-		gamepad = new Gamepad();
-		
-		gamestate = new GameState(input, gamepad);
+		gamestate = new GameState();
 		gamestate.registerGState(new MenuState(gamestate));
 		gamestate.registerGState(new PlayState(gamestate));
 		gamestate.initialize();
@@ -38,12 +33,10 @@ public class VectorDefender implements Application {
 	@Override
 	public void update() {
 		gamestate.update();
-		input.poll();
-		gamepad.poll();
 	}
 	
 	@Override
-	public void render() {
+	public void render(){
 		gamestate.draw();
 	}
 
