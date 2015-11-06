@@ -7,6 +7,7 @@ import org.javatroid.math.Vector3f;
 import org.lwjgl.opengl.Display;
 
 import com.toolkit.inputstate.Gamepad;
+import com.vecdef.analyze.AudioAnalyzer;
 import com.vecdef.objects.CollisionSystem;
 import com.vecdef.objects.Entity;
 import com.vecdef.objects.Grid;
@@ -31,9 +32,9 @@ public class Scene {
 	protected PhysicsSystem physics;
 	protected RenderSystem renders;
 	
-	public Scene(Gamepad gamepad){
+	public Scene(Gamepad gamepad, AudioAnalyzer analyzer){
 		player = new Player(this, gamepad);
-		grid = new Grid(Display.getWidth() + 200, Display.getHeight() + 200, 40, 40);
+		grid = new Grid(Display.getWidth() + 300, Display.getHeight() + 300, 30, 30, analyzer);
 		entities = new ArrayList<Entity>();
 		entitiesToRemove = new ArrayList<Entity>();
 		collision = new CollisionSystem();
@@ -115,6 +116,7 @@ public class Scene {
 	
 	public void update(){
 		collision.checkCollision();
+		physics.integrate();
 		for(int i = 0; i < entities.size(); i++){
 			Entity entity = entities.get(i);
 			if(entity.isExpired()){
@@ -124,7 +126,6 @@ public class Scene {
 				entity.update();
 			}
 		}
-		physics.integrate();
 		grid.update();
 	}
 	
