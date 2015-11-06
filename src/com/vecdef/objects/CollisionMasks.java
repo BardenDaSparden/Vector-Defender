@@ -6,6 +6,7 @@ public class CollisionMasks {
 	public final int ENEMY			= 0b0000000000000100;
 	public final int MULTIPLIER 	= 0b0000000000001000;
 	public final int BLACK_HOLE 	= 0b0000000000010000;
+	public final int ABILITY 		= 0b0000000000100000;
 	
 	@Deprecated
 	public String asString(int mask){
