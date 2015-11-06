@@ -69,6 +69,8 @@ public class Particle extends Entity{
 		
 		transform.setOrientation(velocity.direction());
 		
+		velocity.set(velocity.x * 0.965f, velocity.y * 0.965f);
+		
 		if(currentLife >= maxLife)
 			expire();
 	}
