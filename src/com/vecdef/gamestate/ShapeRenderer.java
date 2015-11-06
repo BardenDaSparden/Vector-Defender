@@ -11,6 +11,7 @@ import org.javatroid.graphics.ShaderProgram;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.Display;
 
 import com.vecdef.model.Primitive.DrawType;
 
@@ -38,7 +39,7 @@ public class ShapeRenderer {
 		shader.addFragmentShader("shaders/shape.fs");
 		shader.compile();
 		
-		camera = null;
+		camera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
 		
 		positionBuffer = BufferUtils.createFloatBuffer(MAX_DRAWS * 2);
 		colorBuffer = BufferUtils.createFloatBuffer(MAX_DRAWS * 4);
