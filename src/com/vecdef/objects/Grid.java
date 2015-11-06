@@ -3,10 +3,17 @@ package com.vecdef.objects;
 import java.util.ArrayList;
 
 import org.javatroid.graphics.BlendState;
+import org.javatroid.graphics.FrameBuffer;
+import org.javatroid.graphics.OrthogonalCamera;
+import org.javatroid.graphics.ShaderProgram;
+import org.javatroid.graphics.SpriteBatch;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 import org.javatroid.math.Vector4f;
+import org.lwjgl.opengl.Display;
 
+import com.vecdef.analyze.AudioAnalyzer;
+import com.vecdef.gamestate.Renderer;
 import com.vecdef.gamestate.ShapeRenderer;
 import com.vecdef.model.Primitive.DrawType;
 
@@ -26,15 +33,26 @@ public class Grid {
 	int rows;
 	int cols;
 	
-	Vector4f color = new Vector4f(0.05f, 0.43f, 1f, 0.22f);
-	//Vector4f color = new Vector4f(1, 0.15f, 0, 0.22f);
+	Vector4f color = new Vector4f(1, 0, 0, 0.22f);
+	//Vector4f color = new Vector4f(0.05f, 0.43f, 1f, 0.22f);
 	
-	public Grid(int width, int height, int cellWidth, int cellHeight){
-		
+	AudioAnalyzer analyzer;
+	FrameBuffer accum1;
+	FrameBuffer accum2;
+	FrameBuffer buffer;
+	ShaderProgram reverseAccum;
+	Vector3f HSB = new Vector3f(0, 1, 0.5f);
+	Vector3f RGB = new Vector3f(1, 0, 0);
+	Vector4f waveColor = new Vector4f(1, 0, 0, 1);
+	float waveAmplitude = 25;
+	float time = 0;
+	
+	public Grid(int width, int height, int cellWidth, int cellHeight, AudioAnalyzer analyzer){
 		this.gridWidth = width;
 		this.gridHeight = height;
 		this.cellWidth = cellWidth;
 		this.cellHeight = cellHeight;
+		this.analyzer = analyzer;
 		
 		Vector2f min = new Vector2f(-gridWidth / 2.0F + 1.0F, -gridHeight / 2.0F + 1.0F);
 	    Vector2f max = new Vector2f(gridWidth / 2.0F - 1.0F, gridHeight / 2.0F - 1.0F);
@@ -105,7 +123,14 @@ public class Grid {
 	    for (PointMass[] row : points)
 	    	for(PointMass mass : row)
 	    		masses.add(mass);
-	        
+	    
+	    accum1 = new FrameBuffer(Display.getWidth(), Display.getHeight());
+		accum2 = new FrameBuffer(Display.getWidth(), Display.getHeight());
+		buffer = new FrameBuffer(Display.getWidth(), Display.getHeight());
+		reverseAccum = new ShaderProgram();
+		reverseAccum.addVertexShader("shaders/reverse_accum.vs");
+		reverseAccum.addFragmentShader("shaders/reverse_accum.fs");
+		reverseAccum.compile();	    
 	}
 
 	public void applyDirectedForce(Vector3f force, Vector3f position, float radius){
@@ -146,12 +171,7 @@ public class Grid {
 			}
 		}
 	}
-
 	
-	float time = 0;
-	
-	final int SKIP_TIME = 5;
-	int skip = SKIP_TIME;
 	public void update(){
 		
 		for(Spring spring : springs)
@@ -160,11 +180,28 @@ public class Grid {
 		for(PointMass mass : masses)
 			mass.update();
 		
+		HSB.x += 1.0f/720.0f;
+		java.awt.Color c = java.awt.Color.getHSBColor(HSB.x, HSB.y, HSB.z);
+		
+		RGB.x = c.getRed() / 255.0f;
+		RGB.y = c.getGreen() / 255.0f;
+		RGB.z = c.getBlue() / 255.0f;
+		
+		waveColor.set(RGB.x, RGB.y, RGB.z, 1);
+		color.set(RGB.x, RGB.y, RGB.z, 0.22f);
 	}
 
-	public void draw(ShapeRenderer renderer){
+	public void draw(Renderer renderer){
 		
-		renderer.begin(DrawType.LINES, BlendState.ADDITIVE);
+		ShapeRenderer sRenderer = renderer.ShapeRenderer();
+		SpriteBatch batch = renderer.SpriteBatch();
+		
+		OrthogonalCamera _old = renderer.getCamera();
+		OrthogonalCamera screenCamera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
+		
+		buffer.bind();
+		buffer.clear(0, 0, 0, 1);
+		sRenderer.begin(DrawType.LINES, BlendState.ADDITIVE);
 		
 		for (int j = 0; j < points.length - 1; j++){
 			for(int i = 0; i < points[j].length - 1; i++){
@@ -184,11 +221,11 @@ public class Grid {
 				Vector3f IB = BL.add(BR.sub(BL).scale(0.5f));
 				Vector3f IL = BL.add(TL.sub(BL).scale(0.5f));
 				
-				drawLine(IT, IB, renderer);
-				drawLine(IL, IR, renderer);
+				drawLine(IT, IB, sRenderer);
+				drawLine(IL, IR, sRenderer);
 				
-				drawLine(TL, TR, renderer);
-				drawLine(TL, BL, renderer);			
+				drawLine(TL, TR, sRenderer);
+				drawLine(TL, BL, sRenderer);			
 			}
 	    }
 		
@@ -199,7 +236,7 @@ public class Grid {
 			Vector3f start = p.getPosition();
 			Vector3f end = p2.getPosition();
 			
-			drawLine(start, end, renderer);
+			drawLine(start, end, sRenderer);
 		}	
 		
 		for(int j = 0; j < rows - 1; j++){
@@ -209,10 +246,64 @@ public class Grid {
 			Vector3f start = p.getPosition();
 			Vector3f end = p2.getPosition();
 			
-			drawLine(start, end, renderer);
+			drawLine(start, end, sRenderer);
 		}	
 		
-		renderer.end();
+		sRenderer.end();
+		buffer.release();
+		
+		//audio reactive edges
+		
+		accum1.bind();
+			accum1.clear(0, 0, 0, 1);
+			float offsetY = cellHeight / 2;
+			float w = getWidth();
+			float h = getHeight() + cellHeight / 2;
+			int thickness = 5;
+			
+			for(int i = 0; i < thickness; i++){
+				//analyzer.drawWaveform(0, Display.getHeight() / 2, 2, amplitude + i, 1, waveColor, sRenderer);
+				analyzer.drawWaveformH(0, -h/2 + offsetY, w, waveAmplitude + i, waveColor, sRenderer);
+				analyzer.drawWaveformH(0, h/2 + offsetY, w, waveAmplitude + i, waveColor, renderer.ShapeRenderer());
+				analyzer.drawWaveformV(-w/2, offsetY, waveAmplitude + i, h, 1, waveColor, renderer.ShapeRenderer());
+				analyzer.drawWaveformV(w/2, offsetY, waveAmplitude + i, h, 1, waveColor, renderer.ShapeRenderer());
+			}
+			
+		accum1.release();
+		
+//		accum2.bind();
+//			batch.setCamera(screenCamera);
+//			batch.begin(BlendState.ADDITIVE);
+//				batch.draw(0, 0, Display.getWidth(), Display.getHeight(), 0, accum1.getTexture());
+//			batch.end();
+//		accum2.release();
+//		
+//		accum1.bind();
+//			accum1.clear(0, 0, 0, 1);
+//			batch.setCamera(screenCamera);
+//			batch.setShader(reverseAccum);
+//			batch.begin(BlendState.ADDITIVE);
+//				batch.draw(0, 0, Display.getWidth(), Display.getHeight(), 0, accum2.getTexture());
+//			batch.end();
+//		accum1.release();
+//		
+//		accum2.bind();
+//			accum2.clear(0, 0, 0, 1);
+//			batch.setCamera(screenCamera);
+//			batch.setShader(null);
+//			batch.begin(BlendState.ALPHA);
+//				batch.draw(0, 0, Display.getWidth(), Display.getHeight(), 0, accum1.getTexture());
+//			batch.end();
+//		accum2.release();
+		
+		buffer.bind();
+			batch.setCamera(screenCamera);
+			batch.begin(BlendState.ADDITIVE);
+				batch.draw(0, 0, Display.getWidth(), Display.getHeight(), 0, accum1.getTexture());
+			batch.end();
+		buffer.release();
+			
+		batch.setCamera(_old);
 		
 	}
 	
@@ -233,6 +324,10 @@ public class Grid {
 
 	public int getHeight(){
 		return gridHeight;
+	}
+	
+	public FrameBuffer asBuffer(){
+		return buffer;
 	}
 	
 }
