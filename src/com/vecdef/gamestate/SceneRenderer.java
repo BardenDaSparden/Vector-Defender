@@ -13,14 +13,12 @@ import org.lwjgl.opengl.Display;
 import com.vecdef.objects.Grid;
 import com.vecdef.objects.RenderSystem;
 
-import ddf.minim.Minim;
-
 public class SceneRenderer {
 
 	Scene scene;
 	Renderer renderer;
-	
 	OrthogonalCamera camera;
+	
 	FrameBuffer back;
 	
 	final Vector2f HORIZONTAL = new Vector2f(1, 0);
@@ -30,7 +28,7 @@ public class SceneRenderer {
 	FrameBuffer bloom;
 	ShaderProgram blur;
 	
-	public SceneRenderer(Scene scene, Renderer renderer, Minim minim){
+	public SceneRenderer(Scene scene, Renderer renderer){
 		this.scene = scene;
 		this.renderer = renderer;
 		
@@ -42,7 +40,7 @@ public class SceneRenderer {
 		back = new FrameBuffer(w, h);
 		bloom = new FrameBuffer(w, h);
 		
-		blurFBO = new FrameBuffer[8];
+		blurFBO = new FrameBuffer[10];
 		for(int i = 0, j = 0; i < blurFBO.length; i+=2, j++){
 			int sf = ((j + 1) * 2);
 			blurFBO[i] = new FrameBuffer(w / sf, h / sf);
@@ -58,16 +56,23 @@ public class SceneRenderer {
 	}
 	
 	public void draw(){
-		ShapeRenderer sRenderer = renderer.ShapeRenderer();
 		SpriteBatch batch = renderer.SpriteBatch();
 		batch.setColor(1, 1, 1, 1);
 		
+		OrthogonalCamera camera = new OrthogonalCamera(Display.getWidth(), Display.getHeight());
+		OrthogonalCamera _old = batch.getCamera();
+		
 		Grid grid = scene.getGrid();
 		RenderSystem renders = scene.renders;
+		grid.draw(renderer);
 		
 		back.bind();
 			back.clear(0, 0, 0, 1);
-			grid.draw(sRenderer);
+			batch.setCamera(camera);
+			batch.begin(BlendState.ALPHA);
+				batch.draw(0, 0, Display.getWidth(), Display.getHeight(), 0, grid.asBuffer().getTexture());
+			batch.end();
+			batch.setCamera(_old);
 			renders.draw(renderer);
 		back.release();
 		
@@ -107,6 +112,7 @@ public class SceneRenderer {
 			drawFullscreenFBO(blurFBO[3], null);
 			drawFullscreenFBO(blurFBO[5], null);
 			drawFullscreenFBO(blurFBO[7], null);
+			drawFullscreenFBO(blurFBO[9], null);
 		bloom.release();
 		
 		drawFullscreenFBO(bloom, null);
