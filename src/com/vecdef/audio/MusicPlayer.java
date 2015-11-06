@@ -39,8 +39,8 @@ public class MusicPlayer {
 			trackList.add(track);
 		}
 		
-		AudioPlayer player = trackList.get(0);
-		player.play();
+//		AudioPlayer player = trackList.get(0);
+//		player.play();
 	}
 	
 	public void previousTrack(){
@@ -75,9 +75,9 @@ public class MusicPlayer {
 		AudioPlayer track = trackList.get(trackIdx);
 		if(track == null)
 			return;
-		if(!track.isPlaying()){
-			nextTrack();
-		}
+//		if(!track.isPlaying()){
+//			nextTrack();
+//		}
 	}
 	
 	public AudioPlayer getCurrentTrack(){
