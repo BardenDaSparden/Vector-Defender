@@ -27,8 +27,9 @@ public class EnemyFactory {
 		Enemy enemy = new Enemy(scene);
 		
 		enemy.transform.setTranslation(position);
-		enemy.baseColor = new Vector4f(1, 1, 0, 1);
+		enemy.baseColor = new Vector4f(0.35f, 0.25f, 1, 1);
 	    enemy.killValue = 5;
+	    enemy.energyValue = 50;
 		enemy.mesh = new Mesh();
 		final float WIDTH = 26;
 		final float HEIGHT = 26;
@@ -83,8 +84,9 @@ public class EnemyFactory {
 	public Enemy createSeeker(Vector2f position){
 		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
-		enemy.baseColor = new Vector4f(0, 1, 0, 1);
+		enemy.baseColor = new Vector4f(0, 1, 1, 1);
 	    enemy.killValue = 10;
+	    enemy.energyValue = 50;
 		enemy.mesh = new Mesh();
 		
 		final float WIDTH = 20;
@@ -113,8 +115,9 @@ public class EnemyFactory {
 	public Enemy createFollower(Vector2f position){
 		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
-		enemy.baseColor = new Vector4f(1, 0.75f, 0, 1);
+		enemy.baseColor = new Vector4f(1, 0, 1, 1);
 	    enemy.killValue = 15;
+	    enemy.energyValue = 50;
 	    enemy.radius = 10;
 		enemy.mesh = new Mesh();
 		
@@ -185,26 +188,30 @@ public class EnemyFactory {
 	public Enemy createChaser(Vector2f position){
 		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
-		enemy.baseColor = new Vector4f(0, 1, 1, 1);
+		enemy.baseColor = new Vector4f(0.5f, 1, 1, 1);
 	    enemy.killValue = 5;
-	    enemy.radius = 10;
+	    enemy.energyValue = 50;
+	    enemy.radius = 5;
 		enemy.mesh = new Mesh();
 		enemy.angularVelocity = FastMath.randomi(-2, 2);
 		
-		LinePrimitive l1 = new LinePrimitive();
-		l1.addVertex(new Vector2f(-6, -6), enemy.baseColor);
-		l1.addVertex(new Vector2f(0, 6f), enemy.baseColor);
-		
-		l1.addVertex(new Vector2f(0, 6f), enemy.baseColor);
-		l1.addVertex(new Vector2f(6, -6), enemy.baseColor);
-		
-		l1.addVertex(new Vector2f(6, -6), enemy.baseColor);
-		l1.addVertex(new Vector2f(-6, -6), enemy.baseColor);
-		
-		MeshLayer layer = new MeshLayer();
-		layer.addPrimitive(l1);
-		
-		enemy.mesh.addLayer(layer);
+		float radius = enemy.radius;
+	    int segments = 12;
+	    LinePrimitive circle = new LinePrimitive();
+	    
+	    for(int i = 0; i < segments; i++){
+	    	float a1 = (float)i / (float) segments * 360f;
+	    	float a2 = (float)((i + 1) % segments) / (float)segments * 360f;
+	    	
+	    	Vector2f v0 = new Vector2f(FastMath.cosd(a1) * radius, FastMath.sind(a1) * radius);
+	    	Vector2f v1 = new Vector2f(FastMath.cosd(a2) * radius, FastMath.sind(a2) * radius);
+	    	circle.addVertex(v0, enemy.baseColor);
+	    	circle.addVertex(v1, enemy.baseColor);
+	    }
+	    
+	    MeshLayer bodyLayer = new MeshLayer();
+	    bodyLayer.addPrimitive(circle);
+	    enemy.mesh.addLayer(bodyLayer);
 		
 		enemy.addBehavior(new ChaserBehaviour(scene, enemy));
 	    scene.add(enemy);
@@ -215,11 +222,12 @@ public class EnemyFactory {
 		Player player = scene.getPlayer();
 		
 		Enemy enemy = new Enemy(scene);
-		enemy.baseColor = new Vector4f(1, 0, 1, 1);
+		enemy.baseColor = new Vector4f(1, 0.75f, 0, 1);
 		enemy.transform.setTranslation(position);
 		enemy.transform.setOrientation(player.getTransform().getTranslation().sub(position).direction());
 	    enemy.killValue = 25;
-	    enemy.radius = 15;
+	    enemy.energyValue = 50;
+	    enemy.radius = 8;
 		enemy.mesh = new Mesh();
 		
 		final float WIDTH = 20;
@@ -258,6 +266,7 @@ public class EnemyFactory {
 		enemy.transform.setTranslation(position);
 		enemy.baseColor = new Vector4f(1, 1, 1, 1);
 		enemy.killValue = 200;
+		enemy.energyValue = 50;
 	    enemy.health = 8;
 	    enemy.radius = 16;
 	    enemy.groupMask = Masks.Collision.ENEMY | Masks.Collision.BLACK_HOLE;
