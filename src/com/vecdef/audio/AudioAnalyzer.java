@@ -1,4 +1,4 @@
-package com.vecdef.analyze;
+package com.vecdef.audio;
 
 import java.util.ArrayList;
 
@@ -6,9 +6,6 @@ import org.javatroid.graphics.BlendState;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector4f;
 
-import com.vecdef.audio.MusicPlayer;
-import com.vecdef.audio.TrackChangeEvent;
-import com.vecdef.audio.TrackEventListener;
 import com.vecdef.gamestate.ShapeRenderer;
 import com.vecdef.model.Primitive.DrawType;
 

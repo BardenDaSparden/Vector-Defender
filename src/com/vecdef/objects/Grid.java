@@ -12,7 +12,7 @@ import org.javatroid.math.Vector3f;
 import org.javatroid.math.Vector4f;
 import org.lwjgl.opengl.Display;
 
-import com.vecdef.analyze.AudioAnalyzer;
+import com.vecdef.audio.AudioAnalyzer;
 import com.vecdef.gamestate.Renderer;
 import com.vecdef.gamestate.ShapeRenderer;
 import com.vecdef.model.Primitive.DrawType;

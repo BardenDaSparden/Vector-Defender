@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.javatroid.core.Input;
 
 import com.toolkit.inputstate.Gamepad;
-import com.vecdef.analyze.AudioAnalyzer;
+import com.vecdef.audio.AudioAnalyzer;
 import com.vecdef.audio.MusicPlayer;
 import com.vecdef.core.MinimFileHandler;
 

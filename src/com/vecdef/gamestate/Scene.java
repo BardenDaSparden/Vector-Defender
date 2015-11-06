@@ -7,7 +7,7 @@ import org.javatroid.math.Vector3f;
 import org.lwjgl.opengl.Display;
 
 import com.toolkit.inputstate.Gamepad;
-import com.vecdef.analyze.AudioAnalyzer;
+import com.vecdef.audio.AudioAnalyzer;
 import com.vecdef.objects.CollisionSystem;
 import com.vecdef.objects.Entity;
 import com.vecdef.objects.Grid;
