@@ -1,76 +1,154 @@
 package com.vecdef.analyze;
 
-import org.javatroid.core.Resources;
-import org.javatroid.graphics.SpriteBatch;
-import org.lwjgl.opengl.Display;
+import java.util.ArrayList;
 
+import org.javatroid.graphics.BlendState;
+import org.javatroid.math.Vector2f;
+import org.javatroid.math.Vector4f;
+
+import com.vecdef.audio.MusicPlayer;
+import com.vecdef.audio.TrackChangeEvent;
+import com.vecdef.audio.TrackEventListener;
+import com.vecdef.gamestate.ShapeRenderer;
+import com.vecdef.model.Primitive.DrawType;
+
+import ddf.minim.AudioListener;
+import ddf.minim.AudioPlayer;
+import ddf.minim.analysis.BeatDetect;
 import ddf.minim.analysis.FFT;
 import ddf.minim.analysis.WindowFunction;
 
 public class AudioAnalyzer {
-
+	
+	int bufferSize;
+	int sampleRate;
+	float[] samples;
 	FFT fft;
 	WindowFunction function = FFT.HAMMING;
 	
-	public AudioAnalyzer(int bufferSize, int sampleRate){
+	BeatDetect detect;
+	BeatDetect detect2;
+	
+	AudioPlayer currentTrack;
+	
+	public AudioAnalyzer(MusicPlayer player){
+		bufferSize = player.getBufferSize();
+		sampleRate = player.getSampleRate();
+		samples = new float[bufferSize];
 		fft = new FFT(bufferSize, sampleRate);
 		fft.window(function);
+		detect = new BeatDetect(bufferSize, sampleRate);
+		detect.detectMode(BeatDetect.FREQ_ENERGY);
+		detect2 = new BeatDetect(bufferSize, sampleRate);
+		detect2.detectMode(BeatDetect.SOUND_ENERGY);
+		currentTrack = player.getCurrentTrack();
+		
+		final AudioListener dataListener = new AudioListener() {
+			@Override
+			public void samples(float[] sampL, float[] sampR) {
+				samples = sampL;
+			}
+			
+			@Override
+			public void samples(float[] samp) {
+				samples = samp;
+			}
+		};
+		currentTrack.addListener(dataListener);
+		
+		player.addListener(new TrackEventListener() {
+			
+			@Override
+			public void process(TrackChangeEvent event){
+				currentTrack.removeListener(dataListener);
+				currentTrack = event.track;
+				currentTrack.addListener(dataListener);
+			}
+		});
 	}
 	
-	public void drawLogFreqSpectrum(float[] buffer, SpriteBatch batch){
-		final int BAR_WIDTH = 2;
-		final int BAR_SPACING = 1;
+	public void analyze(){
 		
-		fft.forward(buffer);
-		int numBins = fft.specSize();
-		int spectrumWidth = (numBins) * (BAR_WIDTH + BAR_SPACING);
-		float startX = -spectrumWidth / 2 - BAR_WIDTH / 2;
+	}
+	
+	ArrayList<Vector2f> waveformPoints = new ArrayList<Vector2f>();
+	public void drawWaveform(float x, float y, float spacingX, float scaleY, int averages, Vector4f color, ShapeRenderer renderer){
+		waveformPoints.clear();
 		
-		batch.begin();
-		batch.setColor(0.35f, 1, 0.35f, 0.1f);
-		for(int i = 0; i < numBins; i++){
-			int offsetX = i * (BAR_WIDTH + BAR_SPACING);
-			float amplitude = fft.getBand(i) * (float)Math.log10(fft.getBandWidth() * i) * 2;
-			batch.draw(startX + offsetX, 0, BAR_WIDTH, amplitude, 0, Resources.getTexture("blank"));
+		
+		int n = samples.length / averages;
+		for(int i = 0; i < n; i+=averages){
+			float sum = 0;
+			for(int j = 0; j < averages; j++){
+				sum += samples[i + j];
+			}
+			sum /= averages;
+			waveformPoints.add(new Vector2f(i * spacingX, sum * scaleY));
 		}
-		batch.end();
-		batch.setColor(1, 1, 1, 1);
+		
+		float waveformWidth = waveformPoints.size() * spacingX - (2 * spacingX);
+		Vector2f offset = new Vector2f(-(waveformWidth / 2.0f) + x, y);
+		renderer.begin(DrawType.LINES, BlendState.ADDITIVE);
+			for(int i = 0; i < waveformPoints.size() - 1; i++){
+				Vector2f v0 = waveformPoints.get(i).add(offset);
+				Vector2f v1 = waveformPoints.get((i + 1)).add(offset);
+				renderer.draw(v0, color);
+				renderer.draw(v1, color);
+			}
+		renderer.end();
 	}
 	
-	public void drawLogFreqSpectrumAvg(float[] buffer, SpriteBatch batch){
-		final int BAR_WIDTH = 30;
-		final int BAR_SPACING = 1;
-		final int AVERAGES = 40;
+	public void drawWaveformH(float x, float y, float width, float height, Vector4f color, ShapeRenderer renderer){
+		waveformPoints.clear();
 		
-		fft.linAverages(AVERAGES);
-		fft.forward(buffer);
+		int n = samples.length;
+		float spacingX = width / n;
 		
-		float posX = 0;
-		float posY = -Display.getHeight() / 2;
-		
-		int numBins = AVERAGES;
-		int spectrumWidth = (numBins) * (BAR_WIDTH + BAR_SPACING);
-		float startX = -spectrumWidth / 2 - BAR_WIDTH / 2;
-		float offsetY = 0;
-		
-		batch.begin();
-		batch.setColor(0, 1, 0.5f, 0.75f);
-		for(int i = 0; i < fft.avgSize(); i++){
-			int offsetX = i * (BAR_WIDTH + BAR_SPACING);
-			float amplitude = fft.getAvg(i) * (float)Math.log10(fft.getAverageCenterFrequency(i)) * 2;
-			offsetY = amplitude / 2;
-			batch.draw(posX + startX + offsetX, posY + offsetY, BAR_WIDTH, amplitude, 0, Resources.getTexture("blank"));
+		Vector2f offset = new Vector2f(-width / 2 + x, y);
+		for(int i = 0; i < n; i++){
+			float sample = samples[i];
+			waveformPoints.add(new Vector2f(i * spacingX + offset.x, sample * height + offset.y));
 		}
-		batch.end();
-		batch.setColor(1, 1, 1, 1);
+		
+		Vector2f start = waveformPoints.get(0);
+		Vector2f end = waveformPoints.get(waveformPoints.size() - 1);
+		start.set(start.x, y);
+		end.set(end.x, y);
+		
+		renderer.begin(DrawType.LINES, BlendState.ADDITIVE);
+			for(int i = 0; i < waveformPoints.size() - 1; i++){
+				Vector2f v0 = waveformPoints.get(i);
+				Vector2f v1 = waveformPoints.get((i + 1));
+				renderer.draw(v0, color);
+				renderer.draw(v1, color);
+			}
+		renderer.end();
 	}
 	
-	public void test_analyze(){
-		int numBins = fft.specSize();
-		for(int i = 0; i < numBins; i++){
-			System.out.print(fft.getBand(i) + " ");
+	public void drawWaveformV(float x, float y, float width, float height, int averages, Vector4f color, ShapeRenderer renderer){
+		waveformPoints.clear();
+		
+		int n = samples.length;
+		float spacingY = height / n;
+		
+		Vector2f offset = new Vector2f(x, -height / 2 + y);
+		for(int i = 0; i < n; i++){
+			float sample = samples[i];
+			waveformPoints.add(new Vector2f(sample * width + offset.x, i * spacingY + offset.y));
 		}
-		System.out.println();
+		
+		Vector2f start = waveformPoints.get(0);
+		Vector2f end = waveformPoints.get(waveformPoints.size() - 1);
+		start.set(x, start.y);
+		end.set(x, end.y);
+		
+		renderer.begin(DrawType.LINES, BlendState.ADDITIVE);
+			for(int i = 0; i < waveformPoints.size() - 1; i++){
+				Vector2f v0 = waveformPoints.get(i);
+				Vector2f v1 = waveformPoints.get((i + 1));
+				renderer.draw(v0, color);
+				renderer.draw(v1, color);
+			}
+		renderer.end();
 	}
-	
 }
