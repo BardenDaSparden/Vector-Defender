@@ -50,7 +50,7 @@ public class PlayState extends GState{
 	    spawner = new EnemySpawner(factory, scene);
 	    hudController = new HUD(this, scene, renderer, Display.getWidth(), Display.getHeight());
 	    
-//	    gamestate.player.nextTrack();
+	    gamestate.player.nextTrack();
 	    scene.getPlayer().reset();
 	}
 	
