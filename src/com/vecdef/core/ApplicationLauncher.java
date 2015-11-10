@@ -68,36 +68,30 @@ public class ApplicationLauncher {
 		
 		long previousTime = System.nanoTime();
 		long currentTime = previousTime;
-		long unprocessedUpdateTime = 0;
-		long unprocessedRenderTime = 0;
+		long unprocessedTime = 0;
 		final long UPDATE_STEP = (long)(1000000000D / (double)settings.updaterate);
-		final long RENDER_STEP = (long)(1000000000D / (double)settings.renderrate);
 		final int MAX_UPDATES_PER_FRAME = 3;
-		final int MAX_RENDERS_PER_FRAME = 1;
 		
 		application.initialize();
 		
 		while(!Display.isCloseRequested() && isRunning){
 			previousTime = currentTime;
 			currentTime = System.nanoTime();
-			unprocessedUpdateTime += (currentTime - previousTime);
-			unprocessedRenderTime += (currentTime - previousTime);
+			unprocessedTime += (currentTime - previousTime);
 			
 			int updates = 0;
-			while(unprocessedUpdateTime >= UPDATE_STEP && updates < MAX_UPDATES_PER_FRAME){
-				unprocessedUpdateTime -= UPDATE_STEP;
+			while(unprocessedTime >= UPDATE_STEP && updates < MAX_UPDATES_PER_FRAME){
+				unprocessedTime -= UPDATE_STEP;
 				application.update();
 				updates++;
 			}
 			
-			int renders = 0;
-			while(unprocessedRenderTime >= RENDER_STEP && renders < MAX_RENDERS_PER_FRAME){
-				unprocessedRenderTime -= RENDER_STEP;
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-				application.render();
-				Display.update();
-				renders++;
-			}
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			application.render();
+			Display.update();
+			if(settings.vsync)
+				Display.setVSyncEnabled(settings.vsync);
+			
 		}
 		
 		application.destroy();
