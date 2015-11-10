@@ -16,8 +16,7 @@ public class Main {
 		settings.height = desktopDisplay.getHeight();
 		settings.fullscreen = true;
 		settings.borderless = false;
-		settings.vsync = false;
-		settings.renderrate = 60;
+		settings.vsync = true;
 		settings.updaterate = 60;
 		settings.multisamples = 4;
 			
