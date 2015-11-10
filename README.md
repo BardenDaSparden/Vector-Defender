@@ -1,23 +1,24 @@
-##Vector Defender
+##Overview
 
-A 2-Dimensional, vector-stylized, shape shooter game written in Java.
+Vector Defender is A 2-Dimensional, vector-stylized, shape shooter game written in Java. Vector Defender is
+multi-platform and is capable of running on Windows, OSx, and most flavors of Linux. This game was originally
+written as a proof-of-concept for myself. After some time, I've decided to re-open the project, and continue
+development.
 
 ##System Requirements
 - OpenGL 3.3
-- 512MB VRAM
+- Atleast 256MB VRAM
 
-##Immediate Tasks
+##TO-DO:
 - [x] Add "Bloom/Glow" post processing effect to rendering pipeline.
 - [x] Implement death effects via particle explosions for each unit.
-- [ ] Implement multiple game states and create an audio reactive main menu.
 - [x] Cleanup and tweak each enemy unit behavior class.
-- [ ] Implement enemy unit spawning effects.
-
-##Extended Tasks
-- [ ] Prototype, and implement a primary, and secondary weapon system for the player ship.
-- [ ] Overhaul the HUD.
-- [ ] Create alternate "Levels/Environments"
-- [ ] Add a challenge system for player goals.
-- [ ] Implement a ship editor for custom player ships.
-- [ ] Add a parallax background system for the "Level/Environment" overhaul.
-- [ ] Create soundtrack.
+- [x] Implement enemy unit spawning effects.
+- [ ] Create and implement alternate spawn methods for enemy spawning.
+- [ ] Create pause menu.
+- [ ] Seamless gamestate transitions.
+- [ ] Option menu for main menu.
+- [ ] Clamp Wanderer speed.
+- [ ] Sounds for EVERYTHING!
+- [ ] Merge and re-implement input handling code from jTroid.
+- [ ] Debug Log
