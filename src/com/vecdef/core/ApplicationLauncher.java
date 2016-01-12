@@ -2,7 +2,6 @@ package com.vecdef.core;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
-import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.PixelFormat;
@@ -44,18 +43,13 @@ public class ApplicationLauncher {
 			compatibleDisplay = new DisplayMode(settings.width, settings.height);
 		}
 		
-		PixelFormat format = new PixelFormat(32, 8, 0, 8, settings.multisamples);
-		
-		ContextAttribs attributes = new ContextAttribs(2, 0);
-		attributes.withForwardCompatible(true);
-		
 		try {
 			Display.setTitle(settings.title);
 			Display.setDisplayMode(compatibleDisplay);
 			Display.setResizable(settings.resizable);
 			Display.setFullscreen(settings.fullscreen);
 			Display.setVSyncEnabled(settings.vsync);
-			Display.create(format, attributes);
+			Display.create();
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
