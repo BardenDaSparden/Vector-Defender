@@ -254,54 +254,18 @@ public class Grid {
 		
 		//audio reactive edges
 		
-		accum1.bind();
-			accum1.clear(0, 0, 0, 1);
-			float offsetY = cellHeight / 2;
-			float w = getWidth();
-			float h = getHeight() + cellHeight / 2;
-			int thickness = 5;
-			
-			for(int i = 0; i < thickness; i++){
-				//analyzer.drawWaveform(0, Display.getHeight() / 2, 2, amplitude + i, 1, waveColor, sRenderer);
-				analyzer.drawWaveformH(0, -h/2 + offsetY, w, waveAmplitude + i, waveColor, sRenderer);
-				analyzer.drawWaveformH(0, h/2 + offsetY, w, waveAmplitude + i, waveColor, renderer.ShapeRenderer());
-				analyzer.drawWaveformV(-w/2, offsetY, waveAmplitude + i, h, 1, waveColor, renderer.ShapeRenderer());
-				analyzer.drawWaveformV(w/2, offsetY, waveAmplitude + i, h, 1, waveColor, renderer.ShapeRenderer());
-			}
-			
-		accum1.release();
+		float offsetY = cellHeight / 2;
+		float w = getWidth();
+		float h = getHeight() + cellHeight / 2;
+		int thickness = 5;
 		
-//		accum2.bind();
-//			batch.setCamera(screenCamera);
-//			batch.begin(BlendState.ADDITIVE);
-//				batch.draw(0, 0, Display.getWidth(), Display.getHeight(), 0, accum1.getTexture());
-//			batch.end();
-//		accum2.release();
-//		
-//		accum1.bind();
-//			accum1.clear(0, 0, 0, 1);
-//			batch.setCamera(screenCamera);
-//			batch.setShader(reverseAccum);
-//			batch.begin(BlendState.ADDITIVE);
-//				batch.draw(0, 0, Display.getWidth(), Display.getHeight(), 0, accum2.getTexture());
-//			batch.end();
-//		accum1.release();
-//		
-//		accum2.bind();
-//			accum2.clear(0, 0, 0, 1);
-//			batch.setCamera(screenCamera);
-//			batch.setShader(null);
-//			batch.begin(BlendState.ALPHA);
-//				batch.draw(0, 0, Display.getWidth(), Display.getHeight(), 0, accum1.getTexture());
-//			batch.end();
-//		accum2.release();
-		
-		buffer.bind();
-			batch.setCamera(screenCamera);
-			batch.begin(BlendState.ADDITIVE);
-				batch.draw(0, 0, Display.getWidth(), Display.getHeight(), 0, accum1.getTexture());
-			batch.end();
-		buffer.release();
+		for(int i = 0; i < thickness; i++){
+			//analyzer.drawWaveform(0, Display.getHeight() / 2, 2, amplitude + i, 1, waveColor, sRenderer);
+			analyzer.drawWaveformH(0, -h/2 + offsetY, w, waveAmplitude + i, waveColor, sRenderer);
+			analyzer.drawWaveformH(0, h/2 + offsetY, w, waveAmplitude + i, waveColor, renderer.ShapeRenderer());
+			analyzer.drawWaveformV(-w/2, offsetY, waveAmplitude + i, h, 1, waveColor, renderer.ShapeRenderer());
+			analyzer.drawWaveformV(w/2, offsetY, waveAmplitude + i, h, 1, waveColor, renderer.ShapeRenderer());
+		}
 			
 		batch.setCamera(_old);
 		
