@@ -136,4 +136,20 @@ public class Scene {
 	public Grid getGrid(){
 		return grid;
 	}
+	
+	public int getPhysicsObjectCount(){
+		return physics.numObjects();
+	}
+	
+	public int getCollisionObjectCount(){
+		return collision.numObjects();
+	}
+	
+	public int getRenderObjectCount(){
+		return renders.numObjects();
+	}
+	
+	public int getEntityCount(){
+		return entities.size();
+	}
 }
