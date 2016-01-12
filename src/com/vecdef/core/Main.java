@@ -12,13 +12,13 @@ public class Main {
 		
 		DisplayMode desktopDisplay = Display.getDesktopDisplayMode();
 		
-		settings.width = desktopDisplay.getWidth();
-		settings.height = desktopDisplay.getHeight();
-		settings.fullscreen = true;
+		settings.width = 1280;
+		settings.height = 720;
+		settings.fullscreen = false;
 		settings.borderless = false;
 		settings.vsync = true;
 		settings.updaterate = 60;
-		settings.multisamples = 4;
+		settings.multisamples = 1;
 			
 		launcher.launch();		
 	}
