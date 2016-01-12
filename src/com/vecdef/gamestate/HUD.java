@@ -14,6 +14,7 @@ import com.vecdef.objects.PlayerStats;
 
 public class HUD {
 
+	private Scene scene;
 	private Renderer renderer;
 	private OrthogonalCamera camera;
 	private PlayState state;
@@ -34,11 +35,14 @@ public class HUD {
 	private Texture life;
 	private Texture white;
 	
+	private boolean bDebug;
+	
 	public HUD(PlayState pState, Scene scene, Renderer renderer, int width, int height){
 		this.state = pState;
 		this.renderer = renderer;
 		this.width = width;
 		this.height = height;
+		this.scene = scene;
 		camera = new OrthogonalCamera(width, height);
 		player = scene.getPlayer();
 		
@@ -54,6 +58,8 @@ public class HUD {
 		livesBarOutline = Resources.getTexture("livesBar");
 		life = Resources.getTexture("life");
 		white = Resources.getTexture("blank");
+		
+		bDebug = true;
 	}
 	
 	public void draw(){
@@ -114,75 +120,22 @@ public class HUD {
 				batch.draw(startX + (i * spacing) + (i * lifeWidth), -height / 2 + 34, 23.5f, lifeHeight, 0, white);
 			}
 			
+			
 			batch.setColor(1, 1, 1, 0.3f);
 			techFontSmall.drawString(-width / 2 + 25, - height / 2 + 34, "PREVIEW BUILD 11-2-15", batch);
+			
+			if(bDebug){
+				techFontSmall.drawString(-width / 2, 30, "Physics Objects: " + scene.getPhysicsObjectCount(), batch);
+				techFontSmall.drawString(-width / 2, 0, "Collision Objects: " + scene.getCollisionObjectCount(), batch);
+				techFontSmall.drawString(-width / 2, -30, "Render Objects: " + scene.getRenderObjectCount(), batch);
+				techFontSmall.drawString(-width / 2, -60, "Entity Count: " + scene.getRenderObjectCount(), batch);
+			}
+			
 		batch.end();
-//		batch.begin(BlendState.ADDITIVE);
-//			batch.draw(0, 0, Display.getWidth(), Display.getHeight(), 0, Resources.getTexture("HUD"));
-//		batch.end();
-//		SpriteBatch spriteBatch = renderer.SpriteBatch();
-//		
-//		glViewport(0, 0, Display.getWidth(), Display.getHeight());
-//		spriteBatch.setShader(null);
-//		spriteBatch.begin();
-//		spriteBatch.setColor(1, 1, 1, 1);
-//		
-//		int lives = player.getStats().getLiveCount();
-//		int bombs = player.getStats().getBombCount();
-//		long score = player.getStats().getScore();
-//		long highscore = player.getStats().getHighscore();
-//		int multiplier = player.getStats().getMultiplier();
-//		
-//		float startX = -Display.getWidth() / 2.0f + 30;
-//		float startY = Display.getHeight() / 2 - 46;
-//		
-//		defaultFont.drawString(startX, startY, "Lives : ", spriteBatch);
-//		
-//		startX += 120;
-//		startY -= 12;
-//		
-//		if(lives< 5){
-//			for(int i = 0; i < lives; i++){
-//				float offsetX = i * 30;
-//				spriteBatch.draw(startX + offsetX, startY, liveTexture.getWidth() * 0.5f, liveTexture.getHeight() * 0.5f, 90, liveTexture);
-//			}
-//		} else {
-//			startX -= 8;
-//			startY += 12;
-//			defaultFont.drawString(startX + 10, startY, lives+"", spriteBatch);
-//		}
-//		
-//		startX -= 120;
-//		startY -= 30;
-//		
-//		defaultFont.drawString(startX, startY, "Bombs : ", spriteBatch);
-//		
-//		startX += 120;
-//		startY -= 15;
-//		
-//		if(bombs < 5){
-//			for(int i = 0; i < bombs; i++){
-//				float offsetX = i * 30;
-//				spriteBatch.draw(startX + offsetX, startY, bombTexture.getWidth(), bombTexture.getHeight(), 0, bombTexture);
-//			}
-//		} else {
-//			//startX -= 8;
-//			startY += 12;
-//			defaultFont.drawString(startX + 10, startY, bombs+"", spriteBatch);
-//		}
-//		
-//		spriteBatch.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-//		
-//		String str = "Highscore  " + " " + highscore;
-//	    scoreFont.drawStringCentered(0, Display.getHeight() / 2 - 30, str, spriteBatch);
-//		
-//		float scoreWidth = scoreFont.getWidth(score+"");
-//		spriteBatch.setColor(0.50f, 0.50f, 0.50f, 1);
-//	    scoreFont.drawStringCentered(0, Display.getHeight() / 2 - 96, score+"", spriteBatch);
-//	    defaultFont.drawString(scoreWidth / 2 + 10, Display.getHeight() / 2 - 92, "x " + multiplier, spriteBatch);
-//	    spriteBatch.setColor(1, 1, 1, 1);
-//	    
-//	    spriteBatch.end();
+	}
+	
+	public void toggleDebugMode(){
+		bDebug = !bDebug;
 	}
 	
 }
