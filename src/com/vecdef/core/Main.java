@@ -12,10 +12,10 @@ public class Main {
 		
 		DisplayMode desktopDisplay = Display.getDesktopDisplayMode();
 		
-		settings.width = 1280;
-		settings.height = 720;
-		settings.fullscreen = false;
-		settings.borderless = false;
+		settings.width = 1920;
+		settings.height = 1080;
+		settings.fullscreen = true;
+		settings.borderless = true;
 		settings.vsync = true;
 		settings.updaterate = 60;
 		settings.multisamples = 1;
