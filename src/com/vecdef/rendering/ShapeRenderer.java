@@ -25,7 +25,7 @@ public class ShapeRenderer {
 		
 	}
 	
-	public static final int MAX_DRAWS = 80000;
+	public static final int MAX_DRAWS = 100000;
 	
 	ShaderProgram shader;
 	OrthogonalCamera camera;
@@ -54,6 +54,11 @@ public class ShapeRenderer {
 		positions = new Vector2f[MAX_DRAWS];
 		colors = new Vector4f[MAX_DRAWS];
 		
+		for(int i = 0; i < MAX_DRAWS; i++){
+			positions[i] = new Vector2f(0, 0);
+			colors[i] = new Vector4f(0, 0, 0, 1);
+		}
+		
 		glEnable(GL_BLEND);
 		glEnable(GL_LINE_SMOOTH);
 		
@@ -68,8 +73,8 @@ public class ShapeRenderer {
 		if(draws >= MAX_DRAWS)
 			flush();
 		
-		positions[draws] = position;
-		colors[draws] = color;
+		positions[draws].set(position);
+		colors[draws].set(color);
 		
 		draws++;
 	}
