@@ -23,7 +23,7 @@ public class GridRenderer {
 	ArrayList<Vector2f> positions;
 	ArrayList<Vector4f> colors;
 	
-	Vector4f color = new Vector4f(1, 0, 0, 0.24f);
+	Vector4f color = new Vector4f(1, 0, 0, 0.195f);
 	AudioAnalyzer analyzer;
 	FrameBuffer buffer;
 	FrameBuffer buffer2;
