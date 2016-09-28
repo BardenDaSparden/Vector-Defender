@@ -23,7 +23,7 @@ public class GridRenderer {
 	ArrayList<Vector2f> positions;
 	ArrayList<Vector4f> colors;
 	
-	Vector4f color = new Vector4f(1, 0, 0, 0.195f);
+	Vector4f color = new Vector4f(1, 0, 0, 0.23f);
 	AudioAnalyzer analyzer;
 	FrameBuffer buffer;
 	FrameBuffer buffer2;
@@ -65,6 +65,11 @@ public class GridRenderer {
 		int cols = grid.numCols();
 		int rows = grid.numRows();
 		
+		Vector3f temp1 = new Vector3f();
+		Vector3f temp2 = new Vector3f();
+		Vector3f temp3 = new Vector3f();
+		Vector3f temp4 = new Vector3f();
+		
 		for (int j = 0; j < points.length - 1; j++){
 			for(int i = 0; i < points[j].length - 1; i++){
 				PointMass point = points[j][i];
@@ -77,13 +82,24 @@ public class GridRenderer {
 				Vector3f BL = point3.getPosition();
 				Vector3f BR = point4.getPosition();
 				
-				Vector3f IT = TL.add(TR.sub(TL).scale(0.5f));
-				Vector3f IR = TR.add(BR.sub(TR).scale(0.5f));
-				Vector3f IB = BL.add(BR.sub(BL).scale(0.5f));
-				Vector3f IL = BL.add(TL.sub(BL).scale(0.5f));
+				temp1.x = TL.x + (TR.x - TL.x) * 0.5f;
+				temp1.y = TL.y + (TR.y - TL.y) * 0.5f;
+				temp1.z = TL.z + (TR.z - TL.z) * 0.5f;
 				
-				drawLine(IT, IB);
-				drawLine(IL, IR);
+				temp2.x = TR.x + (BR.x - TR.x) * 0.5f;
+				temp2.y = TR.y + (BR.y - TR.y) * 0.5f;
+				temp2.z = TR.z + (BR.z - TR.z) * 0.5f;
+				
+				temp3.x = BL.x + (BR.x - BL.x) * 0.5f;
+				temp3.y = BL.y + (BR.y - BL.y) * 0.5f;
+				temp3.z = BL.z + (BR.z - BL.z) * 0.5f;
+				
+				temp4.x = BL.x + (TL.x - BL.x) * 0.5f;
+				temp4.y = BL.y + (TL.y - BL.y) * 0.5f;
+				temp4.z = BL.z + (TL.z - BL.z) * 0.5f;
+				
+				drawLine(temp1, temp3);
+				drawLine(temp4, temp2);
 				
 				drawLine(TL, TR);
 				drawLine(TL, BL);			
