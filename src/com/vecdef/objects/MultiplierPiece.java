@@ -4,20 +4,17 @@ import org.javatroid.core.Timer;
 import org.javatroid.core.TimerCallback;
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
-import org.javatroid.math.Vector4f;
 
-import com.vecdef.gamestate.Scene;
-import com.vecdef.model.LinePrimitive;
-import com.vecdef.model.Mesh;
-import com.vecdef.model.MeshLayer;
+import com.vecdef.collision.ContactEvent;
+import com.vecdef.collision.ContactEventListener;
+import com.vecdef.model.MultiplierModel;
+import com.vecdef.util.Masks;
 
 public class MultiplierPiece extends Entity{
 
 	final float ROTATIONAL_DAMPING = 0.99f;
 	final float VELOCITY_DAMPING = 0.95f;
 	final float RANGE = 150;
-	
-	Mesh mesh;
 	
 	Timer timer = new Timer(500);
 	
@@ -26,29 +23,7 @@ public class MultiplierPiece extends Entity{
 		transform.setTranslation(position);
 		transform.setOrientation(FastMath.random() * (float)Math.PI * 2);
 		angularVelocity = FastMath.randomf(1, 4);
-		mesh = new Mesh();
-		
-		final float WIDTH = 6;
-		final float HEIGHT = 6;
-		Vector4f color = new Vector4f(0.2f, 1, 0.2f, 1);
-		
-		LinePrimitive body = new LinePrimitive();
-		body.addVertex(new Vector2f(-WIDTH / 2f, -HEIGHT / 2f), color);
-		body.addVertex(new Vector2f(-WIDTH / 2f + 1, HEIGHT / 2f - 1), color);
-		
-		body.addVertex(new Vector2f(-WIDTH / 2f + 1, HEIGHT / 2f - 1), color);
-		body.addVertex(new Vector2f(WIDTH / 2f, HEIGHT / 2f), color);
-		
-		body.addVertex(new Vector2f(WIDTH / 2f, HEIGHT / 2f), color);
-		body.addVertex(new Vector2f(WIDTH / 2f - 1, -HEIGHT / 2f + 1), color);
-		
-		body.addVertex(new Vector2f(WIDTH / 2f - 1, -HEIGHT / 2f + 1), color);
-		body.addVertex(new Vector2f(-WIDTH / 2f, -HEIGHT / 2f), color);
-		
-		MeshLayer bodyLayer = new MeshLayer();
-		bodyLayer.addPrimitive(body);
-		
-		mesh.addLayer(bodyLayer);
+		model = MultiplierModel.get();
 		
 		timer.setCallback(new TimerCallback() {
 			public void execute(Timer timer) {
@@ -109,10 +84,6 @@ public class MultiplierPiece extends Entity{
 	
 	public int getEntityType(){
 		return Masks.Entities.MULTIPLIER;
-	}
-	
-	public Mesh getMesh(){
-		return mesh;
 	}
 
 	@Override

@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import org.barden.util.Debug;
+
 import ddf.minim.AudioPlayer;
 import ddf.minim.Minim;
 
@@ -16,6 +18,7 @@ public class MusicPlayer {
 	ArrayList<AudioPlayer> trackList;
 	ArrayList<TrackEventListener> listeners;
 	int trackIdx = 0;
+	boolean isPlaying = false;
 	
 	public MusicPlayer(Minim minim){
 		this.minim = minim;
@@ -33,14 +36,16 @@ public class MusicPlayer {
 		scanner.close();
 		
 		int n = trackFilenames.size();
+		Debug.logInfo("Minim", n + " tracks loaded.");
 		for(int i = 0; i < n; i++){
 			String filename = trackFilenames.get(i);
 			AudioPlayer track = minim.loadFile(filename);
+			Debug.logInfo("Minim I/O", "Load: " + filename);
 			trackList.add(track);
 		}
 		
-		AudioPlayer player = trackList.get(0);
-		player.play();
+		previousTrack();
+		
 	}
 	
 	public void previousTrack(){
@@ -54,7 +59,8 @@ public class MusicPlayer {
 			trackIdx--;
 		
 		track = trackList.get(trackIdx);
-		track.play();
+		if(isPlaying)
+			track.play();
 		
 		onTrackChange(new TrackChangeEvent(track));
 	}
@@ -66,18 +72,32 @@ public class MusicPlayer {
 		
 		trackIdx = (trackIdx + 1) % trackList.size();
 		track = trackList.get(trackIdx);
-		track.play();
+		if(isPlaying)
+			track.play();
 		
 		onTrackChange(new TrackChangeEvent(track));
 	}
 	
 	public void poll(){
+		
 		AudioPlayer track = trackList.get(trackIdx);
+		
 		if(track == null)
 			return;
-		if(!track.isPlaying()){
+		
+		if(!track.isPlaying() && isPlaying)
 			nextTrack();
-		}
+		
+	}
+	
+	public void play(){
+		isPlaying = true;
+	}
+	
+	public void stop(){
+		isPlaying = false;
+		AudioPlayer track = trackList.get(trackIdx);
+		track.pause();
 	}
 	
 	public AudioPlayer getCurrentTrack(){

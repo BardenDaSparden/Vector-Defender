@@ -3,9 +3,11 @@ package com.vecdef.objects;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 
-import com.vecdef.gamestate.Scene;
+import com.vecdef.collision.ContactEvent;
+import com.vecdef.collision.ContactEventListener;
+import com.vecdef.util.Masks;
 
-public class Bullet extends Entity{
+public class Bullet extends Entity {
 	
 	int timeActive = 0;
 	
@@ -29,7 +31,7 @@ public class Bullet extends Entity{
 	
 	public void update(){
 		timeActive++;
-		scene.getGrid().applyExplosiveForce(velocity.length(), new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 80.0F);
+		scene.getGrid().applyExplosiveForce(velocity.length() * 3, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 50.0f);
 	    if (velocity.lengthSquared() > 0.0F) {
 	      transform.setOrientation(velocity.direction());
 	    }

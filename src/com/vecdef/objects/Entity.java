@@ -4,18 +4,22 @@ import java.util.ArrayList;
 
 import org.javatroid.math.Vector2f;
 
-import com.vecdef.gamestate.Scene;
-import com.vecdef.model.DefaultMesh;
-import com.vecdef.model.Mesh;
-import com.vecdef.model.Transform2D;
+import com.vecdef.collision.ContactEvent;
+import com.vecdef.collision.ContactEventListener;
+import com.vecdef.collision.ICollidable;
+import com.vecdef.model.BulletModel;
+import com.vecdef.model.Model;
+import com.vecdef.model.Transform;
+import com.vecdef.physics.IPhysics;
+import com.vecdef.rendering.IRenderable;
 
 public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	
 	//IRenderable Dependencies
-	protected Transform2D transform;
-	protected Mesh mesh;
+	protected Transform transform;
+	protected Model model;
 	protected float opacity;
-	protected boolean isDrawn;
+	protected boolean isVisible;
 	
 	//IPhysics Dependencies
 	protected Vector2f velocity;
@@ -32,10 +36,10 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	
 	public Entity(Scene scene){
 		this.scene = scene;
-		transform = new Transform2D();
-		mesh = new DefaultMesh();
+		transform = new Transform();
+		model = BulletModel.get();
 		opacity = 1;
-		isDrawn = true;
+		isVisible = true;
 		
 		velocity = new Vector2f();
 		acceleration = new Vector2f();
@@ -53,13 +57,13 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	public abstract int getEntityType();
 	
 	@Override
-	public Transform2D getTransform(){
+	public Transform getTransform(){
 		return transform;
 	}
 	
 	@Override
-	public Mesh getMesh(){
-		return mesh;
+	public Model getModel(){
+		return model;
 	}
 	
 	@Override
@@ -73,12 +77,12 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	}
 	
 	@Override
-	public boolean isDrawn(){
-		return isDrawn;
+	public boolean isVisible(){
+		return isVisible;
 	}
 	
-	public void setDraw(boolean bDraw){
-		isDrawn = bDraw;
+	public void setVisible(boolean bDraw){
+		isVisible = bDraw;
 	}
 	
 	@Override

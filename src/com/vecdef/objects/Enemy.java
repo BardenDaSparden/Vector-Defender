@@ -4,15 +4,17 @@ import java.util.ArrayList;
 
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
-import org.javatroid.math.Vector3f;
 import org.javatroid.math.Vector4f;
-import com.vecdef.ai.Behavior;
-import com.vecdef.gamestate.Scene;
+import com.vecdef.ai.Behaviour;
+import com.vecdef.collision.ContactEvent;
+import com.vecdef.collision.ContactEventListener;
+import com.vecdef.collision.ICollidable;
+import com.vecdef.util.Masks;
 
-public class Enemy extends Entity{
+public class Enemy extends Entity {
 	
 	Vector4f baseColor;
-	ArrayList<Behavior> behaviors;
+	ArrayList<Behaviour> behaviors;
 	boolean bCreate;
 	int health;
 	int killValue;
@@ -26,7 +28,7 @@ public class Enemy extends Entity{
 		super(scene);
 		
 		baseColor = new Vector4f(1, 1, 1, 1);
-		behaviors = new ArrayList<Behavior>();
+		behaviors = new ArrayList<Behaviour>();
 		bCreate = false;
 		health = 1;
 		killValue = 1;
@@ -63,14 +65,14 @@ public class Enemy extends Entity{
 		int n = behaviors.size();
 		if(!bCreate){
 			for(int i = 0; i < n; i++){
-				Behavior behavior = behaviors.get(i);
+				Behaviour behavior = behaviors.get(i);
 				behavior.create();
 			}
 			bCreate = true;
 		}
 		
 		for(int i = 0; i < n; i++){
-			Behavior behavior = behaviors.get(i);
+			Behaviour behavior = behaviors.get(i);
 			behavior.update();
 		}
 	}
@@ -78,9 +80,9 @@ public class Enemy extends Entity{
 	
 	
 	public void destroy(){
-	     int numPieces = FastMath.randomi(2, 5);
-	     final int numParticles = 45;
-	     float speed = 2;
+	     int numPieces = FastMath.randomi(2, 4);
+	     final int numParticles = 50;
+	     float speed = 3;
 	     
 	     for(int i = 0; i < numPieces; i++){
 	    	 MultiplierPiece piece = new MultiplierPiece(transform.getTranslation(), scene);
@@ -92,37 +94,41 @@ public class Enemy extends Entity{
 	     
 	     Vector2f position = getTransform().getTranslation();
 	     Vector2f offset = new Vector2f();
-	     float radius = 32;
-	     float pSpeed = 7.5f;
+	    // float radius = 0;
+	     float pSpeed = 8.25f;
 	     
 	     for(int i = 0; i < numParticles; i++){
 	    	 
 	    	 float angle = (float) (((float)i / (float)numParticles) * Math.PI * 2);
-	    	 offset.x = (float)Math.cos(angle) * radius;
-	    	 offset.y = (float)Math.sin(angle) * radius;
+//	    	 offset.x = (float)Math.cos(angle) * radius;
+//	    	 offset.y = (float)Math.sin(angle) * radius;
 	    	 
 	    	 Particle particle = new Particle(position.x, position.y, baseColor, scene);
 	    	 
-	    	 particle.setMaxLife(40);
+	    	 particle.setMaxLife(45);
 	    	 
 	    	 particle.getTransform().setOrientation((float)Math.toDegrees(angle));
 	    	 particle.getTransform().getTranslation().addi(offset);
+	    	 particle.getTransform().getScale().set(0.4f + (float)Math.random() * 0.1f, 0.2f + (float)Math.random() * 0.3f);
 	    	 
-	    	 particle.getVelocity().set((float)Math.cos(angle) * pSpeed, (float)Math.sin(angle) * pSpeed);
+	    	 Vector2f pVel = particle.getVelocity();
+	    	 
+	    	 pVel.set((float)Math.cos(angle) * (float)(pSpeed + Math.random() * 3.0f), (float)Math.sin(angle) * (float)(pSpeed + Math.random() * 3.0f));
+	    	 
 	    	 
 	    	 scene.add(particle);
 	     }
 	     
-	     scene.getGrid().applyImplosiveForce(1200, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 30), 200);
+	     //scene.getGrid().applyImplosiveForce(1200, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 30), 200);
 	     
 	     int n = behaviors.size();
 	     for(int i = 0; i < n; i++){
-			Behavior behavior = behaviors.get(i);
+			Behaviour behavior = behaviors.get(i);
 			behavior.destroy();
 	     }
 	}
 	
-	public void addBehavior(Behavior behavior){
+	public void addBehavior(Behaviour behavior){
 		behaviors.add(behavior);
 	}
 	

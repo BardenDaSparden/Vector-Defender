@@ -20,15 +20,13 @@ public class PlayerStats{
 	private int multiplier = 1;
 	private int lives = 3;
 	private int energy = 0;
-	private int bombs = 4;
 	private long highscore;
 	
 	public void reset(){
 		score = 0;
 		multiplier = 1;
-		lives = 4;
+		lives = 3;
 		energy = 0;
-		bombs = 3;
 		highscore = loadHighscore();
 	}
 
@@ -103,10 +101,6 @@ public class PlayerStats{
 		lives--;
 	}
 
-	public void useBomb(){
-		bombs--;
-	}
-
 	public long getScore(){
 		return score;
 	}
@@ -117,10 +111,6 @@ public class PlayerStats{
 
 	public int getLiveCount(){
 		return lives;
-	}
-
-	public int getBombCount(){
-		return bombs;
 	}
 
 }

@@ -3,22 +3,23 @@ package com.vecdef.ai;
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
-import com.vecdef.gamestate.Scene;
+
 import com.vecdef.objects.Enemy;
 import com.vecdef.objects.EnemySpawnEffect;
 import com.vecdef.objects.Player;
+import com.vecdef.objects.Scene;
 
-public class StalkerBehaviour extends Behavior{
+public class StalkerBehaviour extends Behaviour{
 	
 	float speed = 2.0F;
-	float angleSpeed = 4;
-	int time = 0;
+	float angleSpeed = 7;
+	float time = 0;
 	
 	EnemySpawnEffect spawnEffect;
 	
 	public StalkerBehaviour(Scene scene, Enemy enemy){
 		super(scene, enemy);
-		spawnEffect = new EnemySpawnEffect(scene, enemy, 250, 250);
+		spawnEffect = new EnemySpawnEffect(scene, enemy);
 		scene.add(spawnEffect);
 	}
 	
@@ -30,9 +31,9 @@ public class StalkerBehaviour extends Behavior{
 	@Override
 	public void update(){
 		
-		scene.getGrid().applyDirectedForce(new Vector3f(self.getVelocity().x, self.getVelocity().y, 0), new Vector3f(self.getTransform().getTranslation().x, self.getTransform().getTranslation().y, 0), 100);
+		scene.getGrid().applyExplosiveForce(5 * self.getVelocity().length(), new Vector3f(self.getTransform().getTranslation().x, self.getTransform().getTranslation().y, 0), 50);
 		
-		time += 5;
+		time += 3.75f;
 		Player player = scene.getPlayer();
 		float toPlayer = player.getTransform().getTranslation().sub(self.getTransform().getTranslation()).direction();
 		

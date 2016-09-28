@@ -2,7 +2,6 @@ package com.vecdef.objects;
 
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
-import org.javatroid.math.Vector4f;
 
 import com.vecdef.ai.BlackHoleBehaviour;
 import com.vecdef.ai.ChaserBehaviour;
@@ -10,10 +9,16 @@ import com.vecdef.ai.FollowerBehavior;
 import com.vecdef.ai.PrototypeBehaviour;
 import com.vecdef.ai.StalkerBehaviour;
 import com.vecdef.ai.WandererBehavior;
-import com.vecdef.gamestate.Scene;
-import com.vecdef.model.LinePrimitive;
-import com.vecdef.model.Mesh;
-import com.vecdef.model.MeshLayer;
+import com.vecdef.collision.ContactEvent;
+import com.vecdef.collision.ContactEventListener;
+import com.vecdef.collision.ICollidable;
+import com.vecdef.model.BlackHoleModel;
+import com.vecdef.model.ChaserModel;
+import com.vecdef.model.FollowerModel;
+import com.vecdef.model.PrototypeModel;
+import com.vecdef.model.SeekerModel;
+import com.vecdef.model.WandererModel;
+import com.vecdef.util.Masks;
 
 public class EnemyFactory {
 
@@ -27,54 +32,11 @@ public class EnemyFactory {
 		Enemy enemy = new Enemy(scene);
 		
 		enemy.transform.setTranslation(position);
-		enemy.baseColor = new Vector4f(0.35f, 0.25f, 1, 1);
+		enemy.baseColor.set(0.35f, 0.25f, 1, 1);
 	    enemy.killValue = 5;
-	    enemy.energyValue = 50;
-		enemy.mesh = new Mesh();
-		final float WIDTH = 26;
-		final float HEIGHT = 26;
-		
-		LinePrimitive p1 = new LinePrimitive();
-		
-		p1.addVertex(new Vector2f(0, 0), enemy.baseColor);
-		p1.addVertex(new Vector2f(0, HEIGHT / 2f), enemy.baseColor);
-		
-		p1.addVertex(new Vector2f(0, HEIGHT / 2f), enemy.baseColor);
-		p1.addVertex(new Vector2f(WIDTH / 4f, HEIGHT / 4f), enemy.baseColor);
-		
-		p1.addVertex(new Vector2f(WIDTH / 4f, HEIGHT / 4f), enemy.baseColor);
-		p1.addVertex(new Vector2f(0, 0), enemy.baseColor);
-		
-		p1.addVertex(new Vector2f(0, 0), enemy.baseColor);
-		p1.addVertex(new Vector2f(WIDTH / 2f, 0), enemy.baseColor);
-		
-		p1.addVertex(new Vector2f(WIDTH / 2f, 0), enemy.baseColor);
-		p1.addVertex(new Vector2f(WIDTH / 4f, -HEIGHT / 4f), enemy.baseColor);
-		
-		p1.addVertex(new Vector2f(WIDTH / 4f, -HEIGHT / 4f), enemy.baseColor);
-		p1.addVertex(new Vector2f(0, 0), enemy.baseColor);
-		
-		p1.addVertex(new Vector2f(0, 0), enemy.baseColor);
-		p1.addVertex(new Vector2f(0, -HEIGHT / 2f), enemy.baseColor);
-		
-		p1.addVertex(new Vector2f(0, -HEIGHT / 2f), enemy.baseColor);
-		p1.addVertex(new Vector2f(-WIDTH / 4f, -HEIGHT / 4f), enemy.baseColor);
-		
-		p1.addVertex(new Vector2f(-WIDTH / 4f, -HEIGHT / 4f), enemy.baseColor);
-		p1.addVertex(new Vector2f(0, 0), enemy.baseColor);
-		
-		p1.addVertex(new Vector2f(0, 0), enemy.baseColor);
-		p1.addVertex(new Vector2f(-WIDTH / 2f, 0), enemy.baseColor);
-		
-		p1.addVertex(new Vector2f(-WIDTH / 2f, 0), enemy.baseColor);
-		p1.addVertex(new Vector2f(-WIDTH / 4f, HEIGHT / 4f), enemy.baseColor);
-		
-		p1.addVertex(new Vector2f(-WIDTH / 4f, HEIGHT / 4f), enemy.baseColor);
-		p1.addVertex(new Vector2f(0, 0), enemy.baseColor);
-		
-		MeshLayer bodyLayer = new MeshLayer();
-		bodyLayer.addPrimitive(p1);
-		enemy.mesh.addLayer(bodyLayer);
+	    enemy.energyValue = 500;
+	    enemy.radius = 13;
+	    enemy.model = WandererModel.get();
 		enemy.addBehavior(new WandererBehavior(scene, enemy));
 		
 		scene.add(enemy);
@@ -84,29 +46,12 @@ public class EnemyFactory {
 	public Enemy createSeeker(Vector2f position){
 		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
-		enemy.baseColor = new Vector4f(0, 1, 1, 1);
+		enemy.baseColor.set(0, 1, 1, 1);
 	    enemy.killValue = 10;
-	    enemy.energyValue = 50;
-		enemy.mesh = new Mesh();
-		
-		final float WIDTH = 20;
-		final float HEIGHT = 20;
-		LinePrimitive topBody = new LinePrimitive();
-		topBody.addVertex(new Vector2f(-WIDTH / 2f, 0), enemy.baseColor);
-		topBody.addVertex(new Vector2f(0, HEIGHT / 2f), enemy.baseColor);
-		
-		topBody.addVertex(new Vector2f(0, HEIGHT / 2f), enemy.baseColor);
-		topBody.addVertex(new Vector2f(WIDTH / 2f, 0), enemy.baseColor);
-		
-		topBody.addVertex(new Vector2f(WIDTH / 2f, 0), enemy.baseColor);
-		topBody.addVertex(new Vector2f(0, -HEIGHT / 2f), enemy.baseColor);
-		
-		topBody.addVertex(new Vector2f(0, -HEIGHT / 2f), enemy.baseColor);
-		topBody.addVertex(new Vector2f(-WIDTH / 2f, 0), enemy.baseColor);
-		
-		MeshLayer bodyLayer = new MeshLayer();
-		bodyLayer.addPrimitive(topBody);
-		enemy.mesh.addLayer(bodyLayer);
+	    enemy.energyValue = 5;
+	    enemy.radius = 12;
+	    enemy.health = 1;
+		enemy.model = SeekerModel.get();
 		enemy.addBehavior(new FollowerBehavior(scene, enemy));
 	    scene.add(enemy);
 	    return enemy;
@@ -115,70 +60,12 @@ public class EnemyFactory {
 	public Enemy createFollower(Vector2f position){
 		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
-		enemy.baseColor = new Vector4f(1, 0, 1, 1);
-	    enemy.killValue = 15;
-	    enemy.energyValue = 50;
-	    enemy.radius = 10;
-		enemy.mesh = new Mesh();
-		
-		final float WIDTH = 18;
-		final float HEIGHT = 18;
-		
-		final float CAP_SIZE = 5;
-		
-		LinePrimitive body = new LinePrimitive();
-		body.addVertex(new Vector2f(0, HEIGHT / 2f), enemy.baseColor);
-		body.addVertex(new Vector2f(WIDTH / 2f, 0), enemy.baseColor);
-		
-		body.addVertex(new Vector2f(WIDTH / 2f, 0), enemy.baseColor);
-		body.addVertex(new Vector2f(0, -HEIGHT / 2f), enemy.baseColor);
-		
-		body.addVertex(new Vector2f(0, -HEIGHT / 2f), enemy.baseColor);
-		body.addVertex(new Vector2f(-WIDTH / 2f, 0), enemy.baseColor);
-		
-		body.addVertex(new Vector2f(-WIDTH / 2f, 0), enemy.baseColor);
-		body.addVertex(new Vector2f(0, HEIGHT / 2f), enemy.baseColor);
-		
-		body.addVertex(new Vector2f(-WIDTH / 2f, HEIGHT / 2f), enemy.baseColor);
-		body.addVertex(new Vector2f(-WIDTH / 2f + CAP_SIZE, HEIGHT / 2f), enemy.baseColor);
-		
-		body.addVertex(new Vector2f(-WIDTH / 2f + CAP_SIZE, HEIGHT / 2f), enemy.baseColor);
-		body.addVertex(new Vector2f(-WIDTH / 2f, HEIGHT / 2f - CAP_SIZE), enemy.baseColor);
-		
-		body.addVertex(new Vector2f(-WIDTH / 2f, HEIGHT / 2f - CAP_SIZE), enemy.baseColor);
-		body.addVertex(new Vector2f(-WIDTH / 2f, HEIGHT / 2f), enemy.baseColor);
-		
-		body.addVertex(new Vector2f(WIDTH / 2f, HEIGHT / 2f), enemy.baseColor);
-		body.addVertex(new Vector2f(WIDTH / 2f - CAP_SIZE, HEIGHT / 2f), enemy.baseColor);
-		
-		body.addVertex(new Vector2f(WIDTH / 2f - CAP_SIZE, HEIGHT / 2f), enemy.baseColor);
-		body.addVertex(new Vector2f(WIDTH / 2f, HEIGHT / 2f - CAP_SIZE), enemy.baseColor);
-		
-		body.addVertex(new Vector2f(WIDTH / 2f, HEIGHT / 2f - CAP_SIZE), enemy.baseColor);
-		body.addVertex(new Vector2f(WIDTH / 2f, HEIGHT / 2f), enemy.baseColor);
-		
-		body.addVertex(new Vector2f(-WIDTH / 2f, -HEIGHT / 2f), enemy.baseColor);
-		body.addVertex(new Vector2f(-WIDTH / 2f + CAP_SIZE, -HEIGHT / 2f), enemy.baseColor);
-		
-		body.addVertex(new Vector2f(-WIDTH / 2f + CAP_SIZE, -HEIGHT / 2f), enemy.baseColor);
-		body.addVertex(new Vector2f(-WIDTH / 2f, -HEIGHT / 2f + CAP_SIZE), enemy.baseColor);
-		
-		body.addVertex(new Vector2f(-WIDTH / 2f, -HEIGHT / 2f + CAP_SIZE), enemy.baseColor);
-		body.addVertex(new Vector2f(-WIDTH / 2f, -HEIGHT / 2f), enemy.baseColor);
-		
-		
-		body.addVertex(new Vector2f(WIDTH / 2f, -HEIGHT / 2f), enemy.baseColor);
-		body.addVertex(new Vector2f(WIDTH / 2f - CAP_SIZE, -HEIGHT / 2f), enemy.baseColor);
-		
-		body.addVertex(new Vector2f(WIDTH / 2f - CAP_SIZE, -HEIGHT / 2f), enemy.baseColor);
-		body.addVertex(new Vector2f(WIDTH / 2f, -HEIGHT / 2f + CAP_SIZE), enemy.baseColor);
-		
-		body.addVertex(new Vector2f(WIDTH / 2f, -HEIGHT / 2f + CAP_SIZE), enemy.baseColor);
-		body.addVertex(new Vector2f(WIDTH / 2f, -HEIGHT / 2f), enemy.baseColor);
-		
-		MeshLayer bodyLayer = new MeshLayer();
-		bodyLayer.addPrimitive(body);
-		enemy.mesh.addLayer(bodyLayer);
+		enemy.baseColor.set(1, 0, 1, 1);
+	    enemy.killValue = 25;
+	    enemy.energyValue = 5;
+	    enemy.health = 1;
+	    enemy.radius = 12;
+		enemy.model = FollowerModel.get();
 		enemy.addBehavior(new StalkerBehaviour(scene, enemy));
 		
 	    scene.add(enemy);
@@ -188,30 +75,12 @@ public class EnemyFactory {
 	public Enemy createChaser(Vector2f position){
 		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
-		enemy.baseColor = new Vector4f(0.5f, 1, 1, 1);
-	    enemy.killValue = 5;
-	    enemy.energyValue = 50;
-	    enemy.radius = 5;
-		enemy.mesh = new Mesh();
+		enemy.baseColor.set(0.5f, 1, 1, 1);
+	    enemy.killValue = 10;
+	    enemy.energyValue = 5;
+	    enemy.radius = 7;
 		enemy.angularVelocity = FastMath.randomi(-2, 2);
-		
-		float radius = enemy.radius;
-	    int segments = 12;
-	    LinePrimitive circle = new LinePrimitive();
-	    
-	    for(int i = 0; i < segments; i++){
-	    	float a1 = (float)i / (float) segments * 360f;
-	    	float a2 = (float)((i + 1) % segments) / (float)segments * 360f;
-	    	
-	    	Vector2f v0 = new Vector2f(FastMath.cosd(a1) * radius, FastMath.sind(a1) * radius);
-	    	Vector2f v1 = new Vector2f(FastMath.cosd(a2) * radius, FastMath.sind(a2) * radius);
-	    	circle.addVertex(v0, enemy.baseColor);
-	    	circle.addVertex(v1, enemy.baseColor);
-	    }
-	    
-	    MeshLayer bodyLayer = new MeshLayer();
-	    bodyLayer.addPrimitive(circle);
-	    enemy.mesh.addLayer(bodyLayer);
+		enemy.model = ChaserModel.get();
 		
 		enemy.addBehavior(new ChaserBehaviour(scene, enemy));
 	    scene.add(enemy);
@@ -222,39 +91,13 @@ public class EnemyFactory {
 		Player player = scene.getPlayer();
 		
 		Enemy enemy = new Enemy(scene);
-		enemy.baseColor = new Vector4f(1, 0.75f, 0, 1);
+		enemy.baseColor.set(1, 0.75f, 0, 1);
 		enemy.transform.setTranslation(position);
 		enemy.transform.setOrientation(player.getTransform().getTranslation().sub(position).direction());
 	    enemy.killValue = 25;
-	    enemy.energyValue = 50;
-	    enemy.radius = 8;
-		enemy.mesh = new Mesh();
-		
-		final float WIDTH = 20;
-		final float HEIGHT = 14;
-		LinePrimitive topBody = new LinePrimitive();
-		topBody.addVertex(new Vector2f(-WIDTH / 2f + 5, 2), enemy.baseColor);
-		topBody.addVertex(new Vector2f(WIDTH / 2f, 2), enemy.baseColor);
-		
-		topBody.addVertex(new Vector2f(WIDTH / 2f, 2), enemy.baseColor);
-		topBody.addVertex(new Vector2f(-WIDTH / 2f, HEIGHT / 2f), enemy.baseColor);
-		
-		topBody.addVertex(new Vector2f(-WIDTH / 2f, HEIGHT / 2f), enemy.baseColor);
-		topBody.addVertex(new Vector2f(-WIDTH / 2f + 5, 2), enemy.baseColor);
-		
-		topBody.addVertex(new Vector2f(-WIDTH / 2f + 5, -2), enemy.baseColor);
-		topBody.addVertex(new Vector2f(WIDTH / 2f, -2), enemy.baseColor);
-		
-		topBody.addVertex(new Vector2f(WIDTH / 2f, -2), enemy.baseColor);
-		topBody.addVertex(new Vector2f(-WIDTH / 2f, -HEIGHT / 2f), enemy.baseColor);
-		
-		topBody.addVertex(new Vector2f(-WIDTH / 2f, -HEIGHT / 2f), enemy.baseColor);
-		topBody.addVertex(new Vector2f(-WIDTH / 2f + 5, -2), enemy.baseColor);
-		
-		MeshLayer bodyLayer = new MeshLayer();
-		bodyLayer.addPrimitive(topBody);
-		
-		enemy.mesh.addLayer(bodyLayer);
+	    enemy.energyValue = 10;
+	    enemy.radius = 12;
+		enemy.model = PrototypeModel.get();
 		enemy.addBehavior(new PrototypeBehaviour(scene, enemy));
 		
 	    scene.add(enemy);
@@ -264,32 +107,14 @@ public class EnemyFactory {
 	public Enemy createBlackHole(Vector2f position){
 		Enemy enemy = new Enemy(scene);
 		enemy.transform.setTranslation(position);
-		enemy.baseColor = new Vector4f(1, 1, 1, 1);
-		enemy.killValue = 200;
-		enemy.energyValue = 50;
-	    enemy.health = 8;
-	    enemy.radius = 16;
+		enemy.baseColor.set(1, 1, 1, 1);
+		enemy.killValue = 100;
+		enemy.energyValue = 25;
+	    enemy.health = 5;
+	    enemy.radius = 26;
 	    enemy.groupMask = Masks.Collision.ENEMY | Masks.Collision.BLACK_HOLE;
 	    enemy.collisionMask |= Masks.Collision.MULTIPLIER | Masks.Collision.ENEMY;
-	    enemy.mesh = new Mesh();
-	    
-		float radius = enemy.radius;
-	    int segments = 32;
-	    LinePrimitive circle = new LinePrimitive();
-	    
-	    for(int i = 0; i < segments; i++){
-	    	float a1 = (float)i / (float) segments * 360f;
-	    	float a2 = (float)((i + 1) % segments) / (float)segments * 360f;
-	    	
-	    	Vector2f v0 = new Vector2f(FastMath.cosd(a1) * radius, FastMath.sind(a1) * radius);
-	    	Vector2f v1 = new Vector2f(FastMath.cosd(a2) * radius, FastMath.sind(a2) * radius);
-	    	circle.addVertex(v0, enemy.baseColor);
-	    	circle.addVertex(v1, enemy.baseColor);
-	    }
-	    
-	    MeshLayer bodyLayer = new MeshLayer();
-	    bodyLayer.addPrimitive(circle);
-	    enemy.mesh.addLayer(bodyLayer);
+	    enemy.model = BlackHoleModel.get();
 	    enemy.addBehavior(new BlackHoleBehaviour(scene, this, enemy));
 	    enemy.addContactListener(new ContactEventListener() {
 			

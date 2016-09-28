@@ -4,21 +4,21 @@ import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 
-import com.vecdef.gamestate.Scene;
 import com.vecdef.objects.Enemy;
 import com.vecdef.objects.EnemySpawnEffect;
 import com.vecdef.objects.Player;
+import com.vecdef.objects.Scene;
 
-public class FollowerBehavior extends Behavior{
+public class FollowerBehavior extends Behaviour{
 	
-	final float MAX_SPEED = 1.8f;
+	final float MAX_SPEED = 2.3f;
 	int time = 0;
 	
 	EnemySpawnEffect spawnEffect;
 	
 	public FollowerBehavior(Scene scene, Enemy enemy){
 		super(scene, enemy);
-		spawnEffect = new EnemySpawnEffect(scene, enemy, 250, 250);
+		spawnEffect = new EnemySpawnEffect(scene, enemy);
 		scene.add(spawnEffect);
 	}
   
@@ -30,9 +30,7 @@ public class FollowerBehavior extends Behavior{
 	public void update(){
 		time += 6;
 	  
-		float scaleX = 1 + FastMath.cosd(time + 90) * 0.2f;
-		float scaleY = 1 + FastMath.sind(time) * 0.2f;
-		self.getTransform().getScale().set(scaleX, scaleY);
+		self.getTransform().scale(FastMath.cosd(time + 90) * 0.02f, FastMath.sind(time) * 0.02f);
 	  
 		scene.getGrid().applyExplosiveForce(5 * self.getVelocity().length(), new Vector3f(self.getTransform().getTranslation().x, self.getTransform().getTranslation().y, 0), 50);
 	  

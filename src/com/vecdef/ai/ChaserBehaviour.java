@@ -5,12 +5,12 @@ import org.javatroid.core.TimerCallback;
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 
-import com.vecdef.gamestate.Scene;
 import com.vecdef.objects.Enemy;
 import com.vecdef.objects.EnemySpawnEffect;
 import com.vecdef.objects.Player;
+import com.vecdef.objects.Scene;
 
-public class ChaserBehaviour extends Behavior{
+public class ChaserBehaviour extends Behaviour{
 	
 	float speed = 4.0F;
 	float maxSpeed = 12.0F;
@@ -23,7 +23,7 @@ public class ChaserBehaviour extends Behavior{
 	
 	public ChaserBehaviour(Scene scene, Enemy enemy){
 		super(scene, enemy);
-		spawnEffect = new EnemySpawnEffect(scene, enemy, 250, 250);
+		spawnEffect = new EnemySpawnEffect(scene, enemy);
 		scene.add(spawnEffect);
 		
 		activateTimer.setCallback(new TimerCallback() {

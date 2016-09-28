@@ -3,98 +3,39 @@ package com.vecdef.objects;
 import org.javatroid.core.Timer;
 import org.javatroid.core.TimerCallback;
 import org.javatroid.math.Vector2f;
-import org.javatroid.math.Vector3f;
 
-import com.vecdef.gamestate.Scene;
-import com.vecdef.model.Mesh;
-import com.vecdef.model.Transform2D;
+import com.vecdef.util.Masks;
 
-public class EnemySpawnEffect extends Entity{
+public class EnemySpawnEffect extends Entity {
 	
-	final int EFFECT_DURATION_MS = 25;
-	
-	float fMagnitude;
-	float fRadius;
-	
-	IRenderable renderable;
-	
+	final int EFFECT_DURATION_MS = 40;
 	Timer expiryTimer = new Timer(EFFECT_DURATION_MS);
 	
-	public EnemySpawnEffect(Scene scene, Enemy enemy, float fRadius, float fMag) {
+	public EnemySpawnEffect(Scene scene, Enemy enemy) {
 		super(scene);
-		
-		Transform2D enemyTransform = new Transform2D(enemy.getTransform());
-		Mesh enemyMesh = enemy.getMesh();
-		this.transform = enemyTransform;
-		this.mesh = enemyMesh;
-		
-		renderable = new IRenderable() {
-			
-			float opacity = 1;
-			boolean drawn = true;
-			Transform2D t = enemyTransform;
-			Mesh m = enemyMesh;
-			
-			@Override
-			public void setOpacity(float opacity) {
-				this.opacity = opacity;
-			}
-			
-			@Override
-			public void setDraw(boolean bDraw) {
-				this.drawn = bDraw;
-			}
-			
-			@Override
-			public boolean isDrawn() {
-				return drawn;
-			}
-			
-			@Override
-			public Transform2D getTransform() {
-				return t;
-			}
-			
-			@Override
-			public float getOpacity() {
-				return opacity;
-			}
-			
-			@Override
-			public Mesh getMesh() {
-				return m;
-			}
-		};
-		
+		transform.set(enemy.transform);
+		model = enemy.getModel();
 		expiryTimer.setCallback(new TimerCallback() {
 			@Override
 			public void execute(Timer timer) {
 				expire();
 			}
 		});
-		
 		expiryTimer.start();
-		
-		scene.addRenderable(renderable);
+		scene.add(this);
 	}
 
 	@Override
 	public void update() {
-		float opacity = (float) Math.sin( (1 - expiryTimer.percentComplete()) * Math.PI / 2f );
-		renderable.setOpacity(opacity);
 		expiryTimer.tick();
-		transform.getScale().addi(new Vector2f(0.15f, 0.15f));
+		float opacity = (float) Math.sin( (1 - expiryTimer.percentComplete()) * Math.PI / 2f );
+		setOpacity(opacity);
+		transform.getScale().addi(new Vector2f(0.07f, 0.07f));
 	}
 
 	@Override
 	public void destroy(){
-		Vector2f position = transform.getTranslation();
-		scene.getGrid().applyExplosiveForce(fMagnitude, new Vector3f(position.x, position.y, 0), fRadius);
-		scene.removeRenderable(renderable);
-	}
-	
-	public boolean isDrawn(){
-		return false;
+		scene.remove(this);
 	}
 	
 	@Override

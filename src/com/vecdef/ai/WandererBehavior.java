@@ -5,13 +5,15 @@ import org.javatroid.core.TimerCallback;
 import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
-import com.vecdef.gamestate.Scene;
+
 import com.vecdef.objects.Enemy;
 import com.vecdef.objects.EnemySpawnEffect;
 import com.vecdef.objects.Grid;
+import com.vecdef.objects.Scene;
 
-public class WandererBehavior extends Behavior{
+public class WandererBehavior extends Behaviour{
 	
+	final float MAX_SPEED = 6.0f;
 	float speed = 2f;	
 	int gridWidth;
 	int gridHeight;
@@ -29,7 +31,7 @@ public class WandererBehavior extends Behavior{
 		gridWidth = grid.getWidth();
 		gridHeight = grid.getHeight();
 		active = false;
-		spawnEffect = new EnemySpawnEffect(scene, enemy, 250, 100);
+		spawnEffect = new EnemySpawnEffect(scene, enemy);
 		scene.add(spawnEffect);
 	}
 	
@@ -55,7 +57,15 @@ public class WandererBehavior extends Behavior{
 			return;
 		}
 		
-		scene.getGrid().applyExplosiveForce(10, new Vector3f(self.getTransform().getTranslation().x, self.getTransform().getTranslation().y, 0), 100);
+		if(Math.abs(self.getVelocity().x) > MAX_SPEED){
+			self.getVelocity().x = MAX_SPEED * Math.signum(self.getVelocity().x);
+		}
+		
+		if(Math.abs(self.getVelocity().y) > MAX_SPEED){
+			self.getVelocity().y = MAX_SPEED * Math.signum(self.getVelocity().x);
+		}
+		
+		//scene.getGrid().applyExplosiveForce(5, new Vector3f(self.getTransform().getTranslation().x, self.getTransform().getTranslation().y, 0), 100);
 	    
 	    if ((self.getTransform().getTranslation().x < -gridWidth / 2) || (self.getTransform().getTranslation().x > gridWidth / 2)) {
 	    	self.getTransform().getTranslation().x = FastMath.clamp(-gridWidth / 2 + 1, gridWidth / 2 - 1, self.getTransform().getTranslation().x);
@@ -66,6 +76,8 @@ public class WandererBehavior extends Behavior{
 	    	self.getTransform().getTranslation().y = FastMath.clamp(-gridHeight / 2 + 1, gridHeight / 2 - 1, self.getTransform().getTranslation().y);
 	    	self.getVelocity().y *= -1.0F;
 	    }
+	    
+	    scene.getGrid().applyExplosiveForce(5 * self.getVelocity().length(), new Vector3f(self.getTransform().getTranslation().x, self.getTransform().getTranslation().y, 0), 50);
 	    
 	}
 
