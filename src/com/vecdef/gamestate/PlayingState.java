@@ -10,7 +10,8 @@ import org.javatroid.graphics.Texture;
 import org.javatroid.math.CubicInterpolator;
 import org.javatroid.math.Vector2f;
 
-import com.vecdef.objects.HUDController;
+import com.vecdef.objects.HUD;
+import com.vecdef.objects.Player;
 import com.vecdef.objects.Scene;
 import com.vecdef.rendering.SceneRenderer;
 
@@ -25,9 +26,9 @@ public class PlayingState extends GameState {
 	SceneRenderer sceneRenderer;
 	
 	Scene scene;
-	HUDController hudController;
-	CubicInterpolator interpolator = new CubicInterpolator(new Vector2f(0.0f, 0.5f), new Vector2f(0.5f, 1.0f));
+	HUD hudController;
 	
+	CubicInterpolator interpolator = new CubicInterpolator(new Vector2f(0.35f, 0.0f), new Vector2f(0.75f, 1.0f));
 	Texture white;
 	final int FADE_IN_TIME = 30;
 	Timer fadeInTimer;
@@ -36,9 +37,9 @@ public class PlayingState extends GameState {
 	public void initialize() {
 		camera = new OrthogonalCamera(instance.settings.width, instance.settings.height);
 		hudCamera = new OrthogonalCamera(instance.settings.width, instance.settings.height);
-	    scene = new Scene(instance.settings.width, instance.settings.height, instance.joystick1);
+	    scene = new Scene(instance.settings.width, instance.settings.height, instance.input);
 	    sceneRenderer = new SceneRenderer(instance.settings.width, instance.settings.height, scene, instance.renderer);
-	    hudController = new HUDController(scene, instance.renderer, instance.settings.width, instance.settings.height);
+	    hudController = new HUD(scene, instance.renderer, instance.settings.width, instance.settings.height);
 	    white = Resources.getTexture("blank");
 	    fadeInTimer = new Timer(FADE_IN_TIME);
 	    fadeInTimer.setCallback(new TimerCallback() {
@@ -49,15 +50,62 @@ public class PlayingState extends GameState {
 			}
 		});
 	    fadeInTimer.start();
+	    
 	}
 
 	@Override
 	public void update() {
-		Vector2f cameraPosition = camera.getTranslation();
-		Vector2f playerPosition = scene.getPlayer().getTransform().getTranslation();
-		float newCameraX = interpolator.interpolate(cameraPosition.x, playerPosition.x, 0.12f);
-		float newCameraY = interpolator.interpolate(cameraPosition.y, playerPosition.y, 0.12f);
-		camera.getTranslation().set(newCameraX, newCameraY);
+		if(scene.isMultiplayer()){
+			Vector2f cameraPosition = camera.getTranslation();
+			
+			int playerCount = 1;
+			float x = 0;
+			float y = 0;
+			
+			Player p1 = scene.getPlayer();
+			Player p2 = scene.getPlayer2();
+			Player p3 = scene.getPlayer3();
+			Player p4 = scene.getPlayer4();
+			
+			Vector2f p1Pos = p1.getTransform().getTranslation();
+			x += p1Pos.x;
+			y += p1Pos.y;
+			
+			if(p2.hasJoined() && p2.isAlive()){
+				Vector2f p2Pos = p2.getTransform().getTranslation();
+				x += p2Pos.x;
+				y += p2Pos.y;
+				playerCount++;
+			}
+			
+			if(p3.hasJoined() && p3.isAlive()){
+				Vector2f p3Pos = p3.getTransform().getTranslation();
+				x += p3Pos.x;
+				y += p3Pos.y;
+				playerCount++;
+			}
+			
+			if(p4.hasJoined() && p4.isAlive()){
+				Vector2f p4Pos = p4.getTransform().getTranslation();
+				x += p4Pos.x;
+				y += p4Pos.y;
+				playerCount++;
+			}
+			
+			x /= (float)playerCount;
+			y /= (float)playerCount;
+			
+			float camX = interpolator.interpolate(cameraPosition.x, x, 0.05f);
+			float camY = interpolator.interpolate(cameraPosition.y, y, 0.05f);
+			camera.getTranslation().set(camX, camY);
+			
+		} else {
+			Vector2f cameraPosition = camera.getTranslation();
+			Vector2f playerPosition = scene.getPlayer().getTransform().getTranslation();
+			float newCameraX = interpolator.interpolate(cameraPosition.x, playerPosition.x, 0.05f);
+			float newCameraY = interpolator.interpolate(cameraPosition.y, playerPosition.y, 0.05f);
+			camera.getTranslation().set(newCameraX, newCameraY);
+		}
 		camera.update();
 		
 		scene.update();
@@ -90,8 +138,7 @@ public class PlayingState extends GameState {
 
 	@Override
 	public void cleanUp() {
-		// TODO Auto-generated method stub
-		
+		scene.destroy();
 	}
 
 	
