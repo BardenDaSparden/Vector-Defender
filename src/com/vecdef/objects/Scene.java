@@ -3,7 +3,9 @@ package com.vecdef.objects;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import org.barden.input.InputSystem;
 import org.barden.input.Joystick;
+import org.barden.input.JoystickListener;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 
@@ -16,7 +18,17 @@ public class Scene {
 	
 	static DecimalFormat FORMATTER = new DecimalFormat("##.##");
 	
-	protected Player player;
+	JoystickListener p2Listener;
+	JoystickListener p3Listener;
+	JoystickListener p4Listener;
+	
+	InputSystem input;
+	
+	protected Player player1;
+	protected Player player2;
+	protected Player player3;
+	protected Player player4;
+	
 	protected Grid grid;
 	protected ArrayList<Entity> entities;
 	protected ArrayList<Entity> entitiesToRemove;
@@ -27,9 +39,13 @@ public class Scene {
 	private EnemyFactory enemyFactory;
 	private EnemySpawner enemySpawner;
 	
-	public Scene(int width, int height, Joystick joystick){
-		player = new Player(this, joystick);
-		grid = new Grid(width, height, 20, 20);
+	public Scene(int width, int height, InputSystem input){
+		this.input = input;
+		player1 = new Player(this, input.getJoystick(0));
+		player2 = new Player(this, input.getJoystick(1));
+		player3 = new Player(this, input.getJoystick(2));
+		player4 = new Player(this, input.getJoystick(3));
+		grid = new Grid(width + 240, height + 160, 30, 30);
 		entities = new ArrayList<Entity>();
 		entitiesToRemove = new ArrayList<Entity>();
 		collision = new CollisionSystem();
@@ -37,8 +53,72 @@ public class Scene {
 		enemyFactory = new EnemyFactory(this);
 		enemySpawner = new EnemySpawner(enemyFactory, this);
 		
+		p2Listener = new JoystickListener() {
+			
+			@Override
+			public void onButtonRelease(int button) {
+				if(button == Joystick.BUTTON_START && !player2.hasJoined()){
+					addPlayer(player2, 0, 0);
+					player2.setJoined(true);
+				}
+			}
+			
+			@Override
+			public void onButtonPress(int button) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		
+		p3Listener = new JoystickListener() {
+			
+			@Override
+			public void onButtonRelease(int button) {
+				if(button == Joystick.BUTTON_START && !player3.hasJoined()){
+					addPlayer(player3, 0, 0);
+					player3.setJoined(true);
+				}
+			}
+			
+			@Override
+			public void onButtonPress(int button) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		
+		p4Listener = new JoystickListener() {
+			
+			@Override
+			public void onButtonRelease(int button) {
+				if(button == Joystick.BUTTON_START && !player4.hasJoined()){
+					addPlayer(player4, 0, 0);
+					player4.setJoined(true);
+				}
+			}
+			
+			@Override
+			public void onButtonPress(int button) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		
+		input.getJoystick(1).addListener(p2Listener);
+		input.getJoystick(2).addListener(p3Listener);
+		input.getJoystick(3).addListener(p4Listener);
+		
+		addPlayer(player1, 0, 0);
+	}
+	
+	final Vector3f SPAWN_FORCE = new Vector3f(0, 0, -250);
+	final float SPAWN_FORCE_RADIUS = 450;
+	Vector3f spawnForcePosition = new Vector3f();
+	void addPlayer(Player player, float x, float y){
+		player.getTransform().getTranslation().set(x, y);
+		spawnForcePosition.set(x, y, 0);
 		add(player);
-		grid.applyDirectedForce(new Vector3f(0, 0, -400), new Vector3f(0, 0, 0), 500);
+		grid.applyDirectedForce(SPAWN_FORCE, spawnForcePosition, SPAWN_FORCE_RADIUS);
 	}
 	
 	public void add(Entity entity){
@@ -140,14 +220,41 @@ public class Scene {
 		//System.out.println("Grid Update : " +  FORMATTER.format(millis) + "ms");
 	}
 	
+	public void destroy(){
+		input.getJoystick(1).removeListener(p2Listener);
+		input.getJoystick(2).removeListener(p3Listener);
+		input.getJoystick(3).removeListener(p4Listener);
+	}
+	
 	public void reset(){
 		enemySpawner.reset();
-		player.reset();
-		player.getTransform().getTranslation().set(0, 0);
+		player1.reset();
+		player1.getTransform().getTranslation().set(0, 0);
+	}
+	
+	public Player getNearestPlayer(float x, float y){
+		//TODO implement
+		return null;
+	}
+	
+	public boolean isMultiplayer(){
+		return (player2.hasJoined() || player3.hasJoined() || player4.hasJoined());
 	}
 	
 	public Player getPlayer(){
-		return player;
+		return player1;
+	}
+	
+	public Player getPlayer2(){
+		return player2;
+	}
+	
+	public Player getPlayer3(){
+		return player3;
+	}
+	
+	public Player getPlayer4(){
+		return player4;
 	}
 	
 	public Grid getGrid(){
