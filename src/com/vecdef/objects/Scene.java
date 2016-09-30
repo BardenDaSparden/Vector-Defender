@@ -41,11 +41,11 @@ public class Scene {
 	
 	public Scene(int width, int height, InputSystem input){
 		this.input = input;
-		player1 = new Player(this, input.getJoystick(0));
-		player2 = new Player(this, input.getJoystick(1));
-		player3 = new Player(this, input.getJoystick(2));
-		player4 = new Player(this, input.getJoystick(3));
-		grid = new Grid(width + 240, height + 160, 30, 30);
+		player1 = new Player(this, 0);
+		player2 = new Player(this, 1);
+		player3 = new Player(this, 2);
+		player4 = new Player(this, 3);
+		grid = new Grid(width + 240, height + 160, 40, 40);
 		entities = new ArrayList<Entity>();
 		entitiesToRemove = new ArrayList<Entity>();
 		collision = new CollisionSystem();
@@ -65,7 +65,6 @@ public class Scene {
 			
 			@Override
 			public void onButtonPress(int button) {
-				// TODO Auto-generated method stub
 				
 			}
 		};
@@ -181,25 +180,9 @@ public class Scene {
 	}
 	
 	public void update(){
-		long startTime = System.nanoTime();
 		enemySpawner.trySpawn();
-		long endTime = System.nanoTime();
-		double millis = (endTime - startTime) / 1000000D;
-		//System.out.println("Enemy Spawner : " +  FORMATTER.format(millis) + "ms");
-		
-		startTime = System.nanoTime();
-		collision.checkCollision();
-		endTime = System.nanoTime();
-		millis = (endTime - startTime) / 1000000D;
-		//System.out.println("Collision Solver : " +  FORMATTER.format(millis) + "ms");
-		
-		startTime = System.nanoTime();
 		physics.integrate();
-		endTime = System.nanoTime();
-		millis = (endTime - startTime) / 1000000D;
-		//System.out.println("Physics : " +  FORMATTER.format(millis) + "ms");
-		
-		startTime = System.nanoTime();
+		collision.checkCollision();
 		for(int i = 0; i < entities.size(); i++){
 			Entity entity = entities.get(i);
 			if(entity.isExpired()){
@@ -209,15 +192,7 @@ public class Scene {
 				entity.update();
 			}
 		}
-		endTime = System.nanoTime();
-		millis = (endTime - startTime) / 1000000D;
-		//System.out.println("Entity Updates : " +  FORMATTER.format(millis) + "ms");
-		
-		startTime = System.nanoTime();
 		grid.update();
-		endTime = System.nanoTime();
-		millis = (endTime - startTime) / 1000000D;
-		//System.out.println("Grid Update : " +  FORMATTER.format(millis) + "ms");
 	}
 	
 	public void destroy(){
@@ -233,8 +208,52 @@ public class Scene {
 	}
 	
 	public Player getNearestPlayer(float x, float y){
-		//TODO implement
-		return null;
+		float minDist = Float.MAX_VALUE;
+		Player player = null;
+		Vector2f translation = player1.getTransform().getTranslation();
+		float dx = (x - translation.x);
+		float dy = (y - translation.y);
+		float lenSqr = dx * dx + dy * dy;
+		if(lenSqr  < minDist){
+			player = player1;
+			minDist = lenSqr;
+		}
+		
+		if(player2.hasJoined() && player2.isAlive()){
+			translation = player2.getTransform().getTranslation();
+			dx = (x - translation.x);
+			dy = (y - translation.y);
+			lenSqr = dx * dx + dy * dy;
+			if(lenSqr  < minDist){
+				player = player2;
+				minDist = lenSqr;
+			}
+		}
+		
+		if(player3.hasJoined() && player3.isAlive()){
+			translation = player3.getTransform().getTranslation();
+			dx = (x - translation.x);
+			dy = (y - translation.y);
+			lenSqr = dx * dx + dy * dy;
+			if(lenSqr  < minDist){
+				player = player3;
+				minDist = lenSqr;
+			}
+		}
+		
+		if(player4.hasJoined() && player4.isAlive()){
+			translation = player4.getTransform().getTranslation();
+			dx = (x - translation.x);
+			dy = (y - translation.y);
+			lenSqr = dx * dx + dy * dy;
+			if(lenSqr  < minDist){
+				player = player4;
+				minDist = lenSqr;
+			}
+		}
+		
+		return player;
+		
 	}
 	
 	public boolean isMultiplayer(){
@@ -259,6 +278,10 @@ public class Scene {
 	
 	public Grid getGrid(){
 		return grid;
+	}
+	
+	public InputSystem getInputSystem(){
+		return input;
 	}
 	
 	public ArrayList<Entity> getAllEntities(){
