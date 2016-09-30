@@ -43,11 +43,32 @@ public class Enemy extends Entity {
 				ICollidable other = event.other;
 				int otherGroup = other.getGroupMask();
 				
-				if((otherGroup & Masks.Collision.BULLET) == Masks.Collision.BULLET){
+				if((otherGroup & Masks.Collision.BULLET_P1) == Masks.Collision.BULLET_P1){
 					health -= 1;
 					 if(health <= 0){
 						expire();
 						Player player = scene.getPlayer();
+						player.registerBulletKill(Enemy.this);
+					 }
+				} else if((otherGroup & Masks.Collision.BULLET_P2) == Masks.Collision.BULLET_P2){
+					health -= 1;
+					 if(health <= 0){
+						expire();
+						Player player = scene.getPlayer2();
+						player.registerBulletKill(Enemy.this);
+					 }
+				} else if((otherGroup & Masks.Collision.BULLET_P3) == Masks.Collision.BULLET_P3){
+					health -= 1;
+					 if(health <= 0){
+						expire();
+						Player player = scene.getPlayer3();
+						player.registerBulletKill(Enemy.this);
+					 }
+				} else if((otherGroup & Masks.Collision.BULLET_P4) == Masks.Collision.BULLET_P4){
+					health -= 1;
+					 if(health <= 0){
+						expire();
+						Player player = scene.getPlayer4();
 						player.registerBulletKill(Enemy.this);
 					 }
 				} else if((otherGroup & Masks.Collision.BLACK_HOLE) == Masks.Collision.BLACK_HOLE){
