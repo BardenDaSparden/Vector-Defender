@@ -34,7 +34,8 @@ public class StalkerBehaviour extends Behaviour{
 		scene.getGrid().applyExplosiveForce(5 * self.getVelocity().length(), new Vector3f(self.getTransform().getTranslation().x, self.getTransform().getTranslation().y, 0), 50);
 		
 		time += 3.75f;
-		Player player = scene.getPlayer();
+		Vector2f position = self.getTransform().getTranslation();
+		Player player = scene.getNearestPlayer(position.x, position.y);
 		float toPlayer = player.getTransform().getTranslation().sub(self.getTransform().getTranslation()).direction();
 		
 		self.getVelocity().set(new Vector2f(FastMath.cosd(time) * angleSpeed, FastMath.sind(time) * angleSpeed));
