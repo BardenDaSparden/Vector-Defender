@@ -18,7 +18,7 @@ public class PlayerStats{
 	
 	private long score = 0;
 	private int multiplier = 1;
-	private int lives = 3;
+	private int lives = 4;
 	private int energy = 0;
 	private long highscore;
 	
