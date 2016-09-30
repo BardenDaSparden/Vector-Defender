@@ -49,6 +49,7 @@ public class EntityRenderer {
 				float opacity = renderable.getOpacity();
 				ArrayList<Vector2f> vertices = model.getVertices();
 				ArrayList<Vector4f> colors = model.getColors();
+				Vector4f overrideColor = renderable.getOverrideColor();
 				
 				//Copy vertices of each instance to buffer, transform position and color data
 				for(int j = 0; j < model.numVertices(); j++){
@@ -56,7 +57,10 @@ public class EntityRenderer {
 					Vector4f color = colorBuffer.get(bufferIdx + j);
 					
 					position.set(vertices.get(j));
-					color.set(colors.get(j));
+					if(renderable.useOverrideColor())
+						color.set(overrideColor);
+					else
+						color.set(colors.get(j));
 					
 					position = position.mul(transform.getScale()).rotate(transform.getOrientation()).add(transform.getTranslation());
 					color.w *= opacity;
