@@ -30,7 +30,8 @@ public class PrototypeBehaviour extends Behaviour{
 	public void update(){	
 		scene.getGrid().applyExplosiveForce(25, new Vector3f(self.getTransform().getTranslation().x, self.getTransform().getTranslation().y, 0), 75);
 		
-		Player player = scene.getPlayer();
+		Vector2f position = self.getTransform().getTranslation();
+		Player player = scene.getNearestPlayer(position.x, position.y);
 		Vector2f toPlayer = player.getTransform().getTranslation().sub(self.getTransform().getTranslation());
 
 		self.getTransform().setOrientation(self.getVelocity().direction());
