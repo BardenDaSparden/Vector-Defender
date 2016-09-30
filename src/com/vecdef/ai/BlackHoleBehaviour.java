@@ -97,10 +97,28 @@ public class BlackHoleBehaviour extends Behaviour{
 	    scene.getEntitiesByType(self.getTransform().getTranslation(), BLACK_HOLE_RADIUS, Masks.Entities.ENEMY, enemiesInRange);
 	    
 	    Player player = scene.getPlayer();
+	    Player player2 = scene.getPlayer2();
+	    Player player3 = scene.getPlayer3();
+	    Player player4 = scene.getPlayer4();
 	    
 	    //Player in range of black hole
 	    if(isInRange(self, player)){
 	    	affectPlayer(self, player);
+	    }
+	    
+	  //Player in range of black hole
+	    if(isInRange(self, player2)){
+	    	affectPlayer(self, player2);
+	    }
+	    
+	  //Player in range of black hole
+	    if(isInRange(self, player3)){
+	    	affectPlayer(self, player3);
+	    }
+	    
+	  //Player in range of black hole
+	    if(isInRange(self, player4)){
+	    	affectPlayer(self, player4);
 	    }
 	    
 	    int n = Math.min(particlesInRange.size(), 1000);
