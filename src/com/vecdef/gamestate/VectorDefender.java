@@ -95,6 +95,7 @@ public class VectorDefender extends Application {
 		Resources.loadFont("fonts/tech30.fnt", "tech30");
 		Resources.loadFont("fonts/tech36.fnt", "tech36");
 		Resources.loadFont("fonts/square_16.fnt", "square16");
+		Resources.loadFont("fonts/square18.fnt", "square18");
 		Resources.loadFont("fonts/squarefont_36.fnt", "square36");
 		
 		Resources.loadTexture("textures/white.png", "blank");
@@ -105,6 +106,7 @@ public class VectorDefender extends Application {
 		Resources.loadTexture("textures/splash1.png", "Splash");
 		Resources.loadTexture("textures/splash2.png", "Splash2");
 		Resources.loadTexture("textures/mainMenuTitle.png", "MainMenuTitle");
+		Resources.loadTexture("textures/ui-player-stat-background.png", "PlayerStatBackground");
 		
 		Resources.loadSound("audio/ui_on_select.wav", "onSelect");
 		Resources.loadSound("audio/ship_basic_fire.wav", "fire1");
