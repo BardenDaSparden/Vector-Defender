@@ -34,7 +34,7 @@ public class EnemyFactory {
 		enemy.transform.setTranslation(position);
 		enemy.baseColor.set(0.35f, 0.25f, 1, 1);
 	    enemy.killValue = 5;
-	    enemy.energyValue = 500;
+	    enemy.energyValue = 10;
 	    enemy.radius = 13;
 	    enemy.model = WandererModel.get();
 		enemy.addBehavior(new WandererBehavior(scene, enemy));
@@ -48,7 +48,7 @@ public class EnemyFactory {
 		enemy.transform.setTranslation(position);
 		enemy.baseColor.set(0, 1, 1, 1);
 	    enemy.killValue = 10;
-	    enemy.energyValue = 5;
+	    enemy.energyValue = 15;
 	    enemy.radius = 12;
 	    enemy.health = 1;
 		enemy.model = SeekerModel.get();
@@ -62,7 +62,7 @@ public class EnemyFactory {
 		enemy.transform.setTranslation(position);
 		enemy.baseColor.set(1, 0, 1, 1);
 	    enemy.killValue = 25;
-	    enemy.energyValue = 5;
+	    enemy.energyValue = 25;
 	    enemy.health = 1;
 	    enemy.radius = 12;
 		enemy.model = FollowerModel.get();
@@ -77,7 +77,7 @@ public class EnemyFactory {
 		enemy.transform.setTranslation(position);
 		enemy.baseColor.set(0.5f, 1, 1, 1);
 	    enemy.killValue = 10;
-	    enemy.energyValue = 5;
+	    enemy.energyValue = 50;
 	    enemy.radius = 7;
 		enemy.angularVelocity = FastMath.randomi(-2, 2);
 		enemy.model = ChaserModel.get();
@@ -95,7 +95,7 @@ public class EnemyFactory {
 		enemy.transform.setTranslation(position);
 		enemy.transform.setOrientation(player.getTransform().getTranslation().sub(position).direction());
 	    enemy.killValue = 25;
-	    enemy.energyValue = 10;
+	    enemy.energyValue = 25;
 	    enemy.radius = 12;
 		enemy.model = PrototypeModel.get();
 		enemy.addBehavior(new PrototypeBehaviour(scene, enemy));
@@ -109,7 +109,7 @@ public class EnemyFactory {
 		enemy.transform.setTranslation(position);
 		enemy.baseColor.set(1, 1, 1, 1);
 		enemy.killValue = 100;
-		enemy.energyValue = 25;
+		enemy.energyValue = 150;
 	    enemy.health = 5;
 	    enemy.radius = 26;
 	    enemy.groupMask = Masks.Collision.ENEMY | Masks.Collision.BLACK_HOLE;
