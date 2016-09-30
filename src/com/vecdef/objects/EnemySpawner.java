@@ -13,11 +13,11 @@ import com.vecdef.util.Masks;
 
 public class EnemySpawner{
 	
-	static final int MAX_ENEMIES = 246;
+	static final int MAX_ENEMIES = 300;
 	static final int MAX_BLACK_HOLES = 4;
 	
 	static final float START_SPAWN_CHANCE = 120.0f;
-	static final float MIN_SPAWN_CHANCE = 35.0f;
+	static final float MIN_SPAWN_CHANCE = 40.0f;
 	
 	Random random = new Random();
 	
@@ -45,7 +45,7 @@ public class EnemySpawner{
 	}
 	
 	public void trySpawn(){
-		if(player.isDead())
+		if(player.isRespawning())
 			return;
 		
 		bSpawned = false;
@@ -109,18 +109,48 @@ public class EnemySpawner{
 	}
 	
 	Vector2f getSpawnPosition(){
-		Player player = scene.getPlayer();
+		Player p1 = scene.getPlayer();
+		Player p2 = scene.getPlayer2();
+		Player p3 = scene.getPlayer3();
+		Player p4 = scene.getPlayer4();
+		
+		Vector2f averagePosition = new Vector2f();
+		int playerCount = 1;
+		averagePosition.x += p1.getTransform().getTranslation().x;
+		averagePosition.y += p1.getTransform().getTranslation().y;
+		
+		if(p2.hasJoined() && p2.isAlive()){
+			averagePosition.x += p2.getTransform().getTranslation().x;
+			averagePosition.y += p2.getTransform().getTranslation().y;
+			playerCount++;
+		}
+		
+		if(p3.hasJoined() && p3.isAlive()){
+			averagePosition.x += p3.getTransform().getTranslation().x;
+			averagePosition.y += p3.getTransform().getTranslation().y;
+			playerCount++;
+		}
+		
+		if(p4.hasJoined() && p4.isAlive()){
+			averagePosition.x += p4.getTransform().getTranslation().x;
+			averagePosition.y += p4.getTransform().getTranslation().y;
+			playerCount++;
+		}
+		
+		averagePosition.x /= (float)playerCount;
+		averagePosition.y /= (float)playerCount;
+		
 		Grid grid = scene.getGrid();
 		
 		int regionWidth = grid.getWidth();
 		int regionHeight = grid.getHeight();
 		
 		Vector2f position;
-	    Vector2f playerPosition = player.getTransform().getTranslation();
+	    Vector2f playerPosition = averagePosition;
 		do
 	      position = new Vector2f(-regionWidth / 2 + 40 + random.nextInt(regionWidth - 80), -regionHeight / 2 + 40 + random.nextInt(regionHeight - 80));
 	    while (
-	      position.sub(playerPosition).lengthSquared() < 90000.0F);
+	      position.sub(playerPosition).lengthSquared() < 150000.0F);
 
 	    return position;
 	}
