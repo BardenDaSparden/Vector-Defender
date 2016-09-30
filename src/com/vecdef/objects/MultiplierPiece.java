@@ -42,7 +42,8 @@ public class MultiplierPiece extends Entity{
 	
 	public void update() {
 		
-		Player player = scene.getPlayer();
+		Vector2f position = transform.getTranslation();
+		Player player = scene.getNearestPlayer(position.x, position.y);
 		
 		timer.tick();
 		
@@ -53,7 +54,7 @@ public class MultiplierPiece extends Entity{
 		
 		Vector2f dPos = player.getTransform().getTranslation().sub(getTransform().getTranslation());
 		if(dPos.lengthSquared() < RANGE * RANGE){
-			if(!player.isDead()){
+			if(!player.isRespawning()){
 				float s = 0.1f * (RANGE - dPos.length());
 				transform.setTranslation(getTransform().getTranslation().add(dPos.normalize().scale(s)));
 			}
