@@ -3,6 +3,7 @@ package com.vecdef.objects;
 import java.util.ArrayList;
 
 import org.javatroid.math.Vector2f;
+import org.javatroid.math.Vector4f;
 
 import com.vecdef.collision.ContactEvent;
 import com.vecdef.collision.ContactEventListener;
@@ -20,6 +21,7 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	protected Model model;
 	protected float opacity;
 	protected boolean isVisible;
+	protected Vector4f overrideColor;
 	
 	//IPhysics Dependencies
 	protected Vector2f velocity;
@@ -40,6 +42,7 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 		model = BulletModel.get();
 		opacity = 1;
 		isVisible = true;
+		overrideColor = new Vector4f(1, 1, 1, 1);
 		
 		velocity = new Vector2f();
 		acceleration = new Vector2f();
@@ -83,6 +86,16 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	
 	public void setVisible(boolean bDraw){
 		isVisible = bDraw;
+	}
+	
+	@Override
+	public boolean useOverrideColor(){
+		return false;
+	}
+	
+	@Override
+	public Vector4f getOverrideColor(){
+		return overrideColor;
 	}
 	
 	@Override
