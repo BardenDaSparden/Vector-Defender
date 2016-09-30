@@ -32,7 +32,12 @@ public class MainMenuState extends GameState {
 	OrthogonalCamera camera;
 	Texture title;
 	Texture white;
+	
 	JoystickListener listener;
+	JoystickListener p2Listener;
+	JoystickListener p3Listener;
+	JoystickListener p4Listener;
+	
 	final float JOYSTICK_THRESHOLD = 0.5f;
 	final int JOYSTICK_MOVE_COOLDOWN = 15;
 	Timer cooldownTimer;
@@ -105,6 +110,23 @@ public class MainMenuState extends GameState {
 				}
 			}
 		};
+		
+		p2Listener = new JoystickListener() {
+			
+			@Override
+			public void onButtonRelease(int button) {
+				if(button == Joystick.BUTTON_START){
+					
+				}
+			}
+			
+			@Override
+			public void onButtonPress(int button) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		
 		instance.joystick1.addListener(listener);
 		cooldownTimer = new Timer(JOYSTICK_MOVE_COOLDOWN);
 		cooldownTimer.setCallback(new TimerCallback() {
@@ -239,7 +261,7 @@ public class MainMenuState extends GameState {
 		ShapeRenderer shapeRenderer = instance.shapeRenderer;
 		SpriteBatch batch = instance.batch;
 		BitmapFont font = Resources.getFont("square36");
-		BitmapFont fontSmall = Resources.getFont("square16");
+		//BitmapFont fontSmall = Resources.getFont("square16");
 		batch.setColor(1, 1, 1, 1);
 		
 		shapeRenderer.setCamera(hudCamera);
@@ -264,29 +286,29 @@ public class MainMenuState extends GameState {
 			}
 		batch.end();
 		
-		float x = -instance.settings.width / 2.0f;
-		float y = -instance.settings.height / 2.0f + 50;
-		float x_i = instance.settings.width / 4;
-		
-		float s = FastMath.abs(FastMath.sin(HSB.x * 16.0f));
-		batch.setColor(1, 1, 1, s);
-		batch.begin(BlendState.ALPHA);
-			for(int i = 0; i < 4; i++){
-				Joystick j = instance.input.getJoystick(i);
-				String str = "Press Start to join...";
-				float offsetX = (x_i - fontSmall.getWidth(str)) / 2.0f;
-				if((j.isConnected() || i == 3) && (i != 0)){
-					fontSmall.drawString(x + (x_i * i) + (offsetX), y, str, batch);
-				}
-			}
-		batch.end();
-		
-		String str = "BardenDaSparden";
-		float offsetX = (x_i - fontSmall.getWidth(str)) / 2.0f;
-		batch.setColor(1, 1, 1, 1);
-		batch.begin(BlendState.ALPHA);
-			fontSmall.drawString(-instance.settings.width / 2.0f + offsetX, -instance.settings.height / 2.0f + 50, str, batch);
-		batch.end();
+//		float x = -instance.settings.width / 2.0f;
+//		float y = -instance.settings.height / 2.0f + 50;
+//		float x_i = instance.settings.width / 4;
+//		
+//		float s = FastMath.abs(FastMath.sin(HSB.x * 16.0f));
+//		batch.setColor(1, 1, 1, s);
+//		batch.begin(BlendState.ALPHA);
+//			for(int i = 0; i < 4; i++){
+//				Joystick j = instance.input.getJoystick(i);
+//				String str = "Press Start to join...";
+//				float offsetX = (x_i - fontSmall.getWidth(str)) / 2.0f;
+//				if((j.isConnected() || i == 3) && (i != 0)){
+//					fontSmall.drawString(x + (x_i * i) + (offsetX), y, str, batch);
+//				}
+//			}
+//		batch.end();
+//		
+//		String str = "BardenDaSparden";
+//		float offsetX = (x_i - fontSmall.getWidth(str)) / 2.0f;
+//		batch.setColor(1, 1, 1, 1);
+//		batch.begin(BlendState.ALPHA);
+//			fontSmall.drawString(-instance.settings.width / 2.0f + offsetX, -instance.settings.height / 2.0f + 50, str, batch);
+//		batch.end();
 		
 //		batch.setColor(0, 1, 1, 1);
 //		batch.begin(BlendState.ALPHA);
