@@ -34,7 +34,8 @@ public class FollowerBehavior extends Behaviour{
 	  
 		scene.getGrid().applyExplosiveForce(5 * self.getVelocity().length(), new Vector3f(self.getTransform().getTranslation().x, self.getTransform().getTranslation().y, 0), 50);
 	  
-		Player player = scene.getPlayer();
+		Vector2f position = self.getTransform().getTranslation();
+		Player player = scene.getNearestPlayer(position.x, position.y);
 		Vector2f dPos = player.getTransform().getTranslation().sub(self.getTransform().getTranslation()).normalize();
 		Vector2f acceleration = self.getAcceleration();
 		acceleration.x += dPos.x;
