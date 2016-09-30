@@ -5,14 +5,25 @@ import org.javatroid.math.Vector3f;
 
 import com.vecdef.collision.ContactEvent;
 import com.vecdef.collision.ContactEventListener;
+import com.vecdef.rendering.HUDRenderer;
 import com.vecdef.util.Masks;
 
 public class Bullet extends Entity {
 	
 	int timeActive = 0;
+	int groupMask = Masks.Collision.BULLET_P1;
 	
-	public Bullet(Vector2f pos, Vector2f vel, Scene scene){
+	public Bullet(Vector2f pos, Vector2f vel, int playerID, Scene scene){
 		super(scene);
+		groupMask <<= playerID;
+		if(playerID == 0)
+			overrideColor.set(HUDRenderer.P1_COLOR);
+		if(playerID == 1)
+			overrideColor.set(HUDRenderer.P2_COLOR);
+		if(playerID == 2)
+			overrideColor.set(HUDRenderer.P3_COLOR);
+		if(playerID == 3)
+			overrideColor.set(HUDRenderer.P4_COLOR);
 	    transform.setTranslation(pos);
 	    transform.setOrientation(vel.direction());
 	    velocity = vel;
@@ -50,12 +61,17 @@ public class Bullet extends Entity {
 
 	@Override
 	public int getGroupMask() {
-		return Masks.Collision.BULLET;
+		return groupMask;
 	}
 
 	@Override
 	public int getCollisionMask() {
 		return Masks.Collision.ENEMY;
+	}
+	
+	@Override
+	public boolean useOverrideColor(){
+		return true;
 	}
 	
 }
