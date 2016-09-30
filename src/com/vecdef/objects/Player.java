@@ -20,6 +20,7 @@ import com.vecdef.collision.ContactEventListener;
 import com.vecdef.collision.ICollidable;
 import com.vecdef.model.PlayerModel;
 import com.vecdef.model.ShieldModel;
+import com.vecdef.rendering.HUDRenderer;
 import com.vecdef.util.Masks;
 
 public class Player extends Entity{
@@ -47,6 +48,7 @@ public class Player extends Entity{
 	float bulletSpeed = 17;
 	Timer weaponTimer = new Timer(5);
 	Timer respawnTimer = new Timer(35);
+	Timer postSpawnTimer = new Timer(150);
 	boolean canUseWeapon = false;
 	
 	boolean canBeKilled = true;
@@ -63,10 +65,26 @@ public class Player extends Entity{
 	
 	Sound fireSound;
 	
-	public Player(Scene scene, Joystick gamepad){
+	boolean bRespawn = true;
+	
+	boolean hasJoined = false;
+	
+	boolean outOfLives = false;
+	
+	int playerID;
+	
+	public Player(Scene scene, int playerID){
 		super(scene);
-		
-		this.gamepad = gamepad;
+		this.playerID = playerID;
+		gamepad = scene.getInputSystem().getJoystick(playerID);
+		if(playerID == 0)
+			overrideColor.set(HUDRenderer.P1_COLOR);
+		if(playerID == 1)
+			overrideColor.set(HUDRenderer.P2_COLOR);
+		if(playerID == 2)
+			overrideColor.set(HUDRenderer.P3_COLOR);
+		if(playerID == 3)
+			overrideColor.set(HUDRenderer.P4_COLOR);
 		
 		model = PlayerModel.get();
 		transform.setTranslation(new Vector2f(0, 0));
@@ -82,9 +100,19 @@ public class Player extends Entity{
 			public void execute(Timer timer) {
 				respawn();
 				canBeKilled = true;
+				stats.addEnergy(500);
+				postSpawnTimer.restart();
+				//postSpawnTimer.start();
 			}
 		});
 		respawnTimer.start();
+		
+		postSpawnTimer.setCallback(new TimerCallback() {
+			@Override
+			public void execute(Timer timer) {
+				bRespawn = false;
+			}
+		});
 		
 		addContactListener(new ContactEventListener() {
 			@Override
@@ -101,13 +129,20 @@ public class Player extends Entity{
 		
 		allEnemies = new ArrayList<Entity>();
 		stats = new PlayerStats();
-		shield = new ShieldComponent(scene);
+		shield = new ShieldComponent(scene, playerID);
 		velocity.set(0, 0.00001f);
 		
 		fireSound = Resources.getSound("fire1");
 	}
 	
 	public void update(){
+		
+		if(outOfLives){
+			isVisible = false;
+			return;
+		} else {
+			isVisible = true;
+		}
 		
 		if(!shieldAdded){
 			scene.add(shield);
@@ -116,8 +151,9 @@ public class Player extends Entity{
 		
 		weaponTimer.tick();
 		respawnTimer.tick();
+		postSpawnTimer.tick();
 		
-		if(isDead()){
+		if(isRespawning()){
 			transform.setTranslation(interpolator.interpolate(transform.getTranslation(), new Vector2f(0, 0), respawnTimer.percentComplete()));
 			return;
 		}
@@ -168,7 +204,7 @@ public class Player extends Entity{
 	    	fireWeapon();
 	    }
 	    
-	    if(bTrigger){
+	    if(bTrigger || bRespawn){
 	    	if(stats.hasEnergy(5)){
 		    	shield.activate();
 		    	stats.useEnergy(5);
@@ -205,7 +241,7 @@ public class Player extends Entity{
 		Vector2f bulletPosition = bulletOffset.rotate(direction).add(transform.getTranslation());
 		Vector2f bulletVelocity = new Vector2f(FastMath.cosd(direction) * bulletSpeed, FastMath.sind(direction) * bulletSpeed);
         
-		Bullet bullet = new Bullet(bulletPosition, bulletVelocity, scene);
+		Bullet bullet = new Bullet(bulletPosition, bulletVelocity, playerID, scene);
         scene.add(bullet);
 		
 	    useOffset1 = !useOffset1;
@@ -230,26 +266,47 @@ public class Player extends Entity{
 		velocity.set(0, 0.00001f); 
 	    
 	    allEnemies.clear();
-		scene.getEntitiesByType(Masks.Entities.ENEMY, allEnemies);
-		scene.getGrid().applyExplosiveForce(500, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 200.0F);
+	    scene.getGrid().applyExplosiveForce(350, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 200.0F);
 		
-		int n = allEnemies.size();
-	    for(int i = 0; i < n; i++){
-	    	Entity entity = allEnemies.get(i);
-	    	entity.expire();
+	    if(!scene.isMultiplayer()){
+	    	scene.getEntitiesByType(Masks.Entities.ENEMY, allEnemies);
+			
+			int n = allEnemies.size();
+		    for(int i = 0; i < n; i++){
+		    	Entity entity = allEnemies.get(i);
+		    	entity.expire();
+		    }
 	    }
+	    
+	    bRespawn = true;
 	    
 	    stats.useLife();
 	    stats.resetMultiplier();
 	    
+	    if(stats.getLiveCount() <= 0){
+	    	outOfLives = true;
+	    }
+	    
 	}
 	
-	public boolean isDead(){
+	public boolean isRespawning(){
 		return respawnTimer.percentComplete() < 1.0f;
 	}
 	
+	public boolean isAlive(){
+		return stats.getLiveCount() > -1;
+	}
+	
 	public boolean isVisible(){
-		return !isDead();
+		return !isRespawning();
+	}
+	
+	public void setJoined(boolean b){
+		hasJoined = b;
+	}
+	
+	public boolean hasJoined(){
+		return hasJoined;
 	}
 	
 	public void registerBulletKill(Enemy e){
@@ -283,6 +340,11 @@ public class Player extends Entity{
 		return Masks.Collision.ENEMY | Masks.Collision.MULTIPLIER;
 	}
 	
+	@Override
+	public boolean useOverrideColor(){
+		return true;
+	}
+	
 }
 
 class ShieldComponent extends Entity{
@@ -295,8 +357,16 @@ class ShieldComponent extends Entity{
 	
 	Interpolator inter = new CubicInterpolator(new Vector2f(0.1f, 0.9f), new Vector2f(0.8f, 1));
 	
-	public ShieldComponent(Scene scene) {
+	public ShieldComponent(Scene scene, int playerID) {
 		super(scene);
+		if(playerID == 0)
+			overrideColor.set(HUDRenderer.P1_COLOR);
+		if(playerID == 1)
+			overrideColor.set(HUDRenderer.P2_COLOR);
+		if(playerID == 2)
+			overrideColor.set(HUDRenderer.P3_COLOR);
+		if(playerID == 3)
+			overrideColor.set(HUDRenderer.P4_COLOR);
 		this.model = ShieldModel.get();
 	}
 
@@ -310,6 +380,11 @@ class ShieldComponent extends Entity{
 		return Masks.Collision.ENEMY;
 	}
 
+	@Override
+	public boolean useOverrideColor(){
+		return true;
+	}
+	
 	public void activate(){
 		active = true;
 	}
