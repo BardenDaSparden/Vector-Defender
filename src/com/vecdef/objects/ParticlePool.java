@@ -2,7 +2,7 @@ package com.vecdef.objects;
 
 public class ParticlePool extends ObjectPool {
 
-	static final int NUM_PARTICLES = 750;
+	static final int NUM_PARTICLES = 2000;
 	
 	Scene scene;
 	
