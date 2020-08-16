@@ -44,8 +44,8 @@ public class MusicPlayer {
 			trackList.add(track);
 		}
 		
-		previousTrack();
-		nextTrack();
+		//previousTrack();
+		//nextTrack();
 		
 	}
 	
