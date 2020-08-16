@@ -16,7 +16,7 @@ public class Bullet extends Entity {
 	
 	public Bullet(Scene scene){
 		super(scene);
-	    super.radius = 10;
+	    super.radius = 12;
 	    listener = new ContactEventListener(){
 			@Override
 			public void process(ContactEvent event) {
