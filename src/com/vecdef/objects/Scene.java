@@ -43,7 +43,6 @@ public class Scene {
 	SpawnEffectPool effectPool;
 	
 	private EnemyFactory enemyFactory;
-	//private EnemySpawner enemySpawner;
 	private WaveSpawner enemySpawner;
 	
 	public Scene(int width, int height, InputSystem input){
@@ -198,40 +197,18 @@ public class Scene {
 	}
 	
 	public void update(){
-		long startTime = System.nanoTime();
 		enemySpawner.update();
-		long endTime = System.nanoTime();
-		double millis = (endTime - startTime) / 1000000D;
-		//System.out.println("EnemySpawner: " + FORMATTER.format(millis) + "ms");
-		
-		startTime = System.nanoTime();
 		physics.integrate();
-		endTime = System.nanoTime();
-		millis = (endTime - startTime) / 1000000D;
-		//System.out.println("Physics: " + FORMATTER.format(millis) + "ms");
-		
-		startTime = System.nanoTime();
 		collision.checkCollision();
-		endTime = System.nanoTime();
-		millis = (endTime - startTime) / 1000000D;
-		//System.out.println("Collision: " + FORMATTER.format(millis) + "ms");
 		
-		startTime = System.nanoTime();
 		for(int i = 0; i < entities.size(); i++){
 			Entity entity = entities.get(i);
 			if(entity.isRecycled())
 				continue;
 			entity.update();
 		}
-		endTime = System.nanoTime();
-		millis = (endTime - startTime) / 1000000D;
-		//System.out.println("Entity Update: " + FORMATTER.format(millis) + "ms");
 		
-		startTime = System.nanoTime();
 		grid.update();
-		endTime = System.nanoTime();
-		millis = (endTime - startTime) / 1000000D;
-		//System.out.println("Grid Update: " + FORMATTER.format(millis) + "ms");
 	}
 	
 	public void destroy(){

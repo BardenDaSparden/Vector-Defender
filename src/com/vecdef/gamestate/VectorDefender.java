@@ -156,15 +156,8 @@ public class VectorDefender extends Application {
 	
 	@Override
 	public void update(){
-		long startTime = System.nanoTime();
-		
 		musicPlayer.poll();
 		gameState.update();
-		
-		long endTime = System.nanoTime();
-		double millis = (endTime - startTime) / 1000000D;
-		
-		//System.out.println("[Update Frame: " + frameCount + "] : " +  FORMATTER.format(millis) + "ms");
 		frameCount++;
 	}
 	

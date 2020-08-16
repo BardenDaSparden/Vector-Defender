@@ -113,7 +113,7 @@ public class HUDRenderer {
 		
 		startX = - width / 2.0f + 25;
 		startY = height / 2.0f - 50 - 25;
-		int totalScore = 0;	
+//		int totalScore = 0;	
 		batch.begin(BlendState.ADDITIVE);
 //			totalScore += p1.getStats().getScore();
 //			drawPlayerScore(p1, 0, startX, startY, P1_COLOR);
