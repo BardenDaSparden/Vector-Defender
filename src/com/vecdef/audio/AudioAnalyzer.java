@@ -82,17 +82,18 @@ public class AudioAnalyzer {
 		fft.forward(samples);
 		//fft.linAverages(512);
 		fft.logAverages(50, 40);
-		System.out.println(fft.avgSize());
+		//System.out.println(fft.avgSize());
 		//System.out.println(fft.specSize());
 	}
 	
-	public void drawSpectrumH(float x, float y, float width, Vector4f color, ShapeRenderer renderer){
+	public void drawSpectrumH(float x, float y, float width, float scale, Vector4f color, ShapeRenderer renderer){
 		
 		renderer.begin(DrawType.LINES, BlendState.ADDITIVE);
 		
 		int n = fft.avgSize();
 		for(int i = n - 1; i > -1; i--){
 			float f = 1.0f - (float)i / (float)n;
+			f /= 2.0f;
 			float bw = fft.getAverageBandWidth(i);
 			float cf = fft.getAverageCenterFrequency(i);
 			float lowBound = cf - bw / 2;
@@ -104,6 +105,7 @@ public class AudioAnalyzer {
 			Vector4f c1 = colors.get(drawIdx + 1);
 			drawIdx += 2;
 			
+			avg *= scale;
 			
 			v0.set(x + f * width, y + -avg);
 			v1.set(x + f * width, y + avg);
