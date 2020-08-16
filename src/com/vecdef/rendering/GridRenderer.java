@@ -16,6 +16,8 @@ public class GridRenderer {
 	ShapeRenderer renderer;
 	
 	Vector4f color = new Vector4f(1, 0, 0, 0.24f);
+	Vector4f outlineColor = new Vector4f(1, 0, 0, 0.77f);
+	
 	AudioAnalyzer analyzer;
 	FrameBuffer buffer;
 	FrameBuffer buffer2;
@@ -45,6 +47,7 @@ public class GridRenderer {
 		RGB.y = c.getGreen() / 255.0f;
 		RGB.z = c.getBlue() / 255.0f;
 		color.set(RGB.x, RGB.y, RGB.z, color.w);
+		outlineColor.set(RGB.x, RGB.y, RGB.z, outlineColor.w);
 		
 		PointMass[][] points = grid.getPoints();
 		int cols = grid.numCols();
@@ -115,7 +118,16 @@ public class GridRenderer {
 		
 		renderer.end();
 		
-		//analyzer.drawWaveform(0, 0, 5, 100, 5, color, renderer);
+		
+		
+		float w = grid.getWidth() / 2.0f;
+		float h = grid.getHeight() / 2.0f;
+		
+		analyzer.drawWaveformH(0, -h, w * 2, 70, outlineColor, renderer);
+		analyzer.drawWaveformH(0, h, w * 2, 70, outlineColor, renderer);
+		
+		analyzer.drawWaveformV(-w, 0, 70, h * 2, 5, outlineColor, renderer);
+		analyzer.drawWaveformV(w, 0, 70, h * 2, 5, outlineColor, renderer);
 		
 	}
 }
