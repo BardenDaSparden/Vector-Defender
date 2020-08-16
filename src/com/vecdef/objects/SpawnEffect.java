@@ -6,25 +6,30 @@ import org.javatroid.math.Vector2f;
 
 import com.vecdef.util.Masks;
 
-public class EnemySpawnEffect extends Entity {
+public class SpawnEffect extends Entity {
 	
 	final int EFFECT_DURATION_MS = 40;
 	Timer expiryTimer = new Timer(EFFECT_DURATION_MS);
 	
-	public EnemySpawnEffect(Scene scene, Enemy enemy) {
+	public SpawnEffect(Scene scene) {
 		super(scene);
-		transform.set(enemy.transform);
-		model = enemy.getModel();
 		expiryTimer.setCallback(new TimerCallback() {
 			@Override
 			public void execute(Timer timer) {
-				expire();
+				destroy();
 			}
 		});
 		expiryTimer.start();
-		scene.add(this);
+		radius = 0;
 	}
 
+	public void setBase(Entity object){
+		transform.set(object.transform);
+		transform.setOrientation(object.getTransform().getOrientation());
+		this.overrideColor.set(object.getOverrideColor());
+		model = object.getModel();
+	}
+	
 	@Override
 	public void update() {
 		expiryTimer.tick();
@@ -34,13 +39,31 @@ public class EnemySpawnEffect extends Entity {
 	}
 
 	@Override
+	public void reuse(){
+		super.reuse();
+	}
+	
+	@Override
+	public void recycle(){
+		super.recycle();
+		expiryTimer.restart();
+		transform.getScale().set(1, 1);
+	}
+	
+	@Override
 	public void destroy(){
-		scene.remove(this);
+		if(!super.isRecycled())
+			scene.getSpawnEffectPool().recycle(this);
 	}
 	
 	@Override
 	public int getEntityType() {
 		return Masks.Entities.OTHER;
+	}
+	
+	@Override
+	public boolean useOverrideColor(){
+		return true;
 	}
 	
 	@Override

@@ -45,6 +45,7 @@ public class MusicPlayer {
 		}
 		
 		previousTrack();
+		nextTrack();
 		
 	}
 	

@@ -111,6 +111,8 @@ public class VectorDefender extends Application {
 		Resources.loadSound("audio/ui_on_select.wav", "onSelect");
 		Resources.loadSound("audio/ship_basic_fire.wav", "fire1");
 		Resources.loadSound("audio/enemy_spawn.wav", "spawn1");
+		Resources.loadSound("audio/ui_countdown_beep.wav", "CountdownBeep");
+		Resources.loadSound("audio/ui_countdown_complete_beep.wav", "CountdownComplete");
 		
 		settings = task.getSettings();
 		input = task.getInput();
@@ -139,16 +141,12 @@ public class VectorDefender extends Application {
 					musicPlayer.nextTrack();
 			}
 		};
+		
 		joystick1.addListener(listener);
 	    setGameState(GameStates.SPLASH);
 	    
 	    overlayCamera = new OrthogonalCamera(settings.width, settings.height);
 		overlayFont = Resources.getFont("square16");
-		
-//		System.out.println("Gamepad 1: " + joystick1.isConnected());
-//		System.out.println("Gamepad 2: " + joystick2.isConnected());
-//		System.out.println("Gamepad 3: " + joystick3.isConnected());
-//		System.out.println("Gamepad 4: " + joystick4.isConnected());
 		
 		Debug.logInfo("Input", "Gamepad 1 is " + ((joystick1.isConnected()) ? "connected" : "disconnected"));
 		Debug.logInfo("Input", "Gamepad 2 is " + ((joystick2.isConnected()) ? "connected" : "disconnected"));
@@ -166,7 +164,7 @@ public class VectorDefender extends Application {
 		long endTime = System.nanoTime();
 		double millis = (endTime - startTime) / 1000000D;
 		
-		System.out.println("[Update Frame: " + frameCount + "] : " +  FORMATTER.format(millis) + "ms");
+		//System.out.println("[Update Frame: " + frameCount + "] : " +  FORMATTER.format(millis) + "ms");
 		frameCount++;
 	}
 	
@@ -176,6 +174,7 @@ public class VectorDefender extends Application {
 		profiler.beginFrame();
 		{
 			profiler.startTask("Vector Defender Render");
+				renderer.startFrame();
 				GLUtil.clear(true, false, false, false);
 				glViewport(0, 0, settings.width, settings.height);
 				gameState.render();
@@ -183,15 +182,18 @@ public class VectorDefender extends Application {
 				batch.setCamera(overlayCamera);
 				batch.begin(BlendState.ALPHA);
 					batch.setColor(1, 1, 1, 0.45f);
-					String buildStr = "PREVIEW BUILD 9-28-16";
-					String copyStr = "\u00A9Branden Monroe";
-					overlayFont.drawString(-overlayFont.getWidth(buildStr) - 7, settings.height / 2 - 20, buildStr, batch);
-					overlayFont.drawString(7, settings.height / 2 - 20, copyStr, batch);
+					String buildStr = "PREVIEW BUILD 08-15-2020";
+					String copyStr = "BardenDaSparden";
+					overlayFont.drawString(-overlayFont.getWidth(buildStr) - 7, -settings.height / 2 + 20, buildStr, batch);
+					overlayFont.drawString(7, -settings.height / 2 + 20, copyStr, batch);
 				batch.end();
+				renderer.endFrame();
 		    profiler.endTask();
 		}
 		profiler.endFrame();
-		profiler.getResults().dump();
+		
+		//System.out.println(renderer.getBatchCounts());
+		//profiler.getResults().dump();
 	}
 	
 	@Override

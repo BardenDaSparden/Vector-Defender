@@ -90,6 +90,8 @@ public class ApplicationTask {
 		glfwSetCursorPos(window, settings.width / 2, settings.height / 2);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		
+		//glfwSwapInterval(1);
+		
 		alDevice = alcOpenDevice((ByteBuffer)null);
 		ALCCapabilities deviceCaps = ALC.createCapabilities(alDevice);
 		
@@ -151,6 +153,13 @@ public class ApplicationTask {
 			application.render(interpolation);
 			glfwSwapBuffers(window);
 			glfwPollEvents();
+			
+			try {
+				Thread.sleep(11);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			Debug.print();
 		}
 		dispose();

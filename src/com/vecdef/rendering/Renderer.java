@@ -8,10 +8,21 @@ public class Renderer {
 	private static final int MAX_DRAWS = 10000;
 	private ShapeRenderer shapeRenderer;
 	private SpriteBatch spriteBatch;
+	int batchCount = 0;
 	
 	public Renderer(int width, int height){
 		shapeRenderer = new ShapeRenderer();
 		spriteBatch = new SpriteBatch(width, height, MAX_DRAWS);
+	}
+	
+	public void startFrame(){
+		shapeRenderer.startFrame();
+		spriteBatch.startFrame();
+	}
+	
+	public void endFrame(){
+		shapeRenderer.endFrame();
+		spriteBatch.endFrame();
 	}
 	
 	public void setCamera(OrthogonalCamera camera){
@@ -29,6 +40,10 @@ public class Renderer {
 	
 	public ShapeRenderer ShapeRenderer(){
 		return shapeRenderer;
+	}
+	
+	public String getBatchCounts(){
+		return "Shape Batches: " + shapeRenderer.batchCount + " / Sprite Batches: " + spriteBatch.getBatchCount();
 	}
 	
 }

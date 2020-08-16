@@ -26,10 +26,9 @@ public class HUDRenderer {
 	private BitmapFont techFontSmall;
 	private BitmapFont techFontMedium;
 	private BitmapFont squareFont;
-	private Texture white;
 	private Texture statBackground;
 	
-	public static final Vector4f P1_COLOR = new Vector4f(0.45f, 1, 1, 1);
+	public static final Vector4f P1_COLOR = new Vector4f(1, 1, 1, 1);
 	public static final Vector4f P2_COLOR = new Vector4f(1, 0.75f, 0.45f, 1);
 	public static final Vector4f P3_COLOR = new Vector4f(0.45f, 1, 0.45f, 1);
 	public static final Vector4f P4_COLOR = new Vector4f(1, 0.45f, 1, 1);
@@ -42,7 +41,6 @@ public class HUDRenderer {
 		techFontSmall = Resources.getFont("tech18");
 		techFontMedium = Resources.getFont("tech30");
 		squareFont = Resources.getFont("square18");
-		white = Resources.getTexture("blank");
 		statBackground = Resources.getTexture("PlayerStatBackground");
 	}
 	
@@ -117,26 +115,35 @@ public class HUDRenderer {
 		startY = height / 2.0f - 50 - 25;
 		int totalScore = 0;	
 		batch.begin(BlendState.ADDITIVE);
-			totalScore += p1.getStats().getScore();
-			drawPlayerScore(p1, 0, startX, startY, P1_COLOR);
-			
-			if(p2.hasJoined()){
-				totalScore += p2.getStats().getScore();
-				drawPlayerScore(p2, 1, startX, startY, P2_COLOR);
-			}
-			
-			if(p3.hasJoined()){
-				totalScore += p3.getStats().getScore();
-				drawPlayerScore(p3, 2, startX, startY, P3_COLOR);
-			}
-			
-			if(p4.hasJoined()){
-				totalScore += p4.getStats().getScore();
-				drawPlayerScore(p4, 3, startX, startY, P4_COLOR);
-			}
-			
+//			totalScore += p1.getStats().getScore();
+//			drawPlayerScore(p1, 0, startX, startY, P1_COLOR);
+//			
+//			if(p2.hasJoined()){
+//				totalScore += p2.getStats().getScore();
+//				drawPlayerScore(p2, 1, startX, startY, P2_COLOR);
+//			}
+//			
+//			if(p3.hasJoined()){
+//				totalScore += p3.getStats().getScore();
+//				drawPlayerScore(p3, 2, startX, startY, P3_COLOR);
+//			}
+//			
+//			if(p4.hasJoined()){
+//				totalScore += p4.getStats().getScore();
+//				drawPlayerScore(p4, 3, startX, startY, P4_COLOR);
+//			}
+//			
+//			batch.setColor(1, 1, 1, 1);
+//			techFontMedium.drawString(-width / 2 + 25, height / 2 - 25, "SCORE: " + scoreFormat.format(totalScore), batch);
+//			
 			batch.setColor(1, 1, 1, 1);
-			techFontMedium.drawString(-width / 2 + 25, height / 2 - 25, "SCORE: " + scoreFormat.format(totalScore), batch);
+			techFontMedium.drawStringCentered(0, height / 2.0f - 40, "Survival", batch);
+			techFontSmall.drawStringCentered(0, height / 2.0f - 75, "Wave: 0", batch);
+		
+			if(hud.isCountdownDrawn()){
+				batch.setColor(1, 1, 1, 1.0f - hud.countdownOpacity());
+				techFontMedium.drawStringCentered(0, 0, hud.getCountdownValue(), batch);
+			}
 			
 		batch.end();
 	}

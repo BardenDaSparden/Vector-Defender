@@ -85,11 +85,10 @@ public class Joystick implements InputDevice {
 			
 			for(int i = 0; i < NUM_AXES; i++){
 				axes[i] = axesBuffer.get();
-				//System.out.println("Axis " + i + "=" + axes[i]);
 			}
-			
-			for(int i = 0; i < NUM_BUTTONS; i++)
-				buttons[i] = (buttonsBuffer.get() == 1) ? true : false;
+					
+			for(int i = 0; i < buttonsBuffer.capacity(); i++)
+				buttons[i] = (buttonsBuffer.get(i) == 1) ? true : false;
 			
 			for(int i = 0; i < NUM_BUTTONS; i++){
 				boolean previous = previousButtons[i];

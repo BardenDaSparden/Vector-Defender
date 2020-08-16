@@ -38,6 +38,8 @@ public class ShapeRenderer {
 	
 	int draws = 0;
 	
+	int batchCount = 0;
+	
 	DrawType drawType;
 	
 	public ShapeRenderer(){
@@ -64,6 +66,14 @@ public class ShapeRenderer {
 		
 	}
 	
+	public void startFrame(){
+		batchCount = 0;
+	}
+	
+	public void endFrame(){
+		
+	}
+	
 	public void begin(DrawType drawType, BlendState blendState){
 		this.drawType = drawType;
 		glBlendFunc(blendState.sFactor, blendState.dFactor);
@@ -79,7 +89,20 @@ public class ShapeRenderer {
 		draws++;
 	}
 	
+	public void draw(float x, float y, float r, float g, float b, float a){
+		if(draws >= MAX_DRAWS)
+			flush();
+		
+		positions[draws].set(x, y);
+		colors[draws].set(r, g, b, a);
+		
+		draws++;
+	}
+	
 	private void flush(){
+		
+		batchCount++;
+		
 		for(int i = 0; i < draws; i++){
 			Vector2f position = positions[i];
 			Vector4f color = colors[i];

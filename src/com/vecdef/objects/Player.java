@@ -33,6 +33,10 @@ public class Player extends Entity{
 	static final float VELOCITY_DAMPING = 0.945F;		//Controls the "slipperiness" of ship movement. Within range of [0, 0.99999999], closer to 1 the more slippery
 	static final float MOVEMENT_ACCELERATION = 0.45F;	//How much acceleration is applied each frame in the direction of the LEFT Analog Stick
 	
+	//Vector4f TRAIL_COLOR = new Vector4f(1.0f, 0.25f, 0, 1.0f);
+	int trailEmitTime = 2;
+	Timer trailTimer = new Timer(trailEmitTime);
+	
 	Vector2f weaponOffset1 = new Vector2f(25, 11);
 	Vector2f weaponOffset2 = new Vector2f(25, -11);
 	float aimDirection = 0;
@@ -47,11 +51,11 @@ public class Player extends Entity{
 	boolean useOffset1 = true;
 	float bulletSpeed = 17;
 	Timer weaponTimer = new Timer(5);
-	Timer respawnTimer = new Timer(35);
+	Timer respawnTimer = new Timer(33);
 	Timer postSpawnTimer = new Timer(150);
 	boolean canUseWeapon = false;
 	
-	boolean canBeKilled = true;
+	//boolean canBeKilled = true;
 	
 	float time = 0.0f;
 	PlayerStats stats;
@@ -75,8 +79,10 @@ public class Player extends Entity{
 	
 	public Player(Scene scene, int playerID){
 		super(scene);
+		
 		this.playerID = playerID;
 		gamepad = scene.getInputSystem().getJoystick(playerID);
+		
 		if(playerID == 0)
 			overrideColor.set(HUDRenderer.P1_COLOR);
 		if(playerID == 1)
@@ -88,6 +94,8 @@ public class Player extends Entity{
 		
 		model = PlayerModel.get();
 		transform.setTranslation(new Vector2f(0, 0));
+		velocity.set(0, 0.00001f);
+		transform.setOrientation(velocity.direction());
 		
 		weaponTimer.setCallback(new TimerCallback() {
 			public void execute(Timer timer) {
@@ -98,11 +106,12 @@ public class Player extends Entity{
 		
 		respawnTimer.setCallback(new TimerCallback() {
 			public void execute(Timer timer) {
+				SpawnEffectPool ePool = scene.getSpawnEffectPool();
+				SpawnEffect effect = (SpawnEffect) ePool.getNext();
+				effect.setBase(Player.this);
 				respawn();
-				canBeKilled = true;
 				stats.addEnergy(500);
 				postSpawnTimer.restart();
-				//postSpawnTimer.start();
 			}
 		});
 		respawnTimer.start();
@@ -114,25 +123,36 @@ public class Player extends Entity{
 			}
 		});
 		
+		trailTimer.setCallback(new TimerCallback() {
+			@Override
+			public void execute(Timer timer) {
+				timer.restart();
+				if(velocity.length() > 0.5)
+					emitParticleTrail();
+					
+			}
+		});
+		
 		addContactListener(new ContactEventListener() {
 			@Override
 			public void process(ContactEvent event) {
 				ICollidable other = event.other;
 				if((other.getGroupMask() & Masks.Collision.ENEMY) == Masks.Collision.ENEMY){
-					if(canBeKilled)
-						kill();
+					kill();
 				} else if((other.getGroupMask() & Masks.Collision.MULTIPLIER) == Masks.Collision.MULTIPLIER){
 					stats.increaseMultiplier();
 				}
 			}
 		});
 		
+		trailTimer.start();
+		
 		allEnemies = new ArrayList<Entity>();
 		stats = new PlayerStats();
 		shield = new ShieldComponent(scene, playerID);
-		velocity.set(0, 0.00001f);
 		
 		fireSound = Resources.getSound("fire1");
+		reuse();
 	}
 	
 	public void update(){
@@ -152,6 +172,7 @@ public class Player extends Entity{
 		weaponTimer.tick();
 		respawnTimer.tick();
 		postSpawnTimer.tick();
+		trailTimer.tick();
 		
 		if(isRespawning()){
 			transform.setTranslation(interpolator.interpolate(transform.getTranslation(), new Vector2f(0, 0), respawnTimer.percentComplete()));
@@ -198,7 +219,7 @@ public class Player extends Entity{
 		//Update physics related variables
 	    if(canAccelerate)
 			acceleration.set(movementAcceleration);
-		
+	    
 		//Player ship abilities. Currently "fire weapon", and "use shield"
 	    if (canShoot && canUseWeapon){
 	    	fireWeapon();
@@ -231,7 +252,24 @@ public class Player extends Entity{
 	    	getTransform().getTranslation().y = FastMath.clamp(-gridHeight / 2 + 1, gridHeight / 2 - 1, getTransform().getTranslation().y);
 	    
 	    //Apply movement force to grid
-	    scene.getGrid().applyImplosiveForce(velocity.length() * 3.0f, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0), 100);
+	    scene.getGrid().applyImplosiveForce(velocity.length() * 3.0f, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0), 200);
+	}
+	
+	private void emitParticleTrail(){
+		ParticlePool pool = scene.getParticlePool();
+		Vector2f position = transform.getTranslation().add(velocity.normalize().negate().scale(radius));
+		float theta = velocity.negate().direction() + FastMath.randomf(-30, 30);
+		float force = velocity.length() / MAX_MOVEMENT_SPEED * 3.5f;
+		for(int i = 0; i < 4; i++){
+			Particle particle = (Particle) pool.getNext();
+			particle.maxLife = 45;
+			particle.getTransform().getTranslation().set(position);
+			particle.getTransform().getScale().set(0.5f, 0.5f);
+			particle.overrideColor.set(overrideColor);
+			float accelX = FastMath.cosd(theta) * force;
+			float accelY = FastMath.sind(theta) * force;
+			particle.getAcceleration().set(accelX, accelY);
+		}
 	}
 	
 	private void fireWeapon(){
@@ -240,13 +278,19 @@ public class Player extends Entity{
 		Vector2f bulletOffset = (useOffset1) ? weaponOffset1 : weaponOffset2 ;
 		Vector2f bulletPosition = bulletOffset.rotate(direction).add(transform.getTranslation());
 		Vector2f bulletVelocity = new Vector2f(FastMath.cosd(direction) * bulletSpeed, FastMath.sind(direction) * bulletSpeed);
-        
-		Bullet bullet = new Bullet(bulletPosition, bulletVelocity, playerID, scene);
-        scene.add(bullet);
+		
+		BulletPool pool = scene.getBulletPool();
+		Bullet bullet = (Bullet) pool.getNext();
+		
+		bullet.getTransform().getTranslation().set(bulletPosition);
+		bullet.getTransform().setOrientation(bulletVelocity.direction());
+		bullet.getVelocity().set(bulletVelocity);
+		bullet.setPlayerID(playerID);
 		
 	    useOffset1 = !useOffset1;
 	    canUseWeapon = false;
 	    weaponTimer.restart();
+	    
 	    AudioPlayer.instance().play(fireSound);
 	}
 
@@ -259,12 +303,13 @@ public class Player extends Entity{
 	}
 	
 	public void kill(){
-		canBeKilled = false;
+		//canBeKilled = false;
 		respawnTimer.restart();
 		
 		acceleration.set(0, 0);
 		velocity.set(0, 0.00001f); 
-	    
+		transform.setOrientation(velocity.direction());
+		
 	    allEnemies.clear();
 	    scene.getGrid().applyExplosiveForce(350, new Vector3f(transform.getTranslation().x, transform.getTranslation().y, 0.0F), 200.0F);
 		
@@ -274,18 +319,15 @@ public class Player extends Entity{
 			int n = allEnemies.size();
 		    for(int i = 0; i < n; i++){
 		    	Entity entity = allEnemies.get(i);
-		    	entity.expire();
+		    	entity.destroy();
 		    }
 	    }
 	    
 	    bRespawn = true;
 	    
-	    stats.useLife();
+	    if(stats.getLiveCount() - 1 > -1)
+	    	stats.useLife();
 	    stats.resetMultiplier();
-	    
-	    if(stats.getLiveCount() <= 0){
-	    	outOfLives = true;
-	    }
 	    
 	}
 	
@@ -294,8 +336,8 @@ public class Player extends Entity{
 	}
 	
 	public boolean isAlive(){
-		return stats.getLiveCount() > -1;
-	}
+		return stats.getLiveCount() > 0;
+	} 
 	
 	public boolean isVisible(){
 		return !isRespawning();
@@ -350,7 +392,7 @@ public class Player extends Entity{
 class ShieldComponent extends Entity{
 	
 	final int MIN_RADIUS = 0;
-	final int MAX_RADIUS = 48;
+	final int MAX_RADIUS = 42;
 	
 	boolean active = false;
 	int radius = 0;
@@ -368,6 +410,7 @@ class ShieldComponent extends Entity{
 		if(playerID == 3)
 			overrideColor.set(HUDRenderer.P4_COLOR);
 		this.model = ShieldModel.get();
+		reuse();
 	}
 
 	@Override
@@ -420,11 +463,12 @@ class ShieldComponent extends Entity{
 		transform.getScale().set(sFactor, sFactor);
 		
 		opacity = Math.max((float)(radius) / (float)MAX_RADIUS, 0);
+		
 	}
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
+		
 	}
 	
 	public int getRadius(){

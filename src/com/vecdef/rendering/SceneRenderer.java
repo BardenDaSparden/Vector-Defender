@@ -13,6 +13,7 @@ import org.javatroid.graphics.SpriteBatch;
 import org.javatroid.graphics.Texture;
 import org.javatroid.math.Vector2f;
 
+import com.vecdef.audio.AudioAnalyzer;
 import com.vecdef.objects.Entity;
 import com.vecdef.objects.Scene;
 import com.vecdef.util.Masks;
@@ -44,14 +45,14 @@ public class SceneRenderer {
 	ShaderProgram blur;
 	ShaderProgram accumulator;
 	
-	public SceneRenderer(int width, int height, Scene scene, Renderer renderer){
+	public SceneRenderer(int width, int height, Scene scene, Renderer renderer, AudioAnalyzer analyzer){
 		this.width = width;
 		this.height = height;
 		this.scene = scene;
 		this.renderer = renderer;
 		camera = new OrthogonalCamera();
 		
-		gridRenderer = new GridRenderer(renderer.ShapeRenderer());
+		gridRenderer = new GridRenderer(renderer.ShapeRenderer(), analyzer);
 		tempEntityList = new ArrayList<Entity>();
 		entityRenderer = new EntityRenderer(renderer.ShapeRenderer());
 		
@@ -61,7 +62,7 @@ public class SceneRenderer {
 		back = new FrameBuffer(w, h);
 		bloom = new FrameBuffer(w, h);
 		
-		blurFBO = new FrameBuffer[10];
+		blurFBO = new FrameBuffer[8];
 		for(int i = 0, j = 0; i < blurFBO.length; i+=2, j++){
 			int sf = ((j + 1) * 2);
 			blurFBO[i] = new FrameBuffer(w / sf, h / sf);
@@ -98,7 +99,8 @@ public class SceneRenderer {
 		for(int i = 0; i < tempEntityList.size(); i++){
 			Entity entity = tempEntityList.get(i);
 			IRenderable renderable = (IRenderable) entity;
-			entityRenderer.add(renderable);
+			if(!entity.isRecycled())
+				entityRenderer.add(renderable);
 		}
 		
 		entityRenderer.render();
@@ -111,7 +113,9 @@ public class SceneRenderer {
 		for(int i = 0; i < entities.size(); i++){
 			Entity entity = entities.get(i);
 			IRenderable renderable = (IRenderable) entity;
-			entityRenderer.add(renderable);
+			if(!entity.isRecycled()){
+				entityRenderer.add(renderable);
+			}
 		}
 		
 		entityRenderer.render();
@@ -150,7 +154,6 @@ public class SceneRenderer {
 			drawFullscreenFBO(blurFBO[3], null);
 			drawFullscreenFBO(blurFBO[5], null);
 			drawFullscreenFBO(blurFBO[7], null);
-			drawFullscreenFBO(blurFBO[9], null);
 		bloom.release();
 		
 		drawFullscreenFBO(bloom, null);
@@ -158,18 +161,16 @@ public class SceneRenderer {
 	
 	void MotionBlur(){
 		accum.bind();
-			drawEntitiesByType(Masks.Entities.BLACK_HOLE | Masks.Entities.PARTICLE | Masks.Entities.BULLET | Masks.Entities.OTHER );
-		accum.release();
-		
+			//gridRenderer.render(scene.getGrid());
+			drawEntitiesByType(Masks.Entities.BLACK_HOLE | Masks.Entities.PARTICLE | Masks.Entities.BULLET);
 		accum2.bind();
 			drawFullscreenFBO_ALPHA(accum, accumulator);
-		accum2.release();
-		
 		accum.bind();
 			drawFullscreenFBO_ALPHA(accum2, accumulator);
 		accum.release();
-		
+			
 		drawFullscreenFBO(accum, null);
+		
 	}
 	
 	void doPostProcessing(){

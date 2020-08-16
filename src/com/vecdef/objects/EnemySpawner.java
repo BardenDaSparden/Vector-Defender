@@ -4,19 +4,18 @@ package com.vecdef.objects;
 import java.util.ArrayList;
 import java.util.Random;
 
-import org.javatroid.audio.AudioPlayer;
 import org.javatroid.audio.Sound;
 import org.javatroid.core.Resources;
 import org.javatroid.math.Vector2f;
 
 import com.vecdef.util.Masks;
 
-public class EnemySpawner{
+public class EnemySpawner {
 	
 	static final int MAX_ENEMIES = 300;
 	static final int MAX_BLACK_HOLES = 4;
 	
-	static final float START_SPAWN_CHANCE = 120.0f;
+	static final float START_SPAWN_CHANCE = 50.0f;
 	static final float MIN_SPAWN_CHANCE = 40.0f;
 	
 	Random random = new Random();
@@ -68,9 +67,14 @@ public class EnemySpawner{
 			bSpawned = true;
 		}
 		
-//		if(canSpawn(blackholeSpawnChance)){
-//			factory.createBlackHole(getSpawnPosition());
-//		}
+		if(canSpawn(basicUnitSpawnChance)){
+			factory.createSplitter(getSpawnPosition());
+			bSpawned = true;
+		}
+		
+		if(canSpawn(blackholeSpawnChance)){
+			factory.createBlackHole(getSpawnPosition());
+		}
 		
 		if(score >= 5000 && canSpawn(basicUnitSpawnChance)){
 			factory.createSeeker(getSpawnPosition());
@@ -101,8 +105,8 @@ public class EnemySpawner{
 			}
 		}
 		
-		if(bSpawned)
-			AudioPlayer.instance().play(spawnSound);
+//		if(bSpawned)
+//			AudioPlayer.instance().play(spawnSound);
 		
 		if(basicUnitSpawnChance > MIN_SPAWN_CHANCE)
 			basicUnitSpawnChance -= 0.004f;

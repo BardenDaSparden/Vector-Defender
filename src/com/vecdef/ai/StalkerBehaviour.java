@@ -5,7 +5,6 @@ import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 
 import com.vecdef.objects.Enemy;
-import com.vecdef.objects.EnemySpawnEffect;
 import com.vecdef.objects.Player;
 import com.vecdef.objects.Scene;
 
@@ -15,12 +14,8 @@ public class StalkerBehaviour extends Behaviour{
 	float angleSpeed = 7;
 	float time = 0;
 	
-	EnemySpawnEffect spawnEffect;
-	
 	public StalkerBehaviour(Scene scene, Enemy enemy){
 		super(scene, enemy);
-		spawnEffect = new EnemySpawnEffect(scene, enemy);
-		scene.add(spawnEffect);
 	}
 	
 	@Override
@@ -46,6 +41,6 @@ public class StalkerBehaviour extends Behaviour{
 
 	@Override
 	public void destroy() {
-		spawnEffect.destroy();
+		
 	}
 }

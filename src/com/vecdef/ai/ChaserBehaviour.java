@@ -6,7 +6,6 @@ import org.javatroid.math.FastMath;
 import org.javatroid.math.Vector2f;
 
 import com.vecdef.objects.Enemy;
-import com.vecdef.objects.EnemySpawnEffect;
 import com.vecdef.objects.Player;
 import com.vecdef.objects.Scene;
 
@@ -16,24 +15,17 @@ public class ChaserBehaviour extends Behaviour{
 	float maxSpeed = 12.0F;
 	float random = 0.3f + FastMath.random() * 0.7f;
 	
-	EnemySpawnEffect spawnEffect;
-	
 	Timer activateTimer = new Timer(20);
 	boolean active = false;
 	
 	public ChaserBehaviour(Scene scene, Enemy enemy){
 		super(scene, enemy);
-		spawnEffect = new EnemySpawnEffect(scene, enemy);
-		scene.add(spawnEffect);
-		
 		activateTimer.setCallback(new TimerCallback() {
-			
 			@Override
 			public void execute(Timer timer) {
 				active = true;
 			}
 		});
-		
 		activateTimer.start();
 	}
 	
@@ -49,15 +41,17 @@ public class ChaserBehaviour extends Behaviour{
 			return;
 		
 		  if (speed < maxSpeed)
-			  speed += 0.05F;
+			  speed += 0.005F;
 			
-		  Player player = scene.getPlayer();
-		  float angleToPlayer = player.getTransform().getTranslation().sub(self.getTransform().getTranslation()).direction();
-		  self.getVelocity().set(new Vector2f(FastMath.cosd(angleToPlayer) * speed, FastMath.sind(angleToPlayer) * speed));
+		  Player player = scene.getNearestPlayer(self.getTransform().getTranslation().x, self.getTransform().getTranslation().y);
+		  if(player.isAlive()){
+			  float angleToPlayer = player.getTransform().getTranslation().sub(self.getTransform().getTranslation()).direction();
+			  self.getVelocity().set(new Vector2f(FastMath.cosd(angleToPlayer) * speed, FastMath.sind(angleToPlayer) * speed));
+		  }
 	  }
 
 	@Override
 	public void destroy() {
-		spawnEffect.destroy();
+		
 	}
 }

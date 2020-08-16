@@ -1,5 +1,6 @@
 package com.vecdef.gamestate;
 
+import org.barden.util.GPUProfiler;
 import org.javatroid.core.Resources;
 import org.javatroid.core.Timer;
 import org.javatroid.core.TimerCallback;
@@ -32,10 +33,12 @@ public class PlayingState extends GameState {
 	HUD hud;
 	HUDRenderer hudRenderer;
 	
-	CubicInterpolator interpolator = new CubicInterpolator(new Vector2f(0.35f, 0.0f), new Vector2f(0.75f, 1.0f));
+	CubicInterpolator interpolator = new CubicInterpolator(new Vector2f(0.35f, 0.0f), new Vector2f(1.0f, 1.0f));
 	Texture white;
 	final int FADE_IN_TIME = 30;
 	Timer fadeInTimer;
+	
+	boolean hasStarted = false;
 	
 	@Override
 	public void initialize() {
@@ -47,7 +50,7 @@ public class PlayingState extends GameState {
 		camera = new OrthogonalCamera(width, height);
 		overlayCamera = new OrthogonalCamera(width, height);
 	    scene = new Scene((int)width, (int)height, instance.input);
-	    sceneRenderer = new SceneRenderer((int)width, (int)height, scene, instance.renderer);
+	    sceneRenderer = new SceneRenderer((int)width, (int)height, scene, instance.renderer, super.instance.musicAnalyzer);
 	    hud = new HUD(scene);
 	    hudRenderer = new HUDRenderer((int)width, (int)height, renderer);
 	    white = Resources.getTexture("blank");
@@ -55,16 +58,25 @@ public class PlayingState extends GameState {
 	    fadeInTimer.setCallback(new TimerCallback() {
 			@Override
 			public void execute(Timer timer) {
-				// TODO Auto-generated method stub
 				
 			}
 		});
 	    fadeInTimer.start();
-	    
+	    scene.initialize();
+	    hud.onStateStart();
 	}
 
 	@Override
 	public void update() {
+		fadeInTimer.tick();
+		
+		hud.update();
+		
+		if(!hasStarted){
+			hasStarted = hud.isCountdownComplete();
+			return;
+		}
+		
 		if(scene.isMultiplayer()){
 			Vector2f cameraPosition = camera.getTranslation();
 			
@@ -105,45 +117,62 @@ public class PlayingState extends GameState {
 			x /= (float)playerCount;
 			y /= (float)playerCount;
 			
-			float camX = interpolator.interpolate(cameraPosition.x, x, 0.10f);
-			float camY = interpolator.interpolate(cameraPosition.y, y, 0.10f);
+			float camX = interpolator.interpolate(cameraPosition.x, x, 0.15f);
+			float camY = interpolator.interpolate(cameraPosition.y, y, 0.15f);
 			camera.getTranslation().set(camX, camY);
 			
 		} else {
 			Vector2f cameraPosition = camera.getTranslation();
 			Vector2f playerPosition = scene.getPlayer().getTransform().getTranslation();
-			float newCameraX = interpolator.interpolate(cameraPosition.x, playerPosition.x, 0.10f);
-			float newCameraY = interpolator.interpolate(cameraPosition.y, playerPosition.y, 0.10f);
+			float newCameraX = interpolator.interpolate(cameraPosition.x, playerPosition.x, 0.15f);
+			float newCameraY = interpolator.interpolate(cameraPosition.y, playerPosition.y, 0.15f);
 			camera.getTranslation().set(newCameraX, newCameraY);
 		}
 		camera.update();
 		
 		scene.update();
-		
-//		int liveCount = scene.getPlayer().getStats().getLiveCount();
-//		if(liveCount <= 0){
-//			scene.getPlayer().getStats().writeHighscore();
-//			scene.reset();
-//			instance.setGameState(GameStates.MAIN_MENU);
-//		}
-		
-		fadeInTimer.tick();
+
+		if(!scene.isMultiplayer()){
+			int liveCount = scene.getPlayer().getStats().getLiveCount();
+			if(liveCount <= 0){
+				scene.reset();
+				instance.setGameState(GameStates.MAIN_MENU);
+			}
+		} else {
+			Player p1 = scene.getPlayer();
+			Player p2 = scene.getPlayer2();
+			Player p3 = scene.getPlayer3();
+			Player p4 = scene.getPlayer4();
+			
+			if(!p1.isAlive() && !p2.isAlive() && !p3.isAlive() && !p4.isAlive()){
+				scene.reset();
+				instance.setGameState(GameStates.MAIN_MENU);
+			}
+		}
 	}
 
 	@Override
 	public void render() {
+		
+		GPUProfiler profiler = GPUProfiler.get();
+		
 		instance.renderer.setCamera(camera);
 	    sceneRenderer.draw();
-	    hudRenderer.draw(hud);
+	    
+	    profiler.startTask("HUD Renderer");
+	    	hudRenderer.draw(hud);
+	    profiler.endTask();
 	    
 	    float opacity = 1.0f - fadeInTimer.percentComplete();
-	    SpriteBatch batch = instance.batch;
-	    batch.setCamera(overlayCamera);
-	    batch.setColor(0, 0, 0, opacity);
-	    batch.begin(BlendState.ALPHA);
-	    	batch.draw(0, 0, instance.settings.width, instance.settings.height, 0, white);
-	    batch.end();
-	    batch.setCamera(camera);
+	    if(opacity > 0.0f){
+	    	SpriteBatch batch = instance.batch;
+		    batch.setCamera(overlayCamera);
+		    batch.setColor(0, 0, 0, opacity);
+		    batch.begin(BlendState.ALPHA);
+		    	batch.draw(0, 0, instance.settings.width, instance.settings.height, 0, white);
+		    batch.end();
+		    batch.setCamera(camera);
+	    }
 	}
 
 	@Override

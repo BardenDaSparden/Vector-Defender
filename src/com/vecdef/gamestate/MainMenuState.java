@@ -13,7 +13,6 @@ import org.javatroid.graphics.SpriteBatch;
 import org.javatroid.graphics.Texture;
 import org.javatroid.graphics.TextureRegion;
 import org.javatroid.math.CubicInterpolator;
-import org.javatroid.math.FastMath;
 import org.javatroid.math.Interpolator;
 import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
@@ -122,7 +121,6 @@ public class MainMenuState extends GameState {
 			
 			@Override
 			public void onButtonPress(int button) {
-				// TODO Auto-generated method stub
 				
 			}
 		};
@@ -210,9 +208,9 @@ public class MainMenuState extends GameState {
 			isFadingOut = true;
 			fadeOutTimer.start();
 		} else if(selected.equals("Custom Match")){
-			//TODO push settings menu
+			
 		} else if(selected.equals("Settings")){
-			//TODO push settings menu
+			
 		} else if(selected.equals("Quit")){
 			instance.quit();
 		}

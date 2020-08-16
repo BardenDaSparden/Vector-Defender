@@ -36,8 +36,15 @@ public class Scene {
 	protected CollisionSystem collision;
 	protected PhysicsSystem physics;
 	
+	BulletPool bulletPool;
+	EnemyPool enemyPool;
+	MultiplierPool multiplierPool;
+	ParticlePool particlePool;
+	SpawnEffectPool effectPool;
+	
 	private EnemyFactory enemyFactory;
-	private EnemySpawner enemySpawner;
+	//private EnemySpawner enemySpawner;
+	private WaveSpawner enemySpawner;
 	
 	public Scene(int width, int height, InputSystem input){
 		this.input = input;
@@ -45,16 +52,13 @@ public class Scene {
 		player2 = new Player(this, 1);
 		player3 = new Player(this, 2);
 		player4 = new Player(this, 3);
-		grid = new Grid(width + 240, height + 160, 40, 40);
+		grid = new Grid(width, height, 25, 25);
 		entities = new ArrayList<Entity>();
 		entitiesToRemove = new ArrayList<Entity>();
 		collision = new CollisionSystem();
 		physics = new PhysicsSystem();
-		enemyFactory = new EnemyFactory(this);
-		enemySpawner = new EnemySpawner(enemyFactory, this);
 		
 		p2Listener = new JoystickListener() {
-			
 			@Override
 			public void onButtonRelease(int button) {
 				if(button == Joystick.BUTTON_START && !player2.hasJoined()){
@@ -62,7 +66,6 @@ public class Scene {
 					player2.setJoined(true);
 				}
 			}
-			
 			@Override
 			public void onButtonPress(int button) {
 				
@@ -70,7 +73,6 @@ public class Scene {
 		};
 		
 		p3Listener = new JoystickListener() {
-			
 			@Override
 			public void onButtonRelease(int button) {
 				if(button == Joystick.BUTTON_START && !player3.hasJoined()){
@@ -78,16 +80,13 @@ public class Scene {
 					player3.setJoined(true);
 				}
 			}
-			
 			@Override
 			public void onButtonPress(int button) {
-				// TODO Auto-generated method stub
 				
 			}
 		};
 		
 		p4Listener = new JoystickListener() {
-			
 			@Override
 			public void onButtonRelease(int button) {
 				if(button == Joystick.BUTTON_START && !player4.hasJoined()){
@@ -95,19 +94,38 @@ public class Scene {
 					player4.setJoined(true);
 				}
 			}
-			
 			@Override
 			public void onButtonPress(int button) {
-				// TODO Auto-generated method stub
 				
 			}
 		};
 		
+		bulletPool = new BulletPool(this);
+		enemyPool = new EnemyPool(this);
+		multiplierPool = new MultiplierPool(this);
+		particlePool = new ParticlePool(this);
+		effectPool = new SpawnEffectPool(this);
+		
+		enemyFactory = new EnemyFactory(this, enemyPool);
+		enemySpawner = new WaveSpawner(this, enemyFactory);
+		
 		input.getJoystick(1).addListener(p2Listener);
 		input.getJoystick(2).addListener(p3Listener);
 		input.getJoystick(3).addListener(p4Listener);
-		
+	}
+	
+	public void initialize(){
 		addPlayer(player1, 0, 0);
+		
+		if(player2.hasJoined())
+			addPlayer(player2, 0, -150);
+		
+		if(player3.hasJoined())
+			addPlayer(player3, -150, 0);
+		
+		if(player4.hasJoined())
+			addPlayer(player4, 150, 0);
+		
 	}
 	
 	final Vector3f SPAWN_FORCE = new Vector3f(0, 0, -250);
@@ -152,7 +170,7 @@ public class Scene {
 		int n = entities.size();
 		for(int i = 0; i < n; i++){
 			Entity entity = entities.get(i);
-			if((entity.getEntityType() & mask) == 0x00)
+			if((entity.getEntityType() & mask) == 0x00 || entity.isRecycled())
 				continue;
 			list.add(entity);
 		}
@@ -162,37 +180,58 @@ public class Scene {
 		int n = entities.size();
 		for(int i = 0; i < n; i++){
 			Entity entity = entities.get(i);
-			if((entity.getEntityType() & mask) == 0x00)
+			if((entity.getEntityType() & mask) == 0x00 || entity.isRecycled())
 				continue;
 			
-			//sqrt((dx * dx) + (dy * dy)) = radius
-			//(dx * dx) + (dy * dy) = radius^2
 			Vector2f ePosition = entity.getTransform().getTranslation();
 			float dx = ePosition.x - position.x;
 			float dy = ePosition.y - position.y;
 			float lenSqr = (dx * dx) + (dy * dy);
 			float rSqr = radius * radius;
+			
 			if(lenSqr > rSqr)
 				continue;
 			
 			list.add(entity);
 		}
+		
 	}
 	
 	public void update(){
-		enemySpawner.trySpawn();
+		long startTime = System.nanoTime();
+		enemySpawner.update();
+		long endTime = System.nanoTime();
+		double millis = (endTime - startTime) / 1000000D;
+		//System.out.println("EnemySpawner: " + FORMATTER.format(millis) + "ms");
+		
+		startTime = System.nanoTime();
 		physics.integrate();
+		endTime = System.nanoTime();
+		millis = (endTime - startTime) / 1000000D;
+		//System.out.println("Physics: " + FORMATTER.format(millis) + "ms");
+		
+		startTime = System.nanoTime();
 		collision.checkCollision();
+		endTime = System.nanoTime();
+		millis = (endTime - startTime) / 1000000D;
+		//System.out.println("Collision: " + FORMATTER.format(millis) + "ms");
+		
+		startTime = System.nanoTime();
 		for(int i = 0; i < entities.size(); i++){
 			Entity entity = entities.get(i);
-			if(entity.isExpired()){
-				entity.destroy();
-				remove(entity);
-			} else {
-				entity.update();
-			}
+			if(entity.isRecycled())
+				continue;
+			entity.update();
 		}
+		endTime = System.nanoTime();
+		millis = (endTime - startTime) / 1000000D;
+		//System.out.println("Entity Update: " + FORMATTER.format(millis) + "ms");
+		
+		startTime = System.nanoTime();
 		grid.update();
+		endTime = System.nanoTime();
+		millis = (endTime - startTime) / 1000000D;
+		//System.out.println("Grid Update: " + FORMATTER.format(millis) + "ms");
 	}
 	
 	public void destroy(){
@@ -202,9 +241,18 @@ public class Scene {
 	}
 	
 	public void reset(){
-		enemySpawner.reset();
+		
+		
 		player1.reset();
+		player2.reset();
+		player3.reset();
+		player4.reset();
+		
+		
 		player1.getTransform().getTranslation().set(0, 0);
+		player2.getTransform().getTranslation().set(0, 0);
+		player3.getTransform().getTranslation().set(0, 0);
+		player4.getTransform().getTranslation().set(0, 0);
 	}
 	
 	public Player getNearestPlayer(float x, float y){
@@ -284,19 +332,39 @@ public class Scene {
 		return input;
 	}
 	
+	public BulletPool getBulletPool(){
+		return bulletPool;
+	}
+	
+	public EnemyPool getEnemyPool(){
+		return enemyPool;
+	}
+	
+	public MultiplierPool getMultiplierPool(){
+		return multiplierPool;
+	}
+	
+	public ParticlePool getParticlePool(){
+		return particlePool;
+	}
+	
+	public SpawnEffectPool getSpawnEffectPool(){
+		return effectPool;
+	}
+	
 	public ArrayList<Entity> getAllEntities(){
 		return entities;
 	}
 	
-	public int getPhysicsObjectCount(){
-		return physics.numObjects();
-	}
-	
-	public int getCollisionObjectCount(){
-		return collision.numObjects();
-	}
-	
-	public int getEntityCount(){
-		return entities.size();
-	}
+//	public int getPhysicsObjectCount(){
+//		return physics.numObjects();
+//	}
+//	
+//	public int getCollisionObjectCount(){
+//		return collision.numObjects();
+//	}
+//	
+//	public int getEntityCount(){
+//		return entities.size();
+//	}
 }

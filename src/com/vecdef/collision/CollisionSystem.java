@@ -5,17 +5,19 @@ import java.util.ArrayList;
 import org.javatroid.math.Vector2f;
 
 import com.vecdef.model.Transform;
+import com.vecdef.objects.IPoolable;
 import com.vecdef.util.Masks;
 
 public class CollisionSystem {
 
 	ArrayList<ICollidable> collidables;
 	ArrayList<ICollidable> nearbyCollidables;
-	ArrayList<ContactEvent> eventStack;
+	LooseGrid broadphase;
 	
 	public CollisionSystem(){
 		collidables = new ArrayList<ICollidable>();
 		nearbyCollidables = new ArrayList<ICollidable>();
+		broadphase = new LooseGrid(2000, 2000, 100, 100);
 	}
 	
 	public void add(ICollidable collidable){
@@ -28,22 +30,41 @@ public class CollisionSystem {
 	
 	public void checkCollision(){
 		
+		broadphase.clear();
+		for(int i = 0; i < collidables.size(); i++){
+			ICollidable collidable = collidables.get(i);
+			IPoolable poolable = (IPoolable) collidable;
+			if(!poolable.isRecycled())
+				broadphase.insert(collidable);
+				
+		}
+		
 		ICollidable A = null;
 		ICollidable B = null;
 		
-		int n = collidables.size();
-		for(int i = 0; i < n; i++){
+		IPoolable poolableA = null;
+		IPoolable poolableB = null;
+		
+		for(int i = 0; i < collidables.size(); i++){
 			A = collidables.get(i);
+			poolableA = (IPoolable)A;
 			
-			if(A.getCollisionMask() == Masks.NONE)
+			if(A.getCollisionMask() == Masks.NONE || poolableA.isRecycled() || A.getRadius() <= 0.001f)
 				continue;
 			
+			Vector2f position = A.getTransform().getTranslation();
 			nearbyCollidables.clear();
-			getNearbyCollidables(A.getTransform().getTranslation(), 300, nearbyCollidables, A);
+			broadphase.query(position.x, position.y, nearbyCollidables);
+			//getNearbyCollidables(A.getTransform().getTranslation(), (A.getRadius() + 10) * 2, nearbyCollidables, A);
+			
 			
 			for(int j = 0; j < nearbyCollidables.size(); j++){
 				
 				B = nearbyCollidables.get(j);
+				poolableB = (IPoolable)B;
+				
+				if(B.getCollisionMask() == Masks.NONE || poolableB.isRecycled())
+					continue;
 				
 				//If and A and B are the same references
 				if(A.equals(B)){
@@ -61,7 +82,9 @@ public class CollisionSystem {
 				boolean intersect = testIntersection(A, B);
 				if(intersect){
 					ContactEvent eventAB = new ContactEvent(A, B);
+					ContactEvent eventBA = new ContactEvent(B, A);
 					A.onContact(eventAB);
+					B.onContact(eventBA);
 				}	
 			}
 		}
@@ -71,6 +94,9 @@ public class CollisionSystem {
 		int n = collidables.size();
 		for(int i = 0; i < n; i++){
 			ICollidable collidable = collidables.get(i);
+			IPoolable poolable = (IPoolable) collidable;
+			if(collidable.getCollisionMask() == Masks.NONE || poolable.isRecycled() || collidable.getRadius() <= 0.001f)
+				continue;
 			Vector2f dPos = collidable.getTransform().getTranslation().sub(position);
 			if(dPos.lengthSquared() <= radius * radius)
 				if(!self.equals(collidable))

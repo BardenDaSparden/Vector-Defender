@@ -55,9 +55,12 @@ public class Grid {
 		        
 	    	}
 	    }
-
-	    float stiff = 0.125F;
-	    float damping = 0.0001F;
+	    
+//	    float stiff = 0.125F;
+//	    float damping = 0.0001F;
+	    
+	    float stiff = 0.150F;
+	    float damping = 0.001F;
 	    
 	    PointMass start;
 	    PointMass right;
@@ -157,6 +160,10 @@ public class Grid {
 	
 	public int numCols(){
 		return cols;
+	}
+	
+	public ArrayList<PointMass> getMasses(){
+		return masses;
 	}
 	
 	public PointMass[][] getPoints(){

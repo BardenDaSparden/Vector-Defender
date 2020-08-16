@@ -9,10 +9,11 @@ import org.javatroid.math.Vector3f;
 import com.vecdef.collision.ContactEvent;
 import com.vecdef.collision.ContactEventListener;
 import com.vecdef.collision.ICollidable;
+import com.vecdef.objects.Bullet;
 import com.vecdef.objects.Enemy;
 import com.vecdef.objects.EnemyFactory;
-import com.vecdef.objects.EnemySpawnEffect;
 import com.vecdef.objects.Entity;
+import com.vecdef.objects.MultiplierPiece;
 import com.vecdef.objects.Particle;
 import com.vecdef.objects.Player;
 import com.vecdef.objects.Scene;
@@ -20,14 +21,12 @@ import com.vecdef.util.Masks;
 
 public class BlackHoleBehaviour extends Behaviour{
 
-	static final int BLACK_HOLE_RADIUS = 280;
-	
-	static final float BULLET_REPULSION = 0.0100f;
-	static final float PLAYER_ATTRACT = 0.00050f;
+	final int BLACK_HOLE_RADIUS = 250;
+	final float BULLET_REPULSION = 0.0100f;
+	final float PLAYER_ATTRACT = 0.00050f;
 	
 	int numKills = 0;
-	int maxKills = 16;
-	boolean wasHit = false;
+	int maxKills = 10;
 	
 	ArrayList<Entity> particlesInRange;
 	ArrayList<Entity> particlesInContact;
@@ -39,39 +38,34 @@ public class BlackHoleBehaviour extends Behaviour{
 	
 	EnemyFactory factory;
 	
-	EnemySpawnEffect spawnEffect;
-	
 	float time = 0;
 	
 	public BlackHoleBehaviour(Scene scene, EnemyFactory factory, Enemy enemy){
 		super(scene, enemy);
 		this.factory = factory;
-		
 		particlesInRange = new ArrayList<Entity>();
 		particlesInContact = new ArrayList<Entity>();
 		piecesInRange = new ArrayList<Entity>();
 		bulletsInRange = new ArrayList<Entity>();
 		enemiesInRange = new ArrayList<Entity>();
-		
-		spawnEffect = new EnemySpawnEffect(scene, enemy);
-		scene.add(spawnEffect);
 	}
 	
 	@Override
 	public void create(){
 		listener = new ContactEventListener() {
-			
 			@Override
 			public void process(ContactEvent event) {
 				ICollidable other = event.other;
 				int group = other.getGroupMask();
 				
-				if((group & Masks.Collision.ENEMY) == Masks.Collision.ENEMY){
-					Entity enemy = (Entity)other;
-					onKill(self, enemy);
-				} else if((group & Masks.Collision.BULLET) == Masks.Collision.BULLET){
-					wasHit = true;
-				}
+				if((group & Masks.Collision.ENEMY) == Masks.Collision.ENEMY)
+					onContactWithEnemy((Enemy)other);
+				
+				if((group & Masks.Collision.BULLET) != 0)
+					onContactWithBullet((Bullet)other);
+				
+				if((group & Masks.Collision.MULTIPLIER) == Masks.Collision.MULTIPLIER)
+					onContactWithMultiplier((MultiplierPiece)other);
 			}
 		};
 		
@@ -79,21 +73,16 @@ public class BlackHoleBehaviour extends Behaviour{
 	}
 	
 	public void update(){
-		scene.getGrid().applyExplosiveForce(150, new Vector3f(self.getTransform().getTranslation().x, self.getTransform().getTranslation().y, 0), BLACK_HOLE_RADIUS - 100);
-	    
 	    particlesInRange.clear();
-	    scene.getEntitiesByType(self.getTransform().getTranslation(), BLACK_HOLE_RADIUS, Masks.Entities.PARTICLE, particlesInRange);
-	    
 	    particlesInContact.clear();
-	    scene.getEntitiesByType(self.getTransform().getTranslation(), self.getRadius() * 2, Masks.Entities.PARTICLE, particlesInContact);
-	    
 	    piecesInRange.clear();
-	    scene.getEntitiesByType(self.getTransform().getTranslation(), BLACK_HOLE_RADIUS, Masks.Entities.MULTIPLIER, piecesInRange);
-	    
 	    bulletsInRange.clear();
-	    scene.getEntitiesByType(self.getTransform().getTranslation(), BLACK_HOLE_RADIUS, Masks.Entities.BULLET, bulletsInRange);
-	    
 	    enemiesInRange.clear();
+	    
+	    scene.getEntitiesByType(self.getTransform().getTranslation(), BLACK_HOLE_RADIUS, Masks.Entities.PARTICLE, particlesInRange);
+	    scene.getEntitiesByType(self.getTransform().getTranslation(), self.getRadius() * 2, Masks.Entities.PARTICLE, particlesInContact);
+	    scene.getEntitiesByType(self.getTransform().getTranslation(), BLACK_HOLE_RADIUS, Masks.Entities.MULTIPLIER, piecesInRange);
+	    scene.getEntitiesByType(self.getTransform().getTranslation(), BLACK_HOLE_RADIUS, Masks.Entities.BULLET, bulletsInRange);
 	    scene.getEntitiesByType(self.getTransform().getTranslation(), BLACK_HOLE_RADIUS, Masks.Entities.ENEMY, enemiesInRange);
 	    
 	    Player player = scene.getPlayer();
@@ -101,78 +90,85 @@ public class BlackHoleBehaviour extends Behaviour{
 	    Player player3 = scene.getPlayer3();
 	    Player player4 = scene.getPlayer4();
 	    
-	    //Player in range of black hole
-	    if(isInRange(self, player)){
+	    //Affect players
+	    
+	    if(isInRange(self, player) && player.isAlive())
 	    	affectPlayer(self, player);
-	    }
 	    
-	  //Player in range of black hole
-	    if(isInRange(self, player2)){
+	    if(isInRange(self, player2) && player2.isAlive())
 	    	affectPlayer(self, player2);
-	    }
 	    
-	  //Player in range of black hole
-	    if(isInRange(self, player3)){
+	    if(isInRange(self, player3) && player3.isAlive())
 	    	affectPlayer(self, player3);
-	    }
 	    
-	  //Player in range of black hole
-	    if(isInRange(self, player4)){
+	    if(isInRange(self, player4) && player4.isAlive())
 	    	affectPlayer(self, player4);
-	    }
 	    
-	    int n = Math.min(particlesInRange.size(), 1000);
-	    for(int i = 0; i < n; i++){
+	    //Attract particles
+	    for(int i = 0; i < particlesInRange.size(); i++)
 	    	affectParticle(self, particlesInRange.get(i));
-	    }
 	    
-	    if(wasHit){
-	    	scene.getGrid().applyExplosiveForce(100, new Vector3f(self.getTransform().getTranslation().x, self.getTransform().getTranslation().y, 0), BLACK_HOLE_RADIUS - 50);
-	    	if(particlesInContact.size() > 0){
-	    		Vector2f dir = new Vector2f();
-	    		n = particlesInContact.size();
-				for(int i = 0; i < n; i++){
-					Entity p = particlesInRange.get(i);
-					dir.x = p.getTransform().getTranslation().x - self.getTransform().getTranslation().x;
-					dir.y = p.getTransform().getTranslation().y - self.getTransform().getTranslation().y;
-					dir.normalizei();
-					float s = 12.5f;
-					p.getAcceleration().set(new Vector2f(dir.x * s, dir.y * s));
-				}
-			}
-	    	wasHit = false;
-	    }
-	    
-	    n = piecesInRange.size();
-	    for(int i = 0; i < n; i++)
+	    //Attract multiplier pieces
+	    for(int i = 0; i < piecesInRange.size(); i++)
 	    	affectPiece(self, piecesInRange.get(i));
 	    
-	    n = bulletsInRange.size();
-	    for(int i = 0; i < n; i++)
+	    //Repulse bullets
+	    for(int i = 0; i < bulletsInRange.size(); i++)
 	    	affectBullet(self, bulletsInRange.get(i));
 	    
-	    n = enemiesInRange.size();
-	    for(int i = 0; i < n; i++){
+	    //Attract enemies
+	    for(int i = 0; i < enemiesInRange.size(); i++){
 	    	Entity enemy = enemiesInRange.get(i);
-	    	
-	    	int group = enemy.getGroupMask();
-	    	if((group & Masks.Collision.BLACK_HOLE) == Masks.Collision.BLACK_HOLE){
+	    	if((enemy.getGroupMask() & Masks.Collision.BLACK_HOLE) == Masks.Collision.BLACK_HOLE || enemy.equals(self))
 	    		continue;
-	    	}
-	    	
-	    	if(enemy.equals(self))
-	    		continue;
-	    	
 	    	affectEnemy(self, enemy);
 	    }
 	    
 	    float f = ((float)numKills / (float)maxKills);
-	    float wobble = 0.1f;
-	    float s = 1 + (float)Math.sin(time * (f * 2.0f)) * wobble;
+	    float wobble = 0.125f;
+	    float s = 1 + (float)Math.sin(time * f) * wobble;
+	    
+	    time += 0.45f;
+	    
+	    scene.getGrid().applyImplosiveForce(30, new Vector3f(self.getTransform().getTranslation().x, self.getTransform().getTranslation().y, 0), BLACK_HOLE_RADIUS - 100);
 	    
 	    self.getTransform().getScale().set(s, s);
-	    
-	    time += 0.15f;
+	    self.getAcceleration().set(0, 0);
+	    self.getVelocity().set(0, 0);
+	}
+	
+	void onContactWithBullet(Bullet bullet){
+		bullet.destroy();
+		float dir = FastMath.random() * 360.0f;
+		Vector2f force = new Vector2f();
+		dir = FastMath.random() * 360.0f;
+		force.set(FastMath.cosd(dir), FastMath.sind(dir));
+		force.scalei(6);
+		for(int i = 0; i < particlesInContact.size(); i++){
+			Entity entity = particlesInContact.get(i);
+			dir = FastMath.random() * 360.0f;
+			force.set(FastMath.cosd(dir), FastMath.sind(dir));
+			force.scalei(9);
+			entity.getAcceleration().set(force.x, force.y);
+		}
+	}
+	
+	void onContactWithEnemy(Enemy enemy){
+		if(numKills < maxKills){
+			numKills++;
+			enemy.destroy();
+		}
+			
+		if(numKills >= maxKills){
+			spawnChasers();
+			enemy.destroy();
+			self.destroy();
+			numKills = 0;
+		}
+	}
+	
+	void onContactWithMultiplier(MultiplierPiece multiplier){
+		multiplier.destroy();
 	}
 	
 	private void affectParticle(Entity blackHole, Entity particle){
@@ -218,36 +214,33 @@ public class BlackHoleBehaviour extends Behaviour{
 		float lenSqr = dPos.lengthSquared();
 		return (lenSqr <= BLACK_HOLE_RADIUS * BLACK_HOLE_RADIUS);
 	}
-
-	public void onKill(Entity self, Entity other){
-		if (numKills < maxKills){
-			numKills++;
-		}
-			
-		if (numKills >= maxKills){
-			self.expire();
+	
+	void spawnChasers(){
+		Vector2f spawnPosition = new Vector2f();
+		spawnPosition.set(self.getTransform().getTranslation());
+		for(int i = 0; i < 3; i++){
+			Vector2f offsetPos = new Vector2f(spawnPosition);
+			float a = FastMath.random() * 360.0f;
+			offsetPos.x += FastMath.cosd(a) * (self.getRadius() * 2);
+			offsetPos.y += FastMath.sind(a) * (self.getRadius() * 2);
+			factory.createChaser(offsetPos);
 		}
 	}
 	
 	@Override
 	public void destroy() {
-		for(Entity p : particlesInRange){
-			p.getAcceleration().addi(new Vector2f(FastMath.randomf(-12, 12), FastMath.randomf(-12, 12)));
+		float dir = FastMath.random() * 360.0f;
+		Vector2f force = new Vector2f();
+		dir = FastMath.random() * 360.0f;
+		force.set(FastMath.cosd(dir), FastMath.sind(dir));
+		force.scalei(6);
+		for(int i = 0; i < particlesInContact.size(); i++){
+			Entity entity = particlesInContact.get(i);
+			dir = FastMath.random() * 360.0f;
+			force.set(FastMath.cosd(dir), FastMath.sind(dir));
+			entity.getAcceleration().set(force.x * 3, force.y * 3);
 		}
-		
-		float force = 7 + (float)Math.random() * 4;
-		if(numKills >= maxKills){
-			for(int i = 0; i < 4; i++){
-				float a = FastMath.random() * 360.0F;
-		        Vector2f pos = self.getTransform().getTranslation().add(new Vector2f(FastMath.cosd(a) * self.getRadius() + self.getRadius(), FastMath.sind(a) * self.getRadius() + self.getRadius()));
-		        Vector2f accel = new Vector2f(FastMath.cosd(a) * force, FastMath.sind(a) * force);
-		        Enemy chaser = factory.createChaser(pos);
-		        chaser.getAcceleration().set(accel);
-			}
-		}
-	
-		spawnEffect.destroy();
-		
+		self.removeContactListener(listener);
 	}
 	
 }

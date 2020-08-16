@@ -7,13 +7,12 @@ import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 
 import com.vecdef.objects.Enemy;
-import com.vecdef.objects.EnemySpawnEffect;
 import com.vecdef.objects.Grid;
 import com.vecdef.objects.Scene;
 
 public class WandererBehavior extends Behaviour{
 	
-	final float MAX_SPEED = 6.0f;
+	final float MAX_SPEED = 7.0f;
 	float speed = 2f;	
 	int gridWidth;
 	int gridHeight;
@@ -23,16 +22,12 @@ public class WandererBehavior extends Behaviour{
 	Timer activationTimer;
 	boolean active;
 	
-	EnemySpawnEffect spawnEffect;
-	
 	public WandererBehavior(Scene scene, Enemy enemy){
 		super(scene, enemy);
 		Grid grid = scene.getGrid();
 		gridWidth = grid.getWidth();
 		gridHeight = grid.getHeight();
 		active = false;
-		spawnEffect = new EnemySpawnEffect(scene, enemy);
-		scene.add(spawnEffect);
 	}
 	
 	@Override
@@ -42,12 +37,13 @@ public class WandererBehavior extends Behaviour{
 			
 			@Override
 			public void execute(Timer timer) {
-				self.setAngularVelocity(-3);
+				int sign = (FastMath.random() > 0.5f) ? -1 : 1;
+				float av = FastMath.randomi(3, 4) * sign;
+				self.setAngularVelocity(av);
 				float a = FastMath.random() * 360;
 				self.getVelocity().set(new Vector2f(FastMath.cosd(a) * speed, FastMath.sind(a) * speed));
 			}
 		});
-		
 		activationTimer.start();
 	}
 	
@@ -62,7 +58,7 @@ public class WandererBehavior extends Behaviour{
 		}
 		
 		if(Math.abs(self.getVelocity().y) > MAX_SPEED){
-			self.getVelocity().y = MAX_SPEED * Math.signum(self.getVelocity().x);
+			self.getVelocity().y = MAX_SPEED * Math.signum(self.getVelocity().y);
 		}
 		
 		//scene.getGrid().applyExplosiveForce(5, new Vector3f(self.getTransform().getTranslation().x, self.getTransform().getTranslation().y, 0), 100);
@@ -83,6 +79,6 @@ public class WandererBehavior extends Behaviour{
 
 	@Override
 	public void destroy() {
-		spawnEffect.expire();
+		
 	}
 }

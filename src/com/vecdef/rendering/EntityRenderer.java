@@ -8,6 +8,7 @@ import org.javatroid.math.Vector4f;
 
 import com.vecdef.model.Model;
 import com.vecdef.model.Transform;
+import com.vecdef.objects.IPoolable;
 import com.vecdef.rendering.ShapeRenderer.DrawType;
 
 public class EntityRenderer {
@@ -39,8 +40,9 @@ public class EntityRenderer {
 		{
 			for(int i = 0; i < renderables.size(); i++){
 				IRenderable renderable = renderables.get(i);
+				IPoolable poolable = (IPoolable) renderable;
 				
-				if(!renderable.isVisible())
+				if(!renderable.isVisible() || poolable.isRecycled())
 					continue;
 				
 				//Retrieve rendering data

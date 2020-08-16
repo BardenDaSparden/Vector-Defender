@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.javatroid.math.Vector2f;
 
 import com.vecdef.model.Transform;
+import com.vecdef.objects.IPoolable;
 
 public class PhysicsSystem {
 
@@ -25,6 +26,10 @@ public class PhysicsSystem {
 	public void integrate(){
 		for(int i = 0; i < objects.size(); i++){
 			IPhysics object = objects.get(i);
+			IPoolable poolable = (IPoolable)object;
+			
+			if(poolable.isRecycled())
+				continue;
 			
 			Transform transform = object.getTransform();
 			//Vector2f position = transform.getTranslation();

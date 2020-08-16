@@ -7,6 +7,7 @@ import org.javatroid.math.Vector2f;
 
 import com.vecdef.collision.ContactEvent;
 import com.vecdef.collision.ContactEventListener;
+import com.vecdef.collision.ICollidable;
 import com.vecdef.model.MultiplierModel;
 import com.vecdef.util.Masks;
 
@@ -16,28 +17,32 @@ public class MultiplierPiece extends Entity{
 	final float VELOCITY_DAMPING = 0.95f;
 	final float RANGE = 150;
 	
-	Timer timer = new Timer(500);
+	Timer expiryTimer = new Timer(240);
 	
-	public MultiplierPiece(Vector2f position, Scene scene){
+	ContactEventListener listener;
+	
+	public MultiplierPiece(Scene scene){
 		super(scene);
-		transform.setTranslation(position);
 		transform.setOrientation(FastMath.random() * (float)Math.PI * 2);
 		angularVelocity = FastMath.randomf(1, 4);
 		model = MultiplierModel.get();
 		
-		timer.setCallback(new TimerCallback() {
+		expiryTimer.setCallback(new TimerCallback() {
 			public void execute(Timer timer) {
-				MultiplierPiece.this.expire();
+				destroy();
 			}
 		});
-		timer.start();
+		expiryTimer.start();
 		
-		addContactListener(new ContactEventListener() {
+		listener = new ContactEventListener(){
 			@Override
 			public void process(ContactEvent event) {
-				MultiplierPiece.this.expire();
+				ICollidable other = event.other;
+				if((other.getGroupMask() & Masks.Collision.PLAYER) == Masks.Collision.PLAYER)
+					destroy();
+				
 			}
-		});
+		};
 	}
 	
 	public void update() {
@@ -45,18 +50,20 @@ public class MultiplierPiece extends Entity{
 		Vector2f position = transform.getTranslation();
 		Player player = scene.getNearestPlayer(position.x, position.y);
 		
-		timer.tick();
+		expiryTimer.tick();
 		
-		opacity = 1 - timer.percentComplete();
+		opacity = 1 - expiryTimer.percentComplete();
 		
 		transform.setOrientation(transform.getOrientation() + angularVelocity);
 		transform.setTranslation(getTransform().getTranslation().add(velocity));
 		
-		Vector2f dPos = player.getTransform().getTranslation().sub(getTransform().getTranslation());
-		if(dPos.lengthSquared() < RANGE * RANGE){
-			if(!player.isRespawning()){
-				float s = 0.1f * (RANGE - dPos.length());
-				transform.setTranslation(getTransform().getTranslation().add(dPos.normalize().scale(s)));
+		if(player != null){
+			Vector2f dPos = player.getTransform().getTranslation().sub(getTransform().getTranslation());
+			if(dPos.lengthSquared() < RANGE * RANGE){
+				if(!player.isRespawning()){
+					float s = 0.1f * (RANGE - dPos.length());
+					transform.setTranslation(getTransform().getTranslation().add(dPos.normalize().scale(s)));
+				}
 			}
 		}
 		
@@ -79,8 +86,26 @@ public class MultiplierPiece extends Entity{
 	}
 	
 	@Override
+	public void reuse(){
+		super.reuse();
+		addContactListener(listener);
+	}
+	
+	@Override
+	public void recycle(){
+		super.recycle();
+		velocity.set(0, 0);
+		angularVelocity = 0;
+		acceleration.set(0, 0);
+		torque = 0;
+		expiryTimer.restart();
+		removeContactListener(listener);
+	}
+	
+	@Override
 	public void destroy(){
-		
+		if(!super.isRecycled())
+			scene.getMultiplierPool().recycle(this);
 	}
 	
 	public int getEntityType(){

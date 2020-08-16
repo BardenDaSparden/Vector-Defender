@@ -14,7 +14,7 @@ import com.vecdef.model.Transform;
 import com.vecdef.physics.IPhysics;
 import com.vecdef.rendering.IRenderable;
 
-public abstract class Entity implements ICollidable, IPhysics, IRenderable{
+public abstract class Entity implements ICollidable, IPoolable, IPhysics, IRenderable {
 	
 	//IRenderable Dependencies
 	protected Transform transform;
@@ -33,7 +33,9 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	protected int radius = 8;
 	protected ArrayList<ContactEventListener> contactListeners;
 	
-	private boolean isExpired;
+	//IPoolable
+	protected boolean isUsable;
+	
 	protected Scene scene;
 	
 	public Entity(Scene scene){
@@ -51,12 +53,11 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 		
 		contactListeners = new ArrayList<ContactEventListener>();
 		
-		isExpired = false;
+		isUsable = true;
 	}
 	
 	public abstract void update();
 	public abstract void destroy();
-	
 	public abstract int getEntityType();
 	
 	@Override
@@ -96,6 +97,21 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	@Override
 	public Vector4f getOverrideColor(){
 		return overrideColor;
+	}
+	
+	@Override
+	public void reuse(){
+		isUsable = false;
+	}
+	
+	@Override
+	public void recycle(){
+		isUsable = true;
+	}
+	
+	@Override
+	public boolean isRecycled(){
+		return isUsable;
 	}
 	
 	@Override
@@ -140,25 +156,18 @@ public abstract class Entity implements ICollidable, IPhysics, IRenderable{
 	
 	@Override
 	public void onContact(ContactEvent event){
-		int n = contactListeners.size();
-		for(int i = 0; i < n; i++){
+		for(int i = 0; i < contactListeners.size(); i++){
 			ContactEventListener listener = contactListeners.get(i);
 			listener.process(event);
 		}
 	}
 	
-	public boolean isExpired(){
-		return isExpired;
-	}
-	
-	public void expire(){
-		isExpired = true;
-	}
-	
+	@Override
 	public int getRadius(){
 		return radius;
 	}
 	
+	@Override
 	public void setRadius(int r){
 		this.radius = r;
 	}

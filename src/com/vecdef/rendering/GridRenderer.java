@@ -1,10 +1,7 @@
 package com.vecdef.rendering;
 
-import java.util.ArrayList;
-
 import org.javatroid.graphics.BlendState;
 import org.javatroid.graphics.FrameBuffer;
-import org.javatroid.math.Vector2f;
 import org.javatroid.math.Vector3f;
 import org.javatroid.math.Vector4f;
 
@@ -15,15 +12,10 @@ import com.vecdef.rendering.ShapeRenderer.DrawType;
 import debug.physics.PointMass;
 
 public class GridRenderer {
-	//TODO implement
-	
+
 	ShapeRenderer renderer;
-	final int NUM_VERTICES = 80000;
-	int vertexIdx = 0;
-	ArrayList<Vector2f> positions;
-	ArrayList<Vector4f> colors;
 	
-	Vector4f color = new Vector4f(1, 0, 0, 0.23f);
+	Vector4f color = new Vector4f(1, 0, 0, 0.24f);
 	AudioAnalyzer analyzer;
 	FrameBuffer buffer;
 	FrameBuffer buffer2;
@@ -33,26 +25,19 @@ public class GridRenderer {
 	float waveAmplitude = 50;
 	float time = 0;
 	
-	public GridRenderer(ShapeRenderer renderer){
+	public GridRenderer(ShapeRenderer renderer, AudioAnalyzer analyzer){
 		this.renderer = renderer;
-		positions = new ArrayList<Vector2f>();
-		colors = new ArrayList<Vector4f>();
-		for(int i = 0; i < NUM_VERTICES; i++){
-			positions.add(new Vector2f());
-			colors.add(new Vector4f());
-		}
+		this.analyzer = analyzer;
 	}
 	
 	void drawLine(Vector3f p0, Vector3f p1){
-		positions.get(vertexIdx).set(p0.x, p0.y);
-	    positions.get(vertexIdx + 1).set(p1.x, p1.y);
-	    colors.get(vertexIdx).set(color);
-	    colors.get(vertexIdx + 1).set(color);
-	    if(vertexIdx + 2 < NUM_VERTICES)
-	    	vertexIdx += 2;
+		renderer.draw(p0.x, p0.y, color.x, color.y, color.z, color.w);
+		renderer.draw(p1.x, p1.y, color.x, color.y, color.z, color.w);
 	}
 	
 	public void render(Grid grid){
+		
+		
 		
 		HSB.x += 1.0f / 1440.0f;
 		java.awt.Color c = java.awt.Color.getHSBColor(HSB.x, HSB.y, HSB.z);
@@ -70,6 +55,7 @@ public class GridRenderer {
 		Vector3f temp3 = new Vector3f();
 		Vector3f temp4 = new Vector3f();
 		
+		renderer.begin(DrawType.LINES, BlendState.ADDITIVE);
 		for (int j = 0; j < points.length - 1; j++){
 			for(int i = 0; i < points[j].length - 1; i++){
 				PointMass point = points[j][i];
@@ -100,7 +86,6 @@ public class GridRenderer {
 				
 				drawLine(temp1, temp3);
 				drawLine(temp4, temp2);
-				
 				drawLine(TL, TR);
 				drawLine(TL, BL);			
 			}
@@ -126,14 +111,11 @@ public class GridRenderer {
 			drawLine(start, end);
 		}
 		
-		renderer.begin(DrawType.LINES, BlendState.ADDITIVE);
-			for(int i = 0; i < vertexIdx; i++){
-				Vector2f position = positions.get(i);
-				Vector4f color = colors.get(i);
-				renderer.draw(position, color);
-			}
+		
+		
 		renderer.end();
 		
-		vertexIdx = 0;
+		//analyzer.drawWaveform(0, 0, 5, 100, 5, color, renderer);
+		
 	}
 }

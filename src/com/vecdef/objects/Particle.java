@@ -2,49 +2,36 @@ package com.vecdef.objects;
 
 import java.util.ArrayList;
 
-import org.javatroid.math.FastMath;
-import org.javatroid.math.Vector2f;
-import org.javatroid.math.Vector4f;
+import org.javatroid.math.Vector3f;
 
 import com.vecdef.ai.Behaviour;
 import com.vecdef.model.Model;
+import com.vecdef.model.ParticleModel;
 import com.vecdef.util.Masks;
 
 public class Particle extends Entity{
-	
-	static float PARTICLE_WIDTH = 18;
-	static Vector2f[] vertices = {new Vector2f(-PARTICLE_WIDTH / 2f, 0), new Vector2f(PARTICLE_WIDTH / 2f, 0)};
-	
-	protected Vector4f color;
 	
 	protected int currentLife = 0;
 	protected int maxLife = 60;
 	
 	ArrayList<Behaviour> behaviors;
 	
-	public Particle(float x, float y, Vector4f color, Scene scene){
-		super(scene);
-		transform.setTranslation(new Vector2f(x, y));
-		transform.setOrientation(FastMath.random() * 360f);
-		
-		model = new Model();
-		model.add(vertices[0], color);
-		model.add(vertices[1], color);
-		
-		behaviors = new ArrayList<Behaviour>();
-	}
+	Vector3f HSB = new Vector3f(0, 1, 0.5f);
+	Vector3f RGB = new Vector3f(1, 0, 0);
+	float[] hsbTemp = new float[3];
+	float time = 0;
 	
-	public Particle(Vector2f start, Vector2f end, Vector4f color, Scene scene){
+	public Particle(Scene scene){
 		super(scene);
-		transform.setTranslation(start.add(end.sub(start).scale(0.5f)));
-		transform.getScale().set(1, 2);
-		
-		model = new Model();
-		model.add(start, color);
-		model.add(end, color);
+		transform.getTranslation().set(0, 0);
+		model = ParticleModel.get();
+		behaviors = new ArrayList<Behaviour>();
+		radius = 0;
 	}
 
 	public void update() {
+		if(!isVisible)
+			return;
 		
 		for(Behaviour b : behaviors){
 			b.update();
@@ -54,17 +41,41 @@ public class Particle extends Entity{
 		currentLife++;
 		
 		transform.setOrientation(velocity.direction());
+		velocity.set(velocity.x * 0.95f, velocity.y * 0.95f);
 		
-		velocity.set(velocity.x * 0.945f, velocity.y * 0.945f);
+		java.awt.Color.RGBtoHSB((int)(overrideColor.x * 255), (int)(overrideColor.y * 255), (int)(overrideColor.z * 255), hsbTemp);
+		hsbTemp[0] = (hsbTemp[0] + 1/360.0f);
+		java.awt.Color c = java.awt.Color.getHSBColor(hsbTemp[0], hsbTemp[1], hsbTemp[2]);
+		overrideColor.x = c.getRed() / 255.0f;
+		overrideColor.y = c.getGreen() / 255.0f;
+		overrideColor.z = c.getBlue() / 255.0f;
 		
 		if(currentLife >= maxLife)
-			expire();
+			destroy();
 	}
 	
 	public void destroy(){
 		for(Behaviour b : behaviors){
 			b.destroy();
 		}
+		
+		if(!super.isRecycled())
+			scene.getParticlePool().recycle(this);
+	}
+	
+	@Override
+	public void reuse(){
+		super.reuse();
+		isVisible = true;
+		currentLife = 0;
+	}
+	
+	@Override
+	public void recycle(){
+		super.recycle();
+		behaviors.clear();
+		isVisible = false;
+		currentLife = maxLife;
 	}
 	
 	@Override
@@ -75,6 +86,11 @@ public class Particle extends Entity{
 	@Override
 	public Model getModel(){
 		return model;
+	}
+	
+	@Override
+	public boolean useOverrideColor(){
+		return true;
 	}
 	
 	public void addBehavior(Behaviour b){

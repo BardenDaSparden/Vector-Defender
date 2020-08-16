@@ -11,7 +11,7 @@ public class ApplicationLauncher {
 		//glfwInit();
 			ApplicationTask task = new ApplicationTask(this, application, settings);
 			task.run();
-		//glfwTerminate();
+		glfwTerminate();
 		Debug.print();
 	}
 }

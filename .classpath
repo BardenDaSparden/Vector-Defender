@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="assets"/>
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Javatroid"/>
-	<classpathentry kind="lib" path="/Javatroid/libraries/lwjgl/jar/lwjgl.jar">
+	<classpathentry kind="lib" path="libraries/jinput.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/Javatroid/libraries/lwjgl/doc/javadoc.zip!/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Javatroid/libraries/lwjgl/native"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Vector Defender/libraries/jinput_native"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="libraries/jl1.0.jar"/>
+	<classpathentry kind="lib" path="libraries/jsminim.jar"/>
+	<classpathentry kind="lib" path="libraries/minim.jar"/>
+	<classpathentry kind="lib" path="libraries/mp3spi1.9.4.jar"/>
+	<classpathentry kind="lib" path="libraries/tritonus_aos.jar"/>
+	<classpathentry kind="lib" path="libraries/tritonus_share.jar"/>
+	<classpathentry kind="lib" path="lwjgl/jar/lwjgl.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Vector Defender/lwjgl/native"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libraries/lwjgl_util.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

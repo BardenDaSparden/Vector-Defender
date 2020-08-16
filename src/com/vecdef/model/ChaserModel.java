@@ -6,7 +6,7 @@ import org.javatroid.math.Vector4f;
 
 public class ChaserModel extends Model {
 
-	final float RADIUS = 7;
+	final float RADIUS = 12;
 	final int SEGMENTS = 12;
 	final Vector4f BASE_COLOR = new Vector4f(0.5f, 1, 1, 1);
 	

@@ -15,7 +15,7 @@ public class Main {
 		
 		settings.width = 1920;
 		settings.height = 1080;
-		settings.fullscreen = false;
+		settings.fullscreen = true;
 		settings.decorated = false;
 		settings.framerate = 60;
 		settings.title = "Vector Defender";

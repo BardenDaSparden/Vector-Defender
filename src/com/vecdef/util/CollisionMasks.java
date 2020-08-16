@@ -16,31 +16,31 @@ public class CollisionMasks {
 	
 	@Deprecated
 	public String asString(int mask){
-//		StringBuilder source = new StringBuilder();
-//		
-//		boolean bPlayer = (mask & PLAYER) == PLAYER;
-//		boolean bBullet = (mask & BULLET) == BULLET;
-//		boolean bEnemy = (mask & ENEMY) == ENEMY;
-//		boolean bMultiplier = (mask & MULTIPLIER) == MULTIPLIER;
-//		boolean bBlackHole = (mask & BLACK_HOLE) == BLACK_HOLE;
-//		
-//		if(bPlayer)
-//			source.append(" PLAYER ");
-//		
-//		if(bBullet)
-//			source.append(" BULLET ");
-//		
-//		if(bEnemy)
-//			source.append(" ENEMY ");
-//		
-//		if(bMultiplier)
-//			source.append(" MULTIPLIER ");
-//		
-//		if(bBlackHole)
-//			source.append(" BLACK_HOLE ");
-//		
-//		return source.toString();
-		return "";
+		StringBuilder source = new StringBuilder();
+		
+		boolean bPlayer = (mask & PLAYER) == PLAYER;
+		boolean bBullet = (mask & BULLET) == BULLET;
+		boolean bEnemy = (mask & ENEMY) == ENEMY;
+		boolean bMultiplier = (mask & MULTIPLIER) == MULTIPLIER;
+		boolean bBlackHole = (mask & BLACK_HOLE) == BLACK_HOLE;
+		
+		if(bPlayer)
+			source.append(" PLAYER ");
+		
+		if(bBullet)
+			source.append(" BULLET ");
+		
+		if(bEnemy)
+			source.append(" ENEMY ");
+		
+		if(bMultiplier)
+			source.append(" MULTIPLIER ");
+		
+		if(bBlackHole)
+			source.append(" BLACK_HOLE ");
+		
+		return source.toString();
+		//return "";
 	}
 	
 }
