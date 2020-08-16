@@ -2,6 +2,8 @@
 *.class
 
 #Working Project Directory Setup
-bin/
-resources/
-lwjgl/
+/libraries/
+/assets/
+/bin/
+/resources/
+/lwjgl/
