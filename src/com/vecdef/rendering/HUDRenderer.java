@@ -80,7 +80,7 @@ public class HUDRenderer {
 		float opacity = player.isAlive() ? 1.0f : 0.45f;
 		
 		batch.setColor(color.x, color.y, color.z, opacity);
-		techFontMedium.drawString(x, y, scoreFormat.format(score), batch);
+		//techFontMedium.drawString(x, y, scoreFormat.format(score), batch);
 		techFontMedium.drawString(x + strW + 15, y, "x " + multiplier, batch);
 	}
 	
@@ -113,10 +113,10 @@ public class HUDRenderer {
 		
 		startX = - width / 2.0f + 25;
 		startY = height / 2.0f - 50 - 25;
-//		int totalScore = 0;	
+		int totalScore = 0;	
 		batch.begin(BlendState.ADDITIVE);
-//			totalScore += p1.getStats().getScore();
-//			drawPlayerScore(p1, 0, startX, startY, P1_COLOR);
+			totalScore += p1.getStats().getScore();
+			drawPlayerScore(p1, 0, startX, startY, P1_COLOR);
 //			
 //			if(p2.hasJoined()){
 //				totalScore += p2.getStats().getScore();
@@ -133,9 +133,9 @@ public class HUDRenderer {
 //				drawPlayerScore(p4, 3, startX, startY, P4_COLOR);
 //			}
 //			
-//			batch.setColor(1, 1, 1, 1);
-//			techFontMedium.drawString(-width / 2 + 25, height / 2 - 25, "SCORE: " + scoreFormat.format(totalScore), batch);
-//			
+			batch.setColor(1, 1, 1, 1);
+			techFontMedium.drawString(-width / 2 + 25, height / 2 - 25, "SCORE: " + scoreFormat.format(totalScore), batch);
+			
 			batch.setColor(1, 1, 1, 1);
 			techFontMedium.drawStringCentered(0, height / 2.0f - 40, "Survival", batch);
 			techFontSmall.drawStringCentered(0, height / 2.0f - 75, "Wave: 0", batch);
