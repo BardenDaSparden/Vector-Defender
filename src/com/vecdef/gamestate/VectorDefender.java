@@ -158,6 +158,7 @@ public class VectorDefender extends Application {
 	public void update(){
 		musicPlayer.poll();
 		gameState.update();
+		musicAnalyzer.analyze();
 		frameCount++;
 	}
 	
